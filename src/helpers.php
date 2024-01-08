@@ -1,12 +1,15 @@
 <?php
 
-function convertPHPSizeToBytes($sSize)
+function convertPHPSizeToBytes(int|string $sSize): int
 {
-    $sSuffix = strtoupper(substr($sSize, -1));
+    $sSuffix = strtoupper(substr((string)$sSize, -1));
+
     if (! in_array($sSuffix, ['P', 'T', 'G', 'M', 'K'])) {
         return (int) $sSize;
     }
-    $iValue = substr($sSize, 0, -1);
+    /** @var int $iValue */
+    $iValue = substr((string) $sSize, 0, -1);
+
     switch ($sSuffix) {
         case 'P': $iValue *= 1024;
         case 'T': $iValue *= 1024;

@@ -3,7 +3,7 @@
 namespace NIIT\ESign\Policies;
 
 use App\Models\User;
-use NIIT\ESign\Models\Document;
+use NIIT\ESign\Models\ESignDocument;
 
 class DocumentPolicy
 {
@@ -12,7 +12,7 @@ class DocumentPolicy
         return true;
     }
 
-    public function view(User $user, Document $document): bool
+    public function view(User $user, ESignDocument $document): bool
     {
         return true;
     }
@@ -22,22 +22,22 @@ class DocumentPolicy
         return true;
     }
 
-    public function update(User $user, Document $document): bool
+    public function update(User $user, ESignDocument $document): bool
     {
         return true;
     }
 
-    public function delete(User $user, Document $document): bool
+    public function delete(User $user, ESignDocument $document): bool
     {
         return true;
     }
 
-    public function restore(User $user, Document $document): bool
+    public function restore(User $user, ESignDocument $document): bool
     {
         return true;
     }
 
-    public function forceDelete(User $user, Document $document): bool
+    public function forceDelete(User $user, ESignDocument $document): bool
     {
         return true;
     }

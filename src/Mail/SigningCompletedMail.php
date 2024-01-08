@@ -3,11 +3,11 @@
 namespace NIIT\ESign\Mail;
 
 use Illuminate\Mail\Mailables\Content;
-use NIIT\ESign\Models\Document;
+use NIIT\ESign\Models\ESignDocument;
 
 class SigningCompletedMail extends Mailable
 {
-    public function __construct(public Document $document)
+    public function __construct(public ESignDocument $document)
     {
     }
 

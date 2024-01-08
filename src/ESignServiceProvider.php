@@ -18,13 +18,13 @@ class ESignServiceProvider extends Base
         $this->app->register(Providers\EventServiceProvider::class);
 
         $this->app->singleton(ESign::class);
-        $this->app->alias(ESign::class, self::NAME);
+        $this->app->alias(self::NAME, ESign::class);
     }
 
     public function boot(): void
     {
         if (! Blueprint::hasMacro('userStamps')) {
-            resolve('esign')->registerUserStampsMacro();
+            (new ESign)->registerUserStampsMacro();
         }
 
         Route::prefix(self::NAME)

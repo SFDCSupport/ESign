@@ -8,8 +8,7 @@ use NIIT\ESign\Enum\ElementType;
 use NIIT\ESign\Enum\MailEvent;
 use NIIT\ESign\Enum\SignerStatus;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('e_documents', function (Blueprint $table) {
@@ -63,6 +62,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::drop('esign');
+        Schema::drop('e_documents');
+        Schema::drop('e_document_signers');
+        Schema::drop('e_signer_elements');
+        Schema::drop('e_document_events');
     }
 };

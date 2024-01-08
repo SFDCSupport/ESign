@@ -5,12 +5,12 @@ namespace NIIT\ESign\Mail;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use NIIT\ESign\Models\Document;
+use NIIT\ESign\Models\ESignDocument;
 use Symfony\Component\Mime\Email;
 
 class AllSignersCompletedMail extends Mailable
 {
-    public function __construct(public Document $document)
+    public function __construct(public ESignDocument $document)
     {
     }
 

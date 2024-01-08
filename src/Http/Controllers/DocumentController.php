@@ -4,7 +4,7 @@ namespace NIIT\ESign\Http\Controllers;
 
 use Illuminate\Http\Request;
 use NIIT\ESign\Http\Requests\DocumentRequest;
-use NIIT\ESign\Models\Document;
+use NIIT\ESign\Models\ESignDocument as Document;
 
 class DocumentController extends Controller
 {

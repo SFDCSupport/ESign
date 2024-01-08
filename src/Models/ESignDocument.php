@@ -12,8 +12,14 @@ class ESignDocument extends Model implements Attachable, HasLocalePreference
 
     public function toMailAttachment(): Attachment
     {
-        return Attachment::fromStorageDisk($this->disk, $this->path)
-            ->as($this->name)
+        return Attachment::fromStorageDisk(
+        /** @phpstan-ignore-next-line */
+            $this->disk, $this->path
+        )
+            ->as(
+            /** @phpstan-ignore-next-line */
+                $this->name
+            )
             ->withMime('application/pdf');
     }
 

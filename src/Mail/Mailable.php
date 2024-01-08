@@ -19,7 +19,7 @@ abstract class Mailable extends Base
     {
         return new Headers(
             messageId: $this->messageId,
-            references: $this->references,
+            references: $this->references ?? [],
             text: [
                 'X-Custom-Header' => 'NIIT ESign',
             ],

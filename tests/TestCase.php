@@ -35,11 +35,12 @@ class TestCase extends Orchestra
             'foreign_key_constraints' => true,
         ]);
         config()->set('database.default', 'esign');
+
         Schema::dropAllTables();
 
         $app->singleton(ESign::class);
-        $app->alias(ESign::class, 'esign');
-        resolve('esign')->registerUserStampsMacro();
+        $app->alias('esign', ESign::class);
+        (new ESign)->registerUserStampsMacro();
 
         $migration = include __DIR__.'/../database/migrations/esign_migrations.php';
         $migration->up();

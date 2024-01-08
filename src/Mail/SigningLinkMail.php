@@ -3,12 +3,12 @@
 namespace NIIT\ESign\Mail;
 
 use Illuminate\Mail\Mailables\Content;
-use NIIT\ESign\Models\Document;
-use NIIT\ESign\Models\Signer;
+use NIIT\ESign\Models\ESignDocument;
+use NIIT\ESign\Models\ESignDocumentSigner;
 
 class SigningLinkMail extends Mailable
 {
-    public function __construct(public Signer $signer, public Document $document)
+    public function __construct(public ESignDocumentSigner $signer, public ESignDocument $document)
     {
     }
 
