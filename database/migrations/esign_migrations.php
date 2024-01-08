@@ -5,10 +5,11 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\ElementType;
-use NIIT\ESign\Enum\MailEvent;
+use NIIT\ESign\Enum\MailStatus;
 use NIIT\ESign\Enum\SignerStatus;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('e_documents', function (Blueprint $table) {
@@ -27,7 +28,7 @@ return new class extends Migration {
             $table->uuid('id')->primary();
             $table->foreignUuid('e_document_id')->constrained('e_documents');
             $table->string('email')->nullable();
-            $table->enum('mail_event', MailEvent::values())->default(MailEvent::NOT_SENT);
+            $table->enum('mail_status', MailStatus::values())->default(MailStatus::NOT_SENT);
             $table->enum('status', SignerStatus::values())->nullable();
             $table->json('data')->nullable();
             $table->timestamps();
@@ -50,7 +51,7 @@ return new class extends Migration {
             $table->userStamps();
         });
 
-        Schema::create('e_document_events', function (Blueprint $table) {
+        Schema::create('e_audits', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('e_document_id')->constrained('e_documents');
             $table->foreignUuid('e_signer_id')->constrained('e_signers');
@@ -65,6 +66,6 @@ return new class extends Migration {
         Schema::drop('e_documents');
         Schema::drop('e_document_signers');
         Schema::drop('e_signer_elements');
-        Schema::drop('e_document_events');
+        Schema::drop('e_audits');
     }
 };

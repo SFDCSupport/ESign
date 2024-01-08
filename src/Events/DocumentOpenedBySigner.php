@@ -8,7 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
 
-class SigningProcessCompleted
+class DocumentOpenedBySigner
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 

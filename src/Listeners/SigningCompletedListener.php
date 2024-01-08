@@ -2,11 +2,11 @@
 
 namespace NIIT\ESign\Listeners;
 
-use NIIT\ESign\Events\DocumentSigned;
+use NIIT\ESign\Events\SigningProcessCompleted;
 
 class SigningCompletedListener
 {
-    public function handle(DocumentSigned $event): void
+    public function handle(SigningProcessCompleted $event): void
     {
     }
 }

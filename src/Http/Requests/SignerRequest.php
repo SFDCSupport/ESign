@@ -44,7 +44,7 @@ class SignerRequest extends FormRequest
         if ($mode === 'bulkDestroy') {
             return [
                 'ids' => 'required|array',
-                'ids.*' => Rule::exists('e_document_signers', 'id'),
+                'ids.*' => Rule::exists('e_signers', 'id'),
             ];
         }
 

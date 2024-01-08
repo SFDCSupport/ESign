@@ -1,0 +1,52 @@
+<?php
+
+namespace NIIT\ESign\Models;
+
+use Illuminate\Contracts\Mail\Attachable;
+use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Mail\Attachment;
+use NIIT\ESign\Enum\DocumentStatus;
+
+class Document extends Model implements Attachable, HasLocalePreference
+{
+    protected $table = 'e_documents';
+
+    /**
+     * @var array<int,string>
+     */
+    protected $fillable = [];
+
+    /**
+     * @var array<string,string>
+     */
+    protected $casts = [
+        'status' => DocumentStatus::class,
+    ];
+
+    public function signers(): HasMany
+    {
+        return $this->hasMany(
+            related: Signer::class,
+            foreignKey: 'e_document_id'
+        );
+    }
+
+    public function toMailAttachment(): Attachment
+    {
+        return Attachment::fromStorageDisk(
+            /** @phpstan-ignore-next-line */
+            $this->disk, $this->path
+        )
+            ->as(
+                /** @phpstan-ignore-next-line */
+                $this->name
+            )
+            ->withMime('application/pdf');
+    }
+
+    public function preferredLocale(): string
+    {
+        return 'en';
+    }
+}

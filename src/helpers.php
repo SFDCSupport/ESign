@@ -2,7 +2,7 @@
 
 function convertPHPSizeToBytes(int|string $sSize): int
 {
-    $sSuffix = strtoupper(substr((string)$sSize, -1));
+    $sSuffix = strtoupper(substr((string) $sSize, -1));
 
     if (! in_array($sSuffix, ['P', 'T', 'G', 'M', 'K'])) {
         return (int) $sSize;
