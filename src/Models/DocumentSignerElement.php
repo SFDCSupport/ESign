@@ -5,9 +5,9 @@ namespace NIIT\ESign\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use NIIT\ESign\Enum\ElementType;
 
-class SignerElement extends Model
+class DocumentSignerElement extends Model
 {
-    protected $table = 'e_signer_elements';
+    protected $table = 'e_document_signer_elements';
 
     /**
      * @var array<int,string>
@@ -22,12 +22,12 @@ class SignerElement extends Model
     ];
 
     /**
-     * @return BelongsTo<Signer, SignerElement>
+     * @return BelongsTo<DocumentSigner, SignerElement>
      */
     public function signer()
     {
         return $this->belongsTo(
-            related: Signer::class,
+            related: DocumentSigner::class,
             foreignKey: 'signer_id',
         );
     }

@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 use NIIT\ESign\Concerns\Auditable;
 use NIIT\ESign\Models\Document;
 
-abstract class Controller extends Base
+class Controller extends Base
 {
     use Auditable, AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
@@ -42,18 +42,13 @@ abstract class Controller extends Base
         ]);
     }
 
-    public function upload(Request $request)
+    public function upload(Request $request, $type)
     {
         $data = $request->validate([
-            'type' => 'required',
-            'id' => 'required|exists:e_documents,id',
             'file' => 'required|file|mimes:pdf', //'required|image|mimes:jpg,png,jpeg|max:2048',
-        ], [
-            'id.required' => 'Document is not created yet!',
         ]);
 
         $id = $data['id'];
-        $type = $data['type'];
         $file = $request->file('file');
 
         abort_if(! method_exists(Document::class, ($method = Str::camel($type))), 400);
@@ -62,7 +57,7 @@ abstract class Controller extends Base
         $fileName = date('YmdHms').'_'.trim($file->getClientOriginalName());
 
         if ($filePath = $file->storeAs(
-            surveyUploadPath($type, ['id' => $id]),
+            esignUploadPath($type, ['id' => $id]),
             $fileName,
             FilepondAction::getDisk(true)
         )) {

@@ -10,14 +10,14 @@ namespace NIIT\ESign\Events;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use NIIT\ESign\Models\Signer;
+use NIIT\ESign\Models\DocumentSigner;
 
 class SignerRemoved
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public function __construct(
-        public Signer $signer
+        public DocumentSigner $signer
     ) {
     }
 }

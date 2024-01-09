@@ -6,6 +6,9 @@ use NIIT\ESign\Http\Controllers\SignerController;
 use NIIT\ESign\Http\Controllers\SigningController;
 use NIIT\ESign\Http\Controllers\TemplateController;
 use NIIT\ESign\Http\Middleware\SigningMiddleware;
+use NIIT\ESign\Http\Controllers\Controller;
+
+Route::any('/upload/{type}', [Controller::class, 'upload']);
 
 // ADMIN ROUTES
 Route::middleware(['auth'])
@@ -25,14 +28,16 @@ Route::middleware(['auth'])
             ->name('documents.copy');
         Route::get('document/send', [DocumentController::class, 'send'])
             ->name('documents.send');
+        Route::resource('document', DocumentController::class);
+
+        Route::permanentRedirect('/', '/esign/document');
     });
 
 // SIGNING ROUTES
-Route::prefix('signing')
-    ->name('signing.')
+Route::name('signing.')
     ->middleware([
         SigningMiddleware::class,
     ])->group(function () {
-        Route::get('/signing/{document}', [SigningController::class, 'index']);
-        Route::post('/signing/{document}', [SigningController::class, 'store']);
+        Route::get('/{document}', [SigningController::class, 'index']);
+        Route::post('/{document}', [SigningController::class, 'store']);
     });

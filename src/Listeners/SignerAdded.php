@@ -2,7 +2,7 @@
 
 namespace NIIT\ESign\Listeners;
 
-use NIIT\ESign\Events\Signer\SignerAdded as Event;
+use NIIT\ESign\Events\SignerAdded as Event;
 
 class SignerAdded
 {

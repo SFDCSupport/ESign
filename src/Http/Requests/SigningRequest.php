@@ -25,7 +25,7 @@ class SigningRequest extends FormRequest
             ],
             'signerId' => [
                 'required',
-                Rule::exists('e_signers', 'id'),
+                Rule::exists('e_document_signers', 'id'),
             ],
             'mode' => [
                 'required',

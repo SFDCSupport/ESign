@@ -13,6 +13,14 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
+        Schema::drop('e_templates');
+        Schema::drop('e_documents');
+        Schema::drop('e_document_signers');
+        Schema::drop('e_document_signer_elements');
+        Schema::drop('e_audits');
+        Schema::enableForeignKeyConstraints();
+
         Schema::create('e_templates', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('label');
@@ -50,10 +58,10 @@ return new class extends Migration
             $table->userStamps();
         });
 
-        Schema::create('e_document_elements', function (Blueprint $table) {
+        Schema::create('e_document_signer_elements', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('document_id')->constrained('e_documents');
-            $table->foreignUuid('signer_id')->constrained('e_signers');
+            $table->foreignUuid('signer_id')->constrained('e_document_signers');
             $table->enum('type', ElementType::values());
             $table->integer('on_page');
             $table->integer('x_axis');
@@ -68,7 +76,7 @@ return new class extends Migration
         Schema::create('e_audits', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('document_id')->constrained('e_documents');
-            $table->foreignUuid('signer_id')->nullable()->constrained('e_signers');
+            $table->foreignUuid('signer_id')->nullable()->constrained('e_document_signers');
             $table->string('event');
             $table->json('metadata')->nullable();
             $table->timestamps();

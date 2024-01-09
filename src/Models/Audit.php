@@ -30,12 +30,12 @@ class Audit extends Model
     }
 
     /**
-     * @return BelongsTo<Signer, Audit>
+     * @return BelongsTo<DocumentSigner, Audit>
      */
-    public function Signer()
+    public function signer()
     {
         return $this->belongsTo(
-            related: Signer::class,
+            related: DocumentSigner::class,
             foreignKey: 'signer_id',
         );
     }

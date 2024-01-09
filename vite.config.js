@@ -6,7 +6,12 @@ export default defineConfig({
         laravel({
             hotFile: '../../../public/vendor/esign/esign.hot',
             buildDirectory: '../../../../public/vendor/esign',
-            input: ['resources/saas/app.scss', 'resources/js/app.js'],
+            input: [
+                'resources/sass/app.scss',
+                'resources/js/app.js',
+                'resources/sass/signing.scss',
+                'resources/js/signing.js',
+            ],
             refresh: true,
         }),
     ],
@@ -22,7 +27,7 @@ export default defineConfig({
     esbuild: {
         target: "es2022"
     },
-    optimizeDeps:{
+    optimizeDeps: {
         esbuildOptions: {
             target: "es2022",
         }

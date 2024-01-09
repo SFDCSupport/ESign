@@ -10,7 +10,7 @@ class SigningController extends Controller
 {
     public function index(Request $request)
     {
-        return view('esign::signer.index');
+        return view('esign::index');
     }
 
     public function store(SigningRequest $request)

@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use NIIT\ESign\Enum\MailStatus;
 use NIIT\ESign\Enum\SignerStatus;
 
-class Signer extends Model
+class DocumentSigner extends Model
 {
-    protected $table = 'e_signers';
+    protected $table = 'e_document_signers';
 
     /**
      * @var array<int,string>
@@ -25,7 +25,7 @@ class Signer extends Model
     ];
 
     /**
-     * @return BelongsTo<Document, Signer>
+     * @return BelongsTo<Document, DocumentSigner>
      */
     public function document()
     {
@@ -36,12 +36,12 @@ class Signer extends Model
     }
 
     /**
-     * @return HasMany<SignerElement>
+     * @return HasMany<DocumentSignerElement>
      */
     public function elements()
     {
         return $this->hasMany(
-            related: SignerElement::class,
+            related: DocumentSignerElement::class,
             foreignKey: 'signer_id'
         );
     }

@@ -3,7 +3,7 @@
 namespace NIIT\ESign\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as Base;
-use NIIT\ESign\Events\Signer\SendDocumentLink;
+use NIIT\ESign\Events\SendDocumentLink;
 use NIIT\ESign\Events\SigningProcessCompleted;
 use NIIT\ESign\Events\SigningProcessStarted;
 use NIIT\ESign\Listeners\SendSigningLink;

@@ -5,11 +5,11 @@ namespace NIIT\ESign\Mail\Signer;
 use Illuminate\Mail\Mailables\Content;
 use NIIT\ESign\Mail\Mailable;
 use NIIT\ESign\Models\Document;
-use NIIT\ESign\Models\Signer;
+use NIIT\ESign\Models\DocumentSigner;
 
 class SigningPendingMail extends Mailable
 {
-    public function __construct(public Signer $signer, public Document $document)
+    public function __construct(public DocumentSigner $signer, public Document $document)
     {
     }
 

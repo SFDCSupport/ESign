@@ -82,7 +82,8 @@
     "prefer-stable": true,
     "archive": {
         "exclude": [
-            "./node_modules"
+            "./node_modules",
+            "./resources/html"
         ]
     }
 }

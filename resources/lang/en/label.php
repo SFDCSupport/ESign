@@ -1,5 +1,6 @@
 <?php
 
 return [
-    'hi' => 'hi',
+    'app_name' => 'ESign',
+    'dashboard' => 'Dashboard',
 ];

@@ -9,7 +9,7 @@ use Illuminate\Support\ServiceProvider as Base;
 
 class ESignServiceProvider extends Base
 {
-    const NAME = 'esing';
+    const NAME = 'esign';
 
     public function register(): void
     {

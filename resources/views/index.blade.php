@@ -1,4 +1,4 @@
-<x-esign::layout>
+<x-esign::layout-signing>
     @pushonce('css')
         <style>
 
@@ -99,4 +99,4 @@
 
         </script>
     @endpushonce
-</x-esign::layout>
+</x-esign::layout-signing>
