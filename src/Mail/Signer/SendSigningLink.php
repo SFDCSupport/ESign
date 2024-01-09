@@ -8,14 +8,21 @@
 namespace NIIT\ESign\Mail\Signer;
 
 use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use NIIT\ESign\Mail\Mailable;
 use NIIT\ESign\Models\Document;
-use NIIT\ESign\Models\Signer;
 
 class SendSigningLink extends Mailable
 {
-    public function __construct(public Signer $signer, public Document $document)
+    public function __construct(public Document $document)
     {
+    }
+
+    public function envelope(): Envelope
+    {
+        return new Envelope(
+            subject: 'Document submitted for e-sign'
+        );
     }
 
     public function content(): Content

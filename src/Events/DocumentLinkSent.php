@@ -1,6 +1,6 @@
 <?php
 
-namespace NIIT\ESign\Events\Signer;
+namespace NIIT\ESign\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;

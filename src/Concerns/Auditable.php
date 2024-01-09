@@ -52,8 +52,8 @@ trait Auditable
 
     private function getAuditBy(array $conditions = [])
     {
-        return Audit::when(!blank($conditions),
-            static fn($q) => $q->where($conditions)
+        return Audit::when(! blank($conditions),
+            static fn ($q) => $q->where($conditions)
         )->get();
     }
 }

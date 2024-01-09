@@ -2,7 +2,6 @@
 
 namespace NIIT\ESign\Models;
 
-use App\Traits\RevisionableTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Audit extends Model

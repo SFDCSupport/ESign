@@ -32,6 +32,7 @@ return new class extends Migration
             $table->foreignUuid('template_id')->nullable()->constrained('e_templates');
             $table->enum('status', DocumentStatus::values())->default(DocumentStatus::DRAFT);
             $table->enum('notification_sequence', NotificationSequence::values())->default(NotificationSequence::ASYNC);
+            $table->boolean('link_sent_to_all')->default(false);
             $table->timestamps();
             $table->softDeletes();
             $table->userStamps();
@@ -43,7 +44,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->enum('mail_status', MailStatus::values())->default(MailStatus::NOT_SENT);
             $table->enum('status', SignerStatus::values())->nullable();
-            $table->json('data')->nullable();
+            $table->integer('priority')->default(0);
             $table->timestamps();
             $table->softDeletes();
             $table->userStamps();

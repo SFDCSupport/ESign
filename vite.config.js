@@ -6,7 +6,7 @@ export default defineConfig({
         laravel({
             hotFile: '../../../public/vendor/esign/esign.hot',
             buildDirectory: '../../../../public/vendor/esign',
-            input: ['resources/css/app.scss', 'resources/js/app.js'],
+            input: ['resources/saas/app.scss', 'resources/js/app.js'],
             refresh: true,
         }),
     ],

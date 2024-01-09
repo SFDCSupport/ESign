@@ -9,7 +9,7 @@
 
     {{ Vite::useHotFile('vendor/esign/esign.hot')
         ->useBuildDirectory('vendor/esign')
-        ->withEntryPoints(['resources/css/app.scss', 'resources/js/app.js']) }}
+        ->withEntryPoints(['resources/sass/app.scss', 'resources/js/app.js']) }}
 
     @stack('css')
 </head>

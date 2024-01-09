@@ -5,7 +5,7 @@
  * @updated : 1/8/24, 4:39 PM
  */
 
-namespace NIIT\ESign\Events\Signer;
+namespace NIIT\ESign\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;

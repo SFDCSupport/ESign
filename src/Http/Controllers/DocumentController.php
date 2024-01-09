@@ -4,6 +4,7 @@ namespace NIIT\ESign\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use NIIT\ESign\Events\Signer\SendDocumentLink;
 use NIIT\ESign\Http\Requests\DocumentRequest;
 use NIIT\ESign\Models\Document;
 
@@ -70,8 +71,15 @@ class DocumentController extends Controller
         return redirect()->route('esign.documents.show', $replica);
     }
 
-    public function send(Document $document) {
+    public function send(Document $document)
+    {
+        SendDocumentLink::dispatch($document);
 
         return redirect()->route('esign.documents.show', $document);
+    }
+
+    public function upload(Request $request)
+    {
+        return parent::upload($request);
     }
 }

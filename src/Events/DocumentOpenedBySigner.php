@@ -14,7 +14,8 @@ class DocumentOpenedBySigner
 
     public function __construct(
         public Document $document,
-        public Signer $signer
+        public Signer $signer,
+        public array $metadata
     ) {
     }
 }
