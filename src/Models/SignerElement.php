@@ -28,7 +28,7 @@ class SignerElement extends Model
     {
         return $this->belongsTo(
             related: Signer::class,
-            foreignKey: 'e_signer_id',
+            foreignKey: 'signer_id',
         );
     }
 }

@@ -69,4 +69,9 @@ class DocumentController extends Controller
 
         return redirect()->route('esign.documents.show', $replica);
     }
+
+    public function send(Document $document) {
+
+        return redirect()->route('esign.documents.show', $document);
+    }
 }

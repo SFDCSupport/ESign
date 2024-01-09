@@ -11,11 +11,12 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as Base;
 use Illuminate\Support\Str;
+use NIIT\ESign\Concerns\Auditable;
 use NIIT\ESign\Models\Document;
 
 abstract class Controller extends Base
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests, Auditable;
 
     public function remove(Request $request)
     {
@@ -26,7 +27,7 @@ abstract class Controller extends Base
 
         $type = $data['type'];
 
-        abort_if(! method_exists(Document::class, ($method = Str::camel($type))), 400);
+        abort_if(!method_exists(Document::class, ($method = Str::camel($type))), 400);
 
         $isDeleted = optional(
             optional(
@@ -34,7 +35,7 @@ abstract class Controller extends Base
             )->{$method}
         )->delete();
 
-        $isRemoved = ! blank($isDeleted) || is_null($isDeleted) ? true : false;
+        $isRemoved = !blank($isDeleted) || is_null($isDeleted) ? true : false;
 
         return $this->jsonResponse([
             'status' => $isRemoved ? 0 : 1,
@@ -48,17 +49,17 @@ abstract class Controller extends Base
             'id' => 'required|exists:e_documents,id',
             'file' => 'required|file|mimes:pdf', //'required|image|mimes:jpg,png,jpeg|max:2048',
         ], [
-            'id.required' => __('survey::validations.required_survey_id'),
+            'id.required' => 'Document is not created yet!',
         ]);
 
         $id = $data['id'];
         $type = $data['type'];
         $file = $request->file('file');
 
-        abort_if(! method_exists(Document::class, ($method = Str::camel($type))), 400);
+        abort_if(!method_exists(Document::class, ($method = Str::camel($type))), 400);
 
         $filePath = null;
-        $fileName = date('YmdHms').'_'.trim($file->getClientOriginalName());
+        $fileName = date('YmdHms') . '_' . trim($file->getClientOriginalName());
 
         if ($filePath = $file->storeAs(
             surveyUploadPath($type, ['id' => $id]),

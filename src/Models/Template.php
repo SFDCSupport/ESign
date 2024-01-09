@@ -32,7 +32,7 @@ class Template extends Model
     {
         return $this->hasMany(
             related: Document::class,
-            foreignKey: 'e_template_id',
+            foreignKey: 'template_id',
         );
     }
 }

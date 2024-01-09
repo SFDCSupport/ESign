@@ -34,7 +34,7 @@ class Document extends Model implements Attachable, HasLocalePreference
     {
         return $this->hasMany(
             related: Signer::class,
-            foreignKey: 'e_document_id'
+            foreignKey: 'document_id'
         );
     }
 
@@ -45,7 +45,7 @@ class Document extends Model implements Attachable, HasLocalePreference
     {
         return $this->belongsTo(
             related: Template::class,
-            foreignKey: 'e_template_id',
+            foreignKey: 'template_id',
         );
     }
 

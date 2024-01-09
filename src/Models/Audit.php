@@ -2,6 +2,7 @@
 
 namespace NIIT\ESign\Models;
 
+use App\Traits\RevisionableTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Audit extends Model
@@ -25,7 +26,18 @@ class Audit extends Model
     {
         return $this->belongsTo(
             related: Document::class,
-            foreignKey: 'e_document_id',
+            foreignKey: 'document_id',
+        );
+    }
+
+    /**
+     * @return BelongsTo<Signer, Audit>
+     */
+    public function Signer()
+    {
+        return $this->belongsTo(
+            related: Signer::class,
+            foreignKey: 'signer_id',
         );
     }
 }

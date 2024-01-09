@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('disk');
             $table->string('extension');
             $table->string('path');
-            $table->foreignUuid('e_template_id')->nullable()->constrained('e_templates');
+            $table->foreignUuid('template_id')->nullable()->constrained('e_templates');
             $table->enum('status', DocumentStatus::values())->default(DocumentStatus::DRAFT);
             $table->enum('notification_sequence', NotificationSequence::values())->default(NotificationSequence::ASYNC);
             $table->timestamps();
@@ -39,7 +39,7 @@ return new class extends Migration
 
         Schema::create('e_document_signers', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('e_document_id')->constrained('e_documents');
+            $table->foreignUuid('document_id')->constrained('e_documents');
             $table->string('email')->nullable();
             $table->enum('mail_status', MailStatus::values())->default(MailStatus::NOT_SENT);
             $table->enum('status', SignerStatus::values())->nullable();
@@ -51,8 +51,8 @@ return new class extends Migration
 
         Schema::create('e_document_elements', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('e_document_id')->constrained('e_documents');
-            $table->foreignUuid('e_signer_id')->constrained('e_signers');
+            $table->foreignUuid('document_id')->constrained('e_documents');
+            $table->foreignUuid('signer_id')->constrained('e_signers');
             $table->enum('type', ElementType::values());
             $table->integer('on_page');
             $table->integer('x_axis');
@@ -61,16 +61,15 @@ return new class extends Migration
             $table->integer('height');
             $table->timestamps();
             $table->softDeletes();
-            $table->userStamps();
+            $table->userStamps(['created_by']);
         });
 
         Schema::create('e_audits', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('e_document_id')->constrained('e_documents');
-            $table->foreignUuid('e_signer_id')->nullable()->constrained('e_signers');
+            $table->foreignUuid('document_id')->constrained('e_documents');
+            $table->foreignUuid('signer_id')->nullable()->constrained('e_signers');
             $table->string('event');
-            $table->json('data')->nullable();
-            $table->integer('sequence')->default(0);
+            $table->json('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -23,6 +23,8 @@ Route::middleware(['auth'])
             ->name('documents.bulk-destroy');
         Route::get('document/copy', [DocumentController::class, 'copy'])
             ->name('documents.copy');
+        Route::get('document/send', [DocumentController::class, 'send'])
+            ->name('documents.send');
         Route::resource('document', DocumentController::class);
     });
 

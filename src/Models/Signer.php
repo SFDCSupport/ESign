@@ -31,7 +31,7 @@ class Signer extends Model
     {
         return $this->belongsTo(
             related: Document::class,
-            foreignKey: 'e_document_id',
+            foreignKey: 'document_id',
         );
     }
 
@@ -42,7 +42,7 @@ class Signer extends Model
     {
         return $this->hasMany(
             related: SignerElement::class,
-            foreignKey: 'e_signer_id'
+            foreignKey: 'signer_id'
         );
     }
 }
