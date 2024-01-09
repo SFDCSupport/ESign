@@ -6,10 +6,11 @@ use Illuminate\Http\Request;
 use NIIT\ESign\Http\Requests\SignerRequest;
 use NIIT\ESign\Models\Document;
 
-class DocumentSignerController extends Controller
+class SignerController extends Controller
 {
     public function index(Request $request, Document $document)
     {
+        //
     }
 
     public function store(SignerRequest $request, Document $document)

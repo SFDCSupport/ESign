@@ -6,19 +6,32 @@ use Illuminate\Support\Facades\Schema;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\ElementType;
 use NIIT\ESign\Enum\MailStatus;
+use NIIT\ESign\Enum\NotificationSequence;
 use NIIT\ESign\Enum\SignerStatus;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('e_documents', function (Blueprint $table) {
+        Schema::create('e_templates', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('label');
-            $table->string('name');
+            $table->longText('body');
+            $table->timestamps();
+            $table->softDeletes();
+            $table->userStamps();
+        });
+
+        Schema::create('e_documents', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('title');
+            $table->string('file_name');
             $table->string('disk');
             $table->string('extension');
+            $table->string('path');
+            $table->foreignUuid('e_template_id')->nullable()->constrained('e_templates');
             $table->enum('status', DocumentStatus::values())->default(DocumentStatus::DRAFT);
+            $table->enum('notification_sequence', NotificationSequence::values())->default(NotificationSequence::ASYNC);
             $table->timestamps();
             $table->softDeletes();
             $table->userStamps();
@@ -54,8 +67,10 @@ return new class extends Migration
         Schema::create('e_audits', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('e_document_id')->constrained('e_documents');
-            $table->foreignUuid('e_signer_id')->constrained('e_signers');
+            $table->foreignUuid('e_signer_id')->nullable()->constrained('e_signers');
             $table->string('event');
+            $table->json('data')->nullable();
+            $table->integer('sequence')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -64,8 +79,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::drop('e_documents');
-        Schema::drop('e_document_signers');
+        Schema::drop('e_signers');
         Schema::drop('e_signer_elements');
         Schema::drop('e_audits');
+        Schema::drop('e_templates');
     }
 };

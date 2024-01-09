@@ -24,7 +24,10 @@ class Signer extends Model
         'status' => SignerStatus::class,
     ];
 
-    public function document(): BelongsTo
+    /**
+     * @return BelongsTo<Document, Signer>
+     */
+    public function document()
     {
         return $this->belongsTo(
             related: Document::class,
@@ -32,7 +35,10 @@ class Signer extends Model
         );
     }
 
-    public function elements(): HasMany
+    /**
+     * @return HasMany<SignerElement>
+     */
+    public function elements()
     {
         return $this->hasMany(
             related: SignerElement::class,

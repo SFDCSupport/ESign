@@ -11,5 +11,5 @@ enum DocumentStatus: string
     case DRAFT = 'draft';
     case ACTIVE = 'active';
     case INACTIVE = 'in-active';
-    case ARCHIVE = 'archive';
+    case ARCHIVED = 'archived';
 }

@@ -2,6 +2,8 @@
 
 namespace NIIT\ESign\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 class Audit extends Model
 {
     protected $table = 'e_audits';
@@ -15,4 +17,15 @@ class Audit extends Model
      * @var array<string,string>
      */
     protected $casts = [];
+
+    /**
+     * @return BelongsTo<Document, Audit>
+     */
+    public function document()
+    {
+        return $this->belongsTo(
+            related: Document::class,
+            foreignKey: 'e_document_id',
+        );
+    }
 }

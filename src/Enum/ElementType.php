@@ -13,4 +13,5 @@ enum ElementType: string
     case DATE = 'date';
     case TIME = 'time';
     case TIMESTAMP = 'timestamp';
+    case TEXTAREA = 'textarea';
 }

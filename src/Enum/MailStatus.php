@@ -11,5 +11,5 @@ enum MailStatus: string
     case SENT = 'sent';
     case NOT_SENT = 'not-sent';
     case FAILED = 'failed';
-    case CLICKED = 'clicked';
+    case READ = 'read';
 }

@@ -21,7 +21,10 @@ class SignerElement extends Model
         'type' => ElementType::class,
     ];
 
-    public function signer(): BelongsTo
+    /**
+     * @return BelongsTo<Signer, SignerElement>
+     */
+    public function signer()
     {
         return $this->belongsTo(
             related: Signer::class,
