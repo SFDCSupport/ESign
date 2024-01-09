@@ -17,7 +17,16 @@ class Document extends Model implements Attachable, HasLocalePreference
     /**
      * @var array<int,string>
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'title',
+        'file_name',
+        'disk',
+        'extension',
+        'path',
+        'template_id',
+        'status',
+        'notification_sequence',
+    ];
 
     /**
      * @var array<string,string>
@@ -52,11 +61,11 @@ class Document extends Model implements Attachable, HasLocalePreference
     public function toMailAttachment(): Attachment
     {
         return Attachment::fromStorageDisk(
-            /** @phpstan-ignore-next-line */
+        /** @phpstan-ignore-next-line */
             $this->disk, $this->path
         )
             ->as(
-                /** @phpstan-ignore-next-line */
+            /** @phpstan-ignore-next-line */
                 $this->name
             )
             ->withMime('application/pdf');

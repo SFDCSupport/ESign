@@ -1,8 +1,11 @@
+import {_} from './../_';
 import * as pdfjsLib from "pdfjs-dist";
 import * as pdfjsWorker from "pdfjs-dist/build/pdf.worker.mjs";
 import interact from 'interactjs'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+
+const $ = _().$;
 
 $(function () {
     return;

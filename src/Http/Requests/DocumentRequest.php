@@ -3,14 +3,13 @@
 namespace NIIT\ESign\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class DocumentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return Gate::allows('update_document');
+        return true;
     }
 
     /**
@@ -25,17 +24,10 @@ class DocumentRequest extends FormRequest
                     'create', 'update', 'bulkDestroy',
                 ]),
             ],
+            'title' => 'required|string|min:3',
         ];
 
         $mode = $this->request->get('mode');
-
-        if ($mode === 'create') {
-
-        }
-
-        if ($mode === 'update') {
-
-        }
 
         if ($mode === 'bulkDestroy') {
             return [

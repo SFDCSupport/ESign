@@ -165,12 +165,7 @@
             <div class="row">
                 <main class="col-md-12 ms-sm-auto col-lg-12 pb-4 mb-2">
                     <div class="filepond-section-custom">
-                        <input type="file"
-                               class="filepond"
-                               name="filepond"
-                               id="filepond"
-                               data-max-file-size="3MB"
-                               data-max-files="3"/>
+                        <x-esign::partials.filepond-uploader />
                     </div>
                 </main>
             </div>

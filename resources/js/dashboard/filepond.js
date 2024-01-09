@@ -1,21 +1,19 @@
+import {_} from './../_';
 import * as FilePond from 'filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
-import { getCSRFToken } from "./_helpers";
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize);
 FilePond.registerPlugin(FilePondPluginFileValidateType);
 
-FilePond.create(document.getElementById('filepond'), {
-    acceptedFileTypes: ['application/pdf'],
+FilePond.create(document.querySelectorAll('.filepond'), {
     allowReplace: false,
     allowRevert: false,
     allowRemove: false,
-    maxFiles: 1,
     server: {
         process: './esign/upload/document',
         headers: {
-            'X-CSRF-TOKEN': getCSRFToken(),
+            'X-CSRF-TOKEN': _().getCSRFToken(),
         },
     }
 });

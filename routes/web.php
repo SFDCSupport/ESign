@@ -19,7 +19,7 @@ Route::middleware(['auth'])
 
         Route::delete('document/{document}/signer/destroy', [SignerController::class, 'bulkDestroy'])
             ->name('documents.signers.bulk-destroy');
-        Route::resource('document.signer', SignerController::class)
+        Route::resource('documents.signers', SignerController::class)
             ->except(['create', 'edit', 'show']);
 
         Route::delete('document/destroy', [DocumentController::class, 'bulkDestroy'])
@@ -28,7 +28,7 @@ Route::middleware(['auth'])
             ->name('documents.copy');
         Route::get('document/send', [DocumentController::class, 'send'])
             ->name('documents.send');
-        Route::resource('document', DocumentController::class);
+        Route::resource('documents', DocumentController::class);
 
         Route::permanentRedirect('/', '/esign/document');
     });

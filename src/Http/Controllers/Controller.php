@@ -45,6 +45,7 @@ class Controller extends Base
     public function upload(Request $request, $type)
     {
         $data = $request->validate([
+            'id' => 'required|exists:e_documents,id',
             'file' => 'required|file|mimes:pdf', //'required|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
