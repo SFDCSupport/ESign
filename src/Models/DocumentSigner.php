@@ -2,6 +2,7 @@
 
 namespace NIIT\ESign\Models;
 
+use App\Traits\Userstamps;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use NIIT\ESign\Enum\MailStatus;
@@ -9,6 +10,8 @@ use NIIT\ESign\Enum\SignerStatus;
 
 class DocumentSigner extends Model
 {
+    use Userstamps;
+
     protected $table = 'e_document_signers';
 
     /**

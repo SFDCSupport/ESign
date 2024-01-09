@@ -22,10 +22,12 @@
             .b-example-divider {
                 width: 100%;
                 height: 3rem;
-                background-color: rgba(0, 0, 0, .1);
-                border: solid rgba(0, 0, 0, .15);
+                background-color: rgba(0, 0, 0, 0.1);
+                border: solid rgba(0, 0, 0, 0.15);
                 border-width: 1px 0;
-                box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+                box-shadow:
+                    inset 0 0.5em 1.5em rgba(0, 0, 0, 0.1),
+                    inset 0 0.125em 0.5em rgba(0, 0, 0, 0.15);
             }
 
             .b-example-vr {
@@ -35,7 +37,7 @@
             }
 
             .bi {
-                vertical-align: -.125em;
+                vertical-align: -0.125em;
                 fill: currentColor;
             }
 
@@ -83,18 +85,31 @@
             }
         </style>
     @endpushonce
+
     <section class="grey-bg-section border-top">
         <section class="mb-2">
             <div class="container">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-1 mb-0">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-1 mb-0"
+                >
                     <h1 class="h2">Document Templates</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary">Upload</button>
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-secondary"
+                            >
+                                Upload
+                            </button>
                         </div>
-                        <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
-                                data-bs-toggle="modal" data-bs-target="#addDocumentModal">
-                            <i class="fa fa-plus"></i> &nbsp; Create
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addDocumentModal"
+                        >
+                            <i class="fa fa-plus"></i>
+                            &nbsp; Create
                         </button>
                     </div>
                 </div>
@@ -102,63 +117,7 @@
         </section>
         <div class="container">
             <div class="row">
-                <div class="col-md-4 col-sm-4">
-                    <div class="card document-template-cards">
-                        <div class="card-body">
-                            <h5 class="card-title">Partner Portal Guide</h5>
-                            <p class="user-date text-secondary mb-1"><i class="fa fa-user"></i>&nbsp;
-                                <span>Rahul Thakur</span></p>
-                            <p class="user-date text-secondary mb-1"><i class="fas fa-calendar-alt"></i>&nbsp; <span>14 Dec 06:15 PM</span>
-                            </p>
-
-                            <div class="space-y">
-                                <div class="space-y-inner">
-                                    <a href="" class="text-secondary" title="Edit"><i class="fa fa-edit"></i></a>
-                                    <a href="" class="text-secondary" title="Copy"><i class="fa fa-copy"></i></a>
-                                    <a href="" class="text-secondary" title="Delete"><i class="fa fa-trash"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 col-sm-4">
-                    <div class="card document-template-cards">
-                        <div class="card-body">
-                            <h5 class="card-title">Sample Document</h5>
-                            <p class="user-date text-secondary mb-1"><i class="fa fa-user"></i>&nbsp;
-                                <span>Rahul Thakur</span></p>
-                            <p class="user-date text-secondary mb-1"><i class="fas fa-calendar-alt"></i>&nbsp; <span>14 Dec 06:15 PM</span>
-                            </p>
-                            <div class="space-y">
-                                <div class="space-y-inner">
-                                    <a href="" class="text-secondary" title="Edit"><i class="fa fa-edit"></i></a>
-                                    <a href="" class="text-secondary" title="Copy"><i class="fa fa-copy"></i></a>
-                                    <a href="" class="text-secondary" title="Delete"><i class="fa fa-trash"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4 col-sm-4">
-                    <div class="card document-template-cards">
-                        <div class="card-body">
-                            <h5 class="card-title">Sample Document 2</h5>
-                            <p class="user-date text-secondary mb-1"><i class="fa fa-user"></i>&nbsp;
-                                <span>Rahul Thakur</span></p>
-                            <p class="user-date text-secondary mb-1"><i class="fas fa-calendar-alt"></i>&nbsp; <span>14 Dec 06:15 PM</span>
-                            </p>
-
-                            <div class="space-y">
-                                <div class="space-y-inner">
-                                    <a href="" class="text-secondary" title="Edit"><i class="fa fa-edit"></i></a>
-                                    <a href="" class="text-secondary" title="Copy"><i class="fa fa-copy"></i></a>
-                                    <a href="" class="text-secondary" title="Delete"><i class="fa fa-trash"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @each('esign::documents.partials.document', $documents, 'document')
             </div>
         </div>
         <div class="container d-none">
@@ -172,5 +131,5 @@
         </div>
     </section>
 
-    <x-esign::modals.add-document />
+    @include('esign::documents.modals.add-document')
 </x-esign::layout-app>

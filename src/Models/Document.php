@@ -2,6 +2,7 @@
 
 namespace NIIT\ESign\Models;
 
+use App\Traits\Userstamps;
 use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,8 @@ use NIIT\ESign\Enum\NotificationSequence;
 
 class Document extends Model implements Attachable, HasLocalePreference
 {
+    use Userstamps;
+
     protected $table = 'e_documents';
 
     /**
@@ -61,11 +64,11 @@ class Document extends Model implements Attachable, HasLocalePreference
     public function toMailAttachment(): Attachment
     {
         return Attachment::fromStorageDisk(
-        /** @phpstan-ignore-next-line */
+            /** @phpstan-ignore-next-line */
             $this->disk, $this->path
         )
             ->as(
-            /** @phpstan-ignore-next-line */
+                /** @phpstan-ignore-next-line */
                 $this->name
             )
             ->withMime('application/pdf');
