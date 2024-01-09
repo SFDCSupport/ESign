@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Digital Signature, Author- Rahul Thakur">
+    <meta name="generator" content="Hugo 0.118.2">
+    <title>Digital Signature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet" />
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet"/>
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link href="css/style.css" rel="stylesheet">
+
+  <meta name="theme-color" content="#712cf9">
+
+
+    <style>
+
+      body{
+        background-color: #f6f9fc;
+      }
+
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        width: 100%;
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .btn-bd-primary {
+        --bd-violet-bg: #712cf9;
+        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: var(--bs-white);
+        --bs-btn-bg: var(--bd-violet-bg);
+        --bs-btn-border-color: var(--bd-violet-bg);
+        --bs-btn-hover-color: var(--bs-white);
+        --bs-btn-hover-bg: #6528e0;
+        --bs-btn-hover-border-color: #6528e0;
+        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+        --bs-btn-active-color: var(--bs-btn-hover-color);
+        --bs-btn-active-bg: #5a23c8;
+        --bs-btn-active-border-color: #5a23c8;
+      }
+
+      .bd-mode-toggle {
+        z-index: 1500;
+      }
+
+      .bd-mode-toggle .dropdown-menu .active .bi {
+        display: block !important;
+      }
+    </style>
+
+  
+  </head>
+  <body>
+
+<header class="navbar sticky-top bg-white flex-md-nowrap p-0 shadow" data-bs-theme="dark">
+  <div class="container-fluid">
+  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-dark" href="#">Company name</a>
+
+  <ul class="navbar-nav flex-row d-md-none">
+    <li class="nav-item text-nowrap">
+      <button class="nav-link px-3 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSearch" aria-controls="navbarSearch" aria-expanded="false" aria-label="Toggle search">
+        <svg class="bi"><use xlink:href="#search"/></svg>
+      </button>
+    </li>
+    <li class="nav-item text-nowrap">
+      <button class="nav-link px-3 text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <svg class="bi"><use xlink:href="#list"/></svg>
+      </button>
+    </li>
+  </ul>
+
+  <div id="navbarSearch" class="navbar-search w-100 collapse">
+    <input class="form-control w-100 rounded-0 border-0" type="text" placeholder="Search" aria-label="Search">
+  </div>
+
+  <ul class="navbar-nav ms-auto user-dropdown">
+    <li class="nav-item dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+       <i class="fa fa-user"></i>
+
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><a class="dropdown-item" href="#">Something else here</a></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+</header>
+
+<section class="grey-bg-section border-top">
+  <div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-2 border-bottom">
+        <h1 class="h2">Partner Portal Guide</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">
+              <i class="fas fa-link"></i> &nbsp; Copy Link</button>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 me-2">
+            <i class="fas fa-archive"></i> &nbsp; Archive
+          </button>
+
+          <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 me-2">
+            <i class="fa fa-copy"></i> &nbsp; Clone
+          </button>
+
+          <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 me-2">
+            <i class="fa fa-edit"></i> &nbsp; Edit
+          </button>
+
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-12">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-2 align-items-center">
+        <h4 class="h4 mb-0">Submissions</h4>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <div class="btn-group me-2">
+            <button type="button" class="btn btn-outline-secondary">
+              <i class="fas fa-download"></i> &nbsp; Export</button>
+          </div>
+          <button type="button" class="btn btn-secondary d-flex align-items-center gap-1 me-2" data-bs-toggle="modal" data-bs-target="#sendrecipientModal">
+            <i class="fas fa-plus"></i> &nbsp; Add Recipients
+          </button>
+  
+        </div>
+        </div>
+        </div>
+
+
+    <div class="col-md-12 col-sm-12 mb-3">
+      <div class="card document-template-cards">
+        <div class="card-body p-1">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-2">
+          <div class="btn-toolbar align-items-center">
+            <a href="#" class="btn btn-sm btn-success me-2">Send</a>
+            <span class="text-lg break-all flex items-center">
+              rahulkt07@gmail.com
+            </span>
+          </div>
+          <div class="btn-toolbar mb-2 mb-md-0">
+          
+            <button type="button" class="btn btn-sm btn-outline-secondary me-2">
+              <i class="fas fa-link"></i> &nbsp; Copy Link</button>
+          
+
+          <button type="button" class="btn btn-sm btn-outline-secondary me-2">
+            <i class="fas fa-eye"></i> &nbsp; View</button>
+
+            <button type="button" class="btn btn-sm btn-outline-danger me-2">
+              <i class="fas fa-trash"></i></button>
+        
+        </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-12 col-sm-12 mb-3">
+      <div class="card document-template-cards">
+        <div class="card-body p-1">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-2">
+          <div class="btn-toolbar align-items-center">
+            <a href="#" class="btn btn-sm btn-success me-2">Send</a>
+            <span class="text-lg break-all flex items-center">
+              m.john@gmail.com
+            </span>
+          </div>
+          <div class="btn-toolbar mb-2 mb-md-0">
+          
+            <button type="button" class="btn btn-sm btn-outline-secondary me-2">
+              <i class="fas fa-link"></i> &nbsp; Copy Link</button>
+          
+
+          <button type="button" class="btn btn-sm btn-outline-secondary me-2">
+            <i class="fas fa-eye"></i> &nbsp; View</button>
+
+            <button type="button" class="btn btn-sm btn-outline-danger me-2">
+              <i class="fas fa-trash"></i></button>
+        
+        </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  </div>
+</section>
+
+
+<div class="modal fade" id="sendrecipientModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Recipients </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Add Emails</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Type Emails Here..."></textarea>
+
+          </div>
+
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+              Send Emails
+            </label>
+          </div>
+         
+        </form>
+      </div>
+      <div class="modal-footer">
+        <div class="Submissions-btns-grp w-100">
+        <button type="button" class="btn btn-sm btn-dark add-part-btn">Add Participant</button>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src='https://unpkg.com/filepond-plugin-file-encode/dist/filepond-plugin-file-encode.min.js'></script>
+<script src='https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.min.js'></script>
+<script src='https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.min.js'></script>
+<script src='https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.js'></script>
+<script src='https://unpkg.com/filepond/dist/filepond.min.js'></script>
+
+<script src='js/script.js'></script>
+
+</body>
+</html>
