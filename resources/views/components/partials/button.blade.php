@@ -12,7 +12,7 @@
         ])
     }}
 >
-    @if($attributes->has('icon'))
+    @if ($attributes->has('icon'))
         <i class="fa fa-{{ $attributes->get('icon') }}"></i>
     @endif
 

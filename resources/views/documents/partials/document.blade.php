@@ -14,13 +14,25 @@
             </p>
             <div class="space-y">
                 <div class="space-y-inner">
-                    <a href="" class="text-secondary" title="{{ __('esign::label.edit') }}">
+                    <a
+                        href=""
+                        class="text-secondary"
+                        title="{{ __('esign::label.edit') }}"
+                    >
                         <i class="fa fa-edit"></i>
                     </a>
-                    <a href="" class="text-secondary" title="{{ __('esign::label.copy') }}">
+                    <a
+                        href=""
+                        class="text-secondary"
+                        title="{{ __('esign::label.copy') }}"
+                    >
                         <i class="fa fa-copy"></i>
                     </a>
-                    <a href="" class="text-secondary" title="{{ __('esign::label.delete') }}">
+                    <a
+                        href=""
+                        class="text-secondary"
+                        title="{{ __('esign::label.delete') }}"
+                    >
                         <i class="fa fa-trash"></i>
                     </a>
                 </div>
