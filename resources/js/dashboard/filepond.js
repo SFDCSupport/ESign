@@ -23,32 +23,20 @@ $(() => {
                 } else {
                     $(document).on("document:created", (e, data) => {
                         _filepondProcess(
-                            data.fieldName,
-                            data.file,
-                            data.metadata,
-                            data.load,
-                            data.error,
-                            data.progress,
-                            data.abort,
-                            data.transfer,
-                            data.options,
-                            data.id,
-                            data.redirectUrl
+                            fieldName,
+                            file,
+                            metadata,
+                            load,
+                            error,
+                            progress,
+                            abort,
+                            transfer,
+                            options,
+                            data
                         );
                     }).on("document:cancelled", abort)
                         .trigger("document:creation", {
-                            creationMode: "idOnly",
-                            filepondProcess: {
-                                fieldName: fieldName,
-                                file: file,
-                                metadata: metadata,
-                                load: load,
-                                error: error,
-                                progress: progress,
-                                abort: abort,
-                                transfer: transfer,
-                                options: options
-                            }
+                            creationMode: "idOnly"
                         });
                 }
             },
@@ -64,6 +52,7 @@ const _filepondProcess = (fieldName, file, metadata, load, error, progress, abor
     formData.append("_token", _().getCSRFToken());
     formData.append(fieldName, file, file.name);
     formData.append("id", data.id || null);
+    formData.append("type", "document");
 
     const request = new XMLHttpRequest();
     request.open("POST", "/esign/upload/document");

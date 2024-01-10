@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as Base;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use NIIT\ESign\Concerns\Auditable;
 use NIIT\ESign\Models\Document;
 
@@ -22,48 +23,67 @@ class Controller extends Base
     public function remove(Request $request)
     {
         $data = $request->validate([
+            'type' => 'required',
             'id' => 'required|exists:e_documents,id',
         ]);
 
-        $isDeleted = optional(
+        $type = $data['type'];
+
+        abort_if(! method_exists(Document::class, ($method = Str::camel($type))), 400);
+
+        tap(
             optional(
-                Document::with($method)->find($data['id'])
-            )->{$method}
+                optional(
+                    Document::with($method)->find($data['id'])
+                )->{$method}
+            )->update(['is_current' => false])
         )->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
     }
 
-    public function upload(Request $request, $type)
+    public function upload(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:e_documents,id',
+            'type' => 'required|string',
             'document' => 'required|file|mimes:pdf', //'required|image|mimes:jpg,png,jpeg|max:2048',
+        ], [
+            'id.required' => __('esign::validations.required_document_id'),
         ]);
 
-        if ($validator->failed()) {
+        if ($validator->fails()) {
             return $this->jsonResponse(['errors' => $validator->errors()]);
         }
 
         $data = $validator->validated();
 
         $id = $data['id'];
+        $type = $data['type'];
         $file = $request->file('document');
 
-        $filePath = null;
-        $fileName = date('YmdHms').'_'.trim($originalName = $file->getClientOriginalName());
-        $documentModel = Document::find($id);
+        abort_if(! method_exists(Document::class, ($method = Str::camel($type))), 400);
 
-        if ($documentModel->exists() && ($filePath = $file->storeAs(
+        $filePath = null;
+        $fileName = date('YmdHms').'_'.trim($originalFileName = $file->getClientOriginalName());
+
+        if ($filePath = $file->storeAs(
             esignUploadPath($type, ['id' => $id]),
             $fileName,
             ($disk = FilepondAction::getDisk(true))
-        ))) {
-            (Document::find($id))->update([
-                'file_name' => $originalName,
-                'disk' => $disk,
+        )) {
+            $surveyModel = Document::with($method)->find($id);
+
+            $surveyModel->{$method}()->updateOrCreate([
+                'model_type' => Document::class,
+                'model_id' => $id,
+                'type' => $type,
+            ], [
                 'path' => $filePath,
+                'file_name' => $originalFileName,
+                'disk' => $disk,
                 'extension' => $file->getClientOriginalExtension(),
+                'is_current' => 1,
             ]);
         }
 

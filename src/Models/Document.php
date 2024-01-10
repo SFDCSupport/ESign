@@ -2,20 +2,21 @@
 
 namespace NIIT\ESign\Models;
 
-use App\Actions\FilepondAction;
 use App\Traits\Userstamps;
 use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Contracts\Translation\HasLocalePreference;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Mail\Attachment;
+use NIIT\ESign\Concerns\HasAttachment;
+use NIIT\ESign\Enum\AttachmentType;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\NotificationSequence;
 
 class Document extends Model implements Attachable, HasLocalePreference
 {
-    use Userstamps;
+    use HasAttachment, Userstamps;
 
     /** @var string */
     protected $table = 'e_documents';
@@ -43,6 +44,13 @@ class Document extends Model implements Attachable, HasLocalePreference
     ];
 
     /**
+     * @var array<int, string>
+     */
+    protected $appends = [
+        //        'document',
+    ];
+
+    /**
      * @return HasMany<DocumentSigner>
      */
     public function signers()
@@ -64,11 +72,11 @@ class Document extends Model implements Attachable, HasLocalePreference
         );
     }
 
-    public function document(): Attribute
+    public function document(): MorphOne
     {
-        return Attribute::make(
-            get: fn (mixed $value, array $attributes) => FilepondAction::loadFile($attributes['path'], 'view'),
-        );
+        return $this->attachment(AttachmentType::DOCUMENT)
+            ->where('is_current', true)
+            ->latest();
     }
 
     public function toMailAttachment(): Attachment

@@ -12,7 +12,7 @@ class DocumentController extends Controller
 {
     public function index(Request $request)
     {
-        $documents = Document::with('creator')
+        $documents = Document::with('creator', 'document')
             ->where('created_by', $this->user($request)->id)
             ->get();
 

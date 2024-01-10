@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use NIIT\ESign\Enum\AttachmentType;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\ElementType;
 use NIIT\ESign\Enum\NotificationSequence;
@@ -15,6 +16,7 @@ return new class extends Migration
         Schema::disableForeignKeyConstraints();
         $this->dropIfTableExists('e_templates');
         $this->dropIfTableExists('e_documents');
+        $this->dropIfTableExists('e_document_attachments');
         $this->dropIfTableExists('e_document_signers');
         $this->dropIfTableExists('e_document_signer_elements');
         $this->dropIfTableExists('e_document_submissions');
@@ -33,14 +35,24 @@ return new class extends Migration
         Schema::create('e_documents', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('title');
-            $table->string('file_name');
-            $table->string('disk');
-            $table->string('extension');
-            $table->string('path');
             $table->foreignUuid('template_id')->nullable()->constrained('e_templates');
             $table->enum('status', DocumentStatus::values())->default(DocumentStatus::DRAFT);
             $table->enum('notification_sequence', NotificationSequence::values())->default(NotificationSequence::ASYNC);
             $table->boolean('link_sent_to_all')->default(false);
+            $table->timestamps();
+            $table->softDeletes();
+            $table->userStamps();
+        });
+
+        Schema::create('e_document_attachments', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->uuidMorphs('model');
+            $table->enum('type', AttachmentType::values())->default(AttachmentType::DOCUMENT);
+            $table->string('file_name');
+            $table->string('disk');
+            $table->string('extension');
+            $table->string('path');
+            $table->boolean('is_current')->default(1);
             $table->timestamps();
             $table->softDeletes();
             $table->userStamps();

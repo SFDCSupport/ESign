@@ -13,7 +13,6 @@ $(() => {
         ).done((r) => {
             if (r.id && r.redirect) {
                 $(document).trigger("document:created", {
-                    filepondProcess: createDocumentForm.data("filepond-process"),
                     id: r.id,
                     redirectUrl: r.redirect
                 });
@@ -25,12 +24,10 @@ $(() => {
         });
     }).on("document:creation", (e, data) => {
         creationModeInput.val(data.creationMode);
-        createDocumentForm.data("filepond-process", data.filepondProcess);
 
         $("#createDocumentBtn").click();
     }).on("hidden.bs.modal", "#addDocumentModal", (e) => {
         creationModeInput.val("");
-        createDocumentForm.removeAttr("data-filepond-process");
 
         if (e.relatedTarget !== null) {
             $(document).trigger("document:cancelled");
