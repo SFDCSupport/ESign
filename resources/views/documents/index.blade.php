@@ -14,21 +14,12 @@
                     </h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
-                            <button
-                                type="button"
-                                class="btn btn-sm btn-outline-secondary"
-                            >
-                                {{ __('esign::label.upload') }}
-                            </button>
+                            <x-esign::partials.button :value="__('esign::label.upload')"
+                                                      class="btn-outline-secondary" />
                         </div>
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
-                            data-bs-toggle="modal"
-                            data-bs-target="#addDocumentModal"
-                        >
-                            <i class="fa fa-plus"></i>
-                            {{ __('esign::label.create') }}
+                        <x-esign::partials.button :value="__('esign::label.create')"
+                                                  icon="plus" class="btn-outline-secondary"
+                                                  data-bs-toggle="modal" data-bs-target="#addDocumentModal"/>
                         </button>
                     </div>
                 </div>

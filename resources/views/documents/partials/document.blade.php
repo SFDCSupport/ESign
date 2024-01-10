@@ -6,23 +6,21 @@
             </a>
             <p class="user-date text-secondary mb-1">
                 <i class="fa fa-user"></i>
-                &nbsp;
-                <span>Rahul Thakur</span>
+                <span>{{ $document->creator->name }}</span>
             </p>
             <p class="user-date text-secondary mb-1">
                 <i class="fas fa-calendar-alt"></i>
-                &nbsp;
-                <span>14 Dec 06:15 PM</span>
+                <span>{{ $document->created_at }}</span>
             </p>
             <div class="space-y">
                 <div class="space-y-inner">
-                    <a href="" class="text-secondary" title="Edit">
+                    <a href="" class="text-secondary" title="{{ __('esign::label.edit') }}">
                         <i class="fa fa-edit"></i>
                     </a>
-                    <a href="" class="text-secondary" title="Copy">
+                    <a href="" class="text-secondary" title="{{ __('esign::label.copy') }}">
                         <i class="fa fa-copy"></i>
                     </a>
-                    <a href="" class="text-secondary" title="Delete">
+                    <a href="" class="text-secondary" title="{{ __('esign::label.delete') }}">
                         <i class="fa fa-trash"></i>
                     </a>
                 </div>
