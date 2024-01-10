@@ -5,9 +5,10 @@
         <meta name="theme-color" content="#712cf9" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="csrf-token" content="{{ csrf_token() }}" />
+        <meta name="document-id" content="{{ $document->id ?? '' }}" />
         <title>
             {{ __('esign::label.app_name').(! blank($title) ? ' - '.$title : '') }}
-            
+
         </title>
 
         @stack('headJs')
@@ -21,14 +22,14 @@
         @stack('css')
     </head>
     <body>
-        <noscript>
-            <div class="alert alert-danger text-center" role="alert">
-                <i class="bi bi-exclamation-triangle"></i>
-                Site not functional without JavaScript enabled
-            </div>
-        </noscript>
-        <x-esign::partials.header />
-        {{ $slot }}
-        @stack('js')
+    <noscript>
+        <div class="alert alert-danger text-center" role="alert">
+            <i class="bi bi-exclamation-triangle"></i>
+            Site not functional without JavaScript enabled
+        </div>
+    </noscript>
+    <x-esign::partials.header />
+    {{ $slot }}
+    @stack('js')
     </body>
 </html>

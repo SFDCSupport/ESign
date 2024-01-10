@@ -23,6 +23,7 @@
                             :value="__('esign::label.create')"
                             icon="plus"
                             class="btn-outline-secondary"
+                            id="createDocumentBtn"
                             data-bs-toggle="modal"
                             data-bs-target="#addDocumentModal"
                         />
@@ -36,7 +37,7 @@
             </div>
         </div>
 
-        <x-esign::partials.filepond-uploader />
+        @include('esign::documents.partials.filepond-uploader')
     </section>
 
     @include('esign::documents.modals.add-document')

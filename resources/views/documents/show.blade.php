@@ -27,7 +27,7 @@
                         </button>
                     </div>
                 </div>
-                <x-esign::partials.filepond-uploader />
+                @include('esign::documents.partials.filepond-uploader', ['page' => 'inner'])
             </main>
             <div
                 class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary"

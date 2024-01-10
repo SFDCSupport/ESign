@@ -1,5 +1,7 @@
 @props([
     'id' => 'document',
+    'name' => $name ?? 'document',
+    'page' => 'outer',
     'multi' => false,
     'maxFiles' => 1,
     'maxSize' => '3MB',
@@ -13,8 +15,10 @@
                 <input
                     type="file"
                     class="filepond"
-                    name="{{ $id }}"
+                    id="{{ $id }}"
+                    name="{{ $name }}"
                     {{ $multi ? 'multiple' : '' }}
+                    data-page="{{ $page }}"
                     data-accepted-file-types="{{ $mimes }}"
                     data-max-file-size="{{ $maxSize }}"
                     data-max-files="{{ $maxFiles }}"

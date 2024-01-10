@@ -29,7 +29,10 @@ class DocumentController extends Controller
         $document = Document::create($request->all());
 
         return $request->expectsJson()
-            ? response()->json(['redirect' => route('esign.documents.show', $document)])
+            ? response()->json([
+                'id' => $document->id,
+                'redirect' => route('esign.documents.show', $document),
+            ])
             : redirect()->route('esign.documents.show', $document);
     }
 

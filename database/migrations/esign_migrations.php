@@ -8,17 +8,16 @@ use NIIT\ESign\Enum\ElementType;
 use NIIT\ESign\Enum\NotificationSequence;
 use NIIT\ESign\Enum\SignerStatus;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::disableForeignKeyConstraints();
-        Schema::drop('e_templates');
-        Schema::drop('e_documents');
-        Schema::drop('e_document_signers');
-        Schema::drop('e_document_signer_elements');
-        Schema::drop('e_document_submissions');
-        Schema::drop('e_audits');
+        $this->dropIfTableExists('e_templates');
+        $this->dropIfTableExists('e_documents');
+        $this->dropIfTableExists('e_document_signers');
+        $this->dropIfTableExists('e_document_signer_elements');
+        $this->dropIfTableExists('e_document_submissions');
+        $this->dropIfTableExists('e_audits');
         Schema::enableForeignKeyConstraints();
 
         Schema::create('e_templates', function (Blueprint $table) {
@@ -101,5 +100,12 @@ return new class extends Migration
         Schema::drop('e_document_signers');
         Schema::drop('e_documents');
         Schema::drop('e_templates');
+    }
+
+    protected function dropIfTableExists(string $table): void
+    {
+        if (Schema::hasTable($table)) {
+            Schema::drop($table);
+        }
     }
 };

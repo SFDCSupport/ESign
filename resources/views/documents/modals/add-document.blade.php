@@ -25,7 +25,10 @@
                     action="{{ route('esign.documents.store') }}"
                 >
                     @csrf
+
                     <input type="hidden" name="mode" value="create" />
+                    <input type="hidden" name="creationMode" />
+
                     <div class="mb-3">
                         <label for="document-name" class="col-form-label">
                             {{ __('esign::label.document_name') }}
@@ -44,7 +47,7 @@
                 <div class="Submissions-btns-grp w-100">
                     <button
                         type="button"
-                        id="createDocumentBtn"
+                        id="saveDocumentBtn"
                         class="btn btn-sm btn-dark add-part-btn"
                     >
                         {{ __('esign::label.document_add_modal_submit') }}
