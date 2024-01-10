@@ -2,9 +2,11 @@
 
 namespace NIIT\ESign\Models;
 
+use App\Actions\FilepondAction;
 use App\Traits\Userstamps;
 use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Mail\Attachment;
@@ -59,6 +61,13 @@ class Document extends Model implements Attachable, HasLocalePreference
         return $this->belongsTo(
             related: Template::class,
             foreignKey: 'template_id',
+        );
+    }
+
+    public function document(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => FilepondAction::loadFile($attributes['path'], 'view'),
         );
     }
 

@@ -9,8 +9,9 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as Base;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 use NIIT\ESign\Concerns\Auditable;
 use NIIT\ESign\Models\Document;
 
@@ -21,13 +22,8 @@ class Controller extends Base
     public function remove(Request $request)
     {
         $data = $request->validate([
-            'type' => 'required',
             'id' => 'required|exists:e_documents,id',
         ]);
-
-        $type = $data['type'];
-
-        abort_if(! method_exists(Document::class, ($method = Str::camel($type))), 400);
 
         $isDeleted = optional(
             optional(
@@ -35,48 +31,48 @@ class Controller extends Base
             )->{$method}
         )->delete();
 
-        $isRemoved = ! blank($isDeleted) || is_null($isDeleted) ? true : false;
-
-        return $this->jsonResponse([
-            'status' => $isRemoved ? 0 : 1,
-        ]);
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 
     public function upload(Request $request, $type)
     {
-        $data = $request->validate([
+        $validator = Validator::make($request->all(), [
             'id' => 'required|exists:e_documents,id',
-            'file' => 'required|file|mimes:pdf', //'required|image|mimes:jpg,png,jpeg|max:2048',
+            'document' => 'required|file|mimes:pdf', //'required|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
-        $id = $data['id'];
-        $file = $request->file('file');
+        if ($validator->failed()) {
+            return $this->jsonResponse(['errors' => $validator->errors()]);
+        }
 
-        abort_if(! method_exists(Document::class, ($method = Str::camel($type))), 400);
+        $data = $validator->validated();
+
+        $id = $data['id'];
+        $file = $request->file('document');
 
         $filePath = null;
-        $fileName = date('YmdHms').'_'.trim($file->getClientOriginalName());
+        $fileName = date('YmdHms').'_'.trim($originalName = $file->getClientOriginalName());
+        $documentModel = Document::find($id);
 
-        if ($filePath = $file->storeAs(
+        if ($documentModel->exists() && ($filePath = $file->storeAs(
             esignUploadPath($type, ['id' => $id]),
             $fileName,
-            FilepondAction::getDisk(true)
-        )) {
-            $surveyModel = Document::with($method)->find($id);
-
-            $surveyModel->{$method}()->updateOrCreate([
-                'model_type' => Document::class,
-                'model_id' => $id,
-                'type' => $type,
-            ], [
-                'file_path' => $filePath,
-                'status' => 1,
+            ($disk = FilepondAction::getDisk(true))
+        ))) {
+            (Document::find($id))->update([
+                'file_name' => $originalName,
+                'disk' => $disk,
+                'path' => $filePath,
+                'extension' => $file->getClientOriginalExtension(),
             ]);
         }
 
-        return $this->jsonResponse([
-            $type => FilepondAction::loadFile($filePath, 'view'),
-        ]);
+        return response(FilepondAction::loadFile($filePath, 'view'));
+    }
+
+    protected function jsonResponse($data, $status = 200, array $headers = [], $options = JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
+    {
+        return response()->json($data, $status, $headers, $options);
     }
 
     protected function user(?Request $request = null): User|Authenticatable|null

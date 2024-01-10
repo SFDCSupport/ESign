@@ -1,5 +1,6 @@
 import { _ } from "./../_";
 import * as FilePond from "filepond";
+import { loadPDF } from "./pdf";
 import FilePondPluginPdfPreview from "filepond-plugin-pdf-preview";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
@@ -18,12 +19,37 @@ $(() => {
         server: {
             process: (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
                 if (docUploader.data("page") === "inner") {
-                    _filepondProcess(fieldName, file, metadata, load, error, progress, abort, transfer, options, $("meta[name=\"document-id\"]").attr("content"));
+                    _filepondProcess(fieldName, file, metadata, load, error, progress, abort, transfer, options, { id: $("meta[name=\"document-id\"]").attr("content") });
                 } else {
-                    $(document).on("document:created", (e, id, redirectUrl) => {
-                        _filepondProcess(fieldName, file, metadata, load, error, progress, abort, transfer, options, id, redirectUrl);
+                    $(document).on("document:created", (e, data) => {
+                        _filepondProcess(
+                            data.fieldName,
+                            data.file,
+                            data.metadata,
+                            data.load,
+                            data.error,
+                            data.progress,
+                            data.abort,
+                            data.transfer,
+                            data.options,
+                            data.id,
+                            data.redirectUrl
+                        );
                     }).on("document:cancelled", abort)
-                        .trigger("document:creation", ["idOnly"]);
+                        .trigger("document:creation", {
+                            creationMode: "idOnly",
+                            filepondProcess: {
+                                fieldName: fieldName,
+                                file: file,
+                                metadata: metadata,
+                                load: load,
+                                error: error,
+                                progress: progress,
+                                abort: abort,
+                                transfer: transfer,
+                                options: options
+                            }
+                        });
                 }
             },
             headers: {
@@ -33,11 +59,11 @@ $(() => {
     });
 });
 
-const _filepondProcess = (fieldName, file, metadata, load, error, progress, abort, transfer, options, id, redirectUrl) => {
+const _filepondProcess = (fieldName, file, metadata, load, error, progress, abort, transfer, options, data) => {
     const formData = new FormData();
     formData.append("_token", _().getCSRFToken());
     formData.append(fieldName, file, file.name);
-    formData.append("id", id);
+    formData.append("id", data.id || null);
 
     const request = new XMLHttpRequest();
     request.open("POST", "/esign/upload/document");
@@ -48,10 +74,15 @@ const _filepondProcess = (fieldName, file, metadata, load, error, progress, abor
 
     request.onload = () => {
         if (request.status >= 200 && request.status < 300) {
-            if(redirectUrl) {
-                window.location.assign(redirectUrl);
-            }else{
-                load(request.responseText);
+            if (data.redirectUrl) {
+                window.location.assign(data.redirectUrl);
+            } else {
+                const url = request.responseText;
+                const pdfViewer = $("#pdfViewer");
+
+                loadPDF(url, pdfViewer);
+                pdfViewer.data("url", url);
+                docUploader.remove();
             }
         } else {
             error("oh no");

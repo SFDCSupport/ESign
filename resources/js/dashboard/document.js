@@ -12,18 +12,25 @@ $(() => {
             createDocumentForm.serialize()
         ).done((r) => {
             if (r.id && r.redirect) {
-                $(document).trigger("document:created", [r.id, r.redirect]);
+                $(document).trigger("document:created", {
+                    filepondProcess: createDocumentForm.data("filepond-process"),
+                    id: r.id,
+                    redirectUrl: r.redirect
+                });
             }
 
             $("#addDocumentModal .btn-close").click();
         }).fail((x) => {
 
         });
-    }).on("document:creation", (e, creationMode) => {
-        creationModeInput.val(creationMode);
+    }).on("document:creation", (e, data) => {
+        creationModeInput.val(data.creationMode);
+        createDocumentForm.data("filepond-process", data.filepondProcess);
+
         $("#createDocumentBtn").click();
     }).on("hidden.bs.modal", "#addDocumentModal", (e) => {
         creationModeInput.val("");
+        createDocumentForm.removeAttr("data-filepond-process");
 
         if (e.relatedTarget !== null) {
             $(document).trigger("document:cancelled");

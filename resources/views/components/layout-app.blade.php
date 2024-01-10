@@ -5,7 +5,7 @@
         <meta name="theme-color" content="#712cf9" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="csrf-token" content="{{ csrf_token() }}" />
-        <meta name="document-id" content="{{ $document->id ?? '' }}" />
+        <meta name="document-id" content="{{ $documentId ?? '' }}" />
         <title>
             {{ __('esign::label.app_name').(! blank($title) ? ' - '.$title : '') }}
             

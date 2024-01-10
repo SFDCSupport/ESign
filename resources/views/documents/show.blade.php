@@ -1,4 +1,4 @@
-<x-esign::layout-app :title="$document->title">
+<x-esign::layout-app :title="$document->title" :documentId="$document->id">
     <div class="container-fluid">
         <div class="row">
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -27,7 +27,16 @@
                         </button>
                     </div>
                 </div>
-                @include('esign::documents.partials.filepond-uploader', ['page' => 'inner'])
+
+                @if ($path = $document->document)
+                    <canvas
+                        id="pdfViewer"
+                        style="border: 1px solid black"
+                        data-url="{{ $path }}"
+                    ></canvas>
+                @else
+                    @include('esign::documents.partials.filepond-uploader', ['page' => 'inner'])
+                @endif
             </main>
             <div
                 class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary"
