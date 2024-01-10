@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\ElementType;
-use NIIT\ESign\Enum\MailStatus;
 use NIIT\ESign\Enum\NotificationSequence;
 use NIIT\ESign\Enum\SignerStatus;
 

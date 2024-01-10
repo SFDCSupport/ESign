@@ -5,17 +5,12 @@
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-2"
             >
                 <div class="btn-toolbar align-items-center">
-                    <a
-                        href="#"
-                        class="btn btn-sm btn-success me-2"
-                    >
+                    <a href="#" class="btn btn-sm btn-success me-2">
                         {{ $signer->status }}
                     </a>
-                    <span
-                        class="text-lg break-all flex items-center"
-                    >
-                                        {{ $signer->email }}
-                                    </span>
+                    <span class="text-lg break-all flex items-center">
+                        {{ $signer->email }}
+                    </span>
                 </div>
                 <div class="btn-toolbar mb-2 mb-md-0">
                     <button

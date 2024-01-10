@@ -23,7 +23,7 @@ class SendSigningLink
         $isAsyncSigners = $document->notification_sequence === NotificationSequence::ASYNC;
         $signers = $document->loadMissing('signers')->signers->pluck('email');
 
-        if (!$isAsyncSigners) {
+        if (! $isAsyncSigners) {
             $signers[] = $document->signers()->where(
                 'mail_status', SignerStatus::MAIL_NOT_RECEIVED
             )->oldest('priority')->first()->email;
