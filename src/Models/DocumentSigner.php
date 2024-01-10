@@ -5,7 +5,6 @@ namespace NIIT\ESign\Models;
 use App\Traits\Userstamps;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use NIIT\ESign\Enum\MailStatus;
 use NIIT\ESign\Enum\SignerStatus;
 
 class DocumentSigner extends Model
@@ -24,7 +23,6 @@ class DocumentSigner extends Model
      * @var array<string,string>
      */
     protected $casts = [
-        'mail_status' => MailStatus::class,
         'status' => SignerStatus::class,
     ];
 
@@ -46,6 +44,17 @@ class DocumentSigner extends Model
     {
         return $this->hasMany(
             related: DocumentSignerElement::class,
+            foreignKey: 'signer_id'
+        );
+    }
+
+    /**
+     * @return HasMany<DocumentSubmission>
+     */
+    public function submissions()
+    {
+        return $this->hasMany(
+            related: DocumentSubmission::class,
             foreignKey: 'signer_id'
         );
     }

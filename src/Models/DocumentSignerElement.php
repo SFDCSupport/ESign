@@ -3,6 +3,7 @@
 namespace NIIT\ESign\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use NIIT\ESign\Enum\ElementType;
 
 class DocumentSignerElement extends Model
@@ -23,13 +24,24 @@ class DocumentSignerElement extends Model
     ];
 
     /**
-     * @return BelongsTo<DocumentSigner, SignerElement>
+     * @return BelongsTo<DocumentSigner, DocumentSignerElement>
      */
     public function signer()
     {
         return $this->belongsTo(
             related: DocumentSigner::class,
             foreignKey: 'signer_id',
+        );
+    }
+
+    /**
+     * @return HasOne<DocumentSubmission>
+     */
+    public function submission()
+    {
+        return $this->hasOne(
+            related: DocumentSubmission::class,
+            foreignKey: 'signer_element_id'
         );
     }
 }

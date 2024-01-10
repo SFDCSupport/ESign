@@ -7,6 +7,7 @@ use NIIT\ESign\Http\Controllers\SignerController;
 use NIIT\ESign\Http\Controllers\SigningController;
 use NIIT\ESign\Http\Controllers\TemplateController;
 use NIIT\ESign\Http\Middleware\SigningMiddleware;
+use NIIT\ESign\Http\Controllers\SubmissionController;
 
 Route::any('/upload/{type}', [Controller::class, 'upload']);
 

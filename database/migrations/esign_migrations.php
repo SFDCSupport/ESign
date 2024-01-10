@@ -51,7 +51,6 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('document_id')->constrained('e_documents');
             $table->string('email')->nullable();
-            $table->enum('mail_status', MailStatus::values())->default(MailStatus::NOT_SENT);
             $table->enum('status', SignerStatus::values())->nullable();
             $table->integer('priority')->default(0);
             $table->timestamps();

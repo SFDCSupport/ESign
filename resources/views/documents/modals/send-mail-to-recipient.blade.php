@@ -21,7 +21,7 @@
             <div class="modal-body">
                 <form
                     method="POST"
-                    action="{{ route('esign.documents.signers.store') }}"
+                    action="{{ route('esign.documents.signers.store', $document) }}"
                 >
                     @csrf
                     <input

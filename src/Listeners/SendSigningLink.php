@@ -3,8 +3,8 @@
 namespace NIIT\ESign\Listeners;
 
 use Illuminate\Support\Facades\Mail;
-use NIIT\ESign\Enum\MailStatus;
 use NIIT\ESign\Enum\NotificationSequence;
+use NIIT\ESign\Enum\SignerStatus;
 use NIIT\ESign\Events\SendDocumentLink;
 use NIIT\ESign\Mail\Signer\SendSigningLink as MailLink;
 use NIIT\ESign\Models\Document;
@@ -23,9 +23,9 @@ class SendSigningLink
         $isAsyncSigners = $document->notification_sequence === NotificationSequence::ASYNC;
         $signers = $document->loadMissing('signers')->signers->pluck('email');
 
-        if (! $isAsyncSigners) {
+        if (!$isAsyncSigners) {
             $signers[] = $document->signers()->where(
-                'mail_status', MailStatus::NOT_SENT
+                'mail_status', SignerStatus::MAIL_NOT_RECEIVED
             )->oldest('priority')->first()->email;
         }
 

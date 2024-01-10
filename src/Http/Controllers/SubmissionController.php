@@ -9,6 +9,8 @@ class SubmissionController extends Controller
 {
     public function index(Request $request, Document $document)
     {
+        $document->loadMissing('signers.submissions');
+
         return view('esign::submissions.index', compact('document'));
     }
 
