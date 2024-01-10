@@ -8,7 +8,7 @@
         <meta name="document-id" content="{{ $document->id ?? '' }}" />
         <title>
             {{ __('esign::label.app_name').(! blank($title) ? ' - '.$title : '') }}
-
+            
         </title>
 
         @stack('headJs')
@@ -22,14 +22,14 @@
         @stack('css')
     </head>
     <body>
-    <noscript>
-        <div class="alert alert-danger text-center" role="alert">
-            <i class="bi bi-exclamation-triangle"></i>
-            Site not functional without JavaScript enabled
-        </div>
-    </noscript>
-    <x-esign::partials.header />
-    {{ $slot }}
-    @stack('js')
+        <noscript>
+            <div class="alert alert-danger text-center" role="alert">
+                <i class="bi bi-exclamation-triangle"></i>
+                Site not functional without JavaScript enabled
+            </div>
+        </noscript>
+        <x-esign::partials.header />
+        {{ $slot }}
+        @stack('js')
     </body>
 </html>

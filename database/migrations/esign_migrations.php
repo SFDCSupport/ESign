@@ -8,7 +8,8 @@ use NIIT\ESign\Enum\ElementType;
 use NIIT\ESign\Enum\NotificationSequence;
 use NIIT\ESign\Enum\SignerStatus;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::disableForeignKeyConstraints();
