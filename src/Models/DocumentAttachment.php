@@ -2,6 +2,8 @@
 
 namespace NIIT\ESign\Models;
 
+use App\Actions\FilepondAction;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use NIIT\ESign\Enum\AttachmentType;
 
@@ -37,6 +39,13 @@ class DocumentAttachment extends Model
         return $this->morphTo(
             type: 'model_type',
             id: 'model_id',
+        );
+    }
+
+    public function url(): Attribute
+    {
+        return new Attribute(
+            get: fn (?string $value, array $attributes) => FilepondAction::loadFile($attributes['path'], 'view'),
         );
     }
 }

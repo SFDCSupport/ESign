@@ -11,6 +11,10 @@ class ESignServiceProvider extends Base
 {
     const NAME = 'esign';
 
+    protected $commands = [
+        Commands\InstallCommand::class,
+    ];
+
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', self::NAME);
@@ -63,9 +67,11 @@ class ESignServiceProvider extends Base
                 __DIR__.'/../public/vendor/'.self::NAME => public_path('vendor/'.self::NAME),
             ], 'assets');
 
-            $this->commands([
-                Commands\InstallCommand::class,
-            ]);
+            if ($this->app->environment() === 'local') {
+                $this->commands[] = Commands\DevCommand::class;
+            }
+
+            $this->commands($this->commands);
         }
     }
 

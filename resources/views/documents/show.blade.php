@@ -29,11 +29,10 @@
                 </div>
 
                 @if ($document->document?->exists())
-                    <canvas
+                    <div
                         id="pdfViewer"
-                        style="border: 1px solid black"
-                        data-url="{{ $document->document->path }}"
-                    ></canvas>
+                        data-url="{{ $document->document->url }}"
+                    ></div>
                 @else
                     @include('esign::documents.partials.filepond-uploader', ['page' => 'inner'])
                 @endif

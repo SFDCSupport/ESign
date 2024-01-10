@@ -14,21 +14,26 @@ $(() => {
 
 export async function loadPDF(url, viewer) {
     pdfjsLib.getDocument(url).promise.then(function(pdfDoc) {
-        pdfDoc.getPage(1).then(function(page) {
-            const scale = 1.5;
-            const viewport = page.getViewport({ scale });
+        const numPages = pdfDoc.numPages;
 
-            const canvas = viewer;
-            const context = canvas.getContext("2d");
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
+        for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+            pdfDoc.getPage(pageNum).then(function(page) {
+                const viewport = page.getViewport({scale: 1.5});
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
 
-            const renderContext = {
-                canvasContext: context,
-                viewport: viewport
-            };
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
 
-            page.render(renderContext);
-        });
+                viewer.append(canvas);
+
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+
+                page.render(renderContext);
+            });
+        }
     });
 }
