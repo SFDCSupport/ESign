@@ -48,8 +48,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuidMorphs('model');
             $table->enum('type', AttachmentType::values())->default(AttachmentType::DOCUMENT);
-            $table->string('file_name');
             $table->string('disk');
+            $table->string('bucket')->nullable();
+            $table->string('file_name');
             $table->string('extension');
             $table->string('path');
             $table->boolean('is_current')->default(1);

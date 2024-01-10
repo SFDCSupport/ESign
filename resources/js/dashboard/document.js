@@ -6,7 +6,9 @@ $(() => {
     const createDocumentForm = $("#createDocumentForm");
     const creationModeInput = createDocumentForm.find("input[name=\"creationMode\"]");
 
-    $(document).on("click", "#saveDocumentBtn", () => {
+    $(document).on('click', '#uploadDocument', () => {
+        $(document).trigger("filepond:show-uploader");
+    }).on("click", "#saveDocumentBtn", () => {
         $.post(
             createDocumentForm.attr("action"),
             createDocumentForm.serialize()

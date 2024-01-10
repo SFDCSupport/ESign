@@ -15,6 +15,7 @@
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
                             <x-esign::partials.button
+                                id="uploadDocument"
                                 :value="__('esign::label.upload')"
                                 class="btn-outline-secondary"
                             />

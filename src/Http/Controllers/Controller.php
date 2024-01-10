@@ -79,6 +79,7 @@ class Controller extends Base
                 'model_id' => $id,
                 'type' => $type,
             ], [
+                'bucket' => config('filesystems.disks.s3.bucket'),
                 'path' => $filePath,
                 'file_name' => $originalFileName,
                 'disk' => $disk,

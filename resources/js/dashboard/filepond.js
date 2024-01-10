@@ -45,6 +45,10 @@ $(() => {
             }
         }
     });
+
+    $(document).on("filepond:show-uploader", () => {
+        $('input.filepond--browser[name="document"]').click();
+    });
 });
 
 const _filepondProcess = (fieldName, file, metadata, load, error, progress, abort, transfer, options, data) => {

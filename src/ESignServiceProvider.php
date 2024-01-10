@@ -17,8 +17,10 @@ class ESignServiceProvider extends Base
 
         $this->app->register(Providers\EventServiceProvider::class);
 
-        $this->app->singleton(ESign::class);
-        $this->app->alias(self::NAME, ESign::class);
+        $this->app->singleton('fileSampark', FileSampark::class);
+
+        $this->app->singleton(self::NAME, ESign::class);
+        $this->app->alias(self::NAME, ESignFacade::class);
     }
 
     public function boot(): void
@@ -72,6 +74,7 @@ class ESignServiceProvider extends Base
         return [
             self::NAME,
             ESign::class,
+            FileSampark::class,
         ];
     }
 }
