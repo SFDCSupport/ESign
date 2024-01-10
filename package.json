@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "format": "npx prettier --write resources/views/",
+        "format-blade": "npx prettier --write resources/views/",
+        "format": "composer format && yarn format-blade",
         "push": "git push -u origin main"
     },
     "devDependencies": {

@@ -18,6 +18,7 @@ return new class extends Migration
         Schema::drop('e_documents');
         Schema::drop('e_document_signers');
         Schema::drop('e_document_signer_elements');
+        Schema::drop('e_document_submissions');
         Schema::drop('e_audits');
         Schema::enableForeignKeyConstraints();
 
@@ -73,6 +74,16 @@ return new class extends Migration
             $table->userStamps(['created_by']);
         });
 
+        Schema::create('e_document_submissions', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('document_id')->constrained('e_documents');
+            $table->foreignUuid('signer_id')->constrained('e_document_signers');
+            $table->foreignUuid('signer_element_id')->constrained('e_document_signer_elements');
+            $table->longText('data');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
         Schema::create('e_audits', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('document_id')->constrained('e_documents');
@@ -86,10 +97,11 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::drop('e_documents');
-        Schema::drop('e_signers');
-        Schema::drop('e_signer_elements');
         Schema::drop('e_audits');
+        Schema::drop('e_document_submissions');
+        Schema::drop('e_document_signer_elements');
+        Schema::drop('e_document_signers');
+        Schema::drop('e_documents');
         Schema::drop('e_templates');
     }
 };

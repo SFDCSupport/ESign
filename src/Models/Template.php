@@ -9,6 +9,7 @@ class Template extends Model
 {
     use Userstamps;
 
+    /** @var string */
     protected $table = 'e_templates';
 
     /**

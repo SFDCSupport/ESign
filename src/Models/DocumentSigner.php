@@ -12,6 +12,7 @@ class DocumentSigner extends Model
 {
     use Userstamps;
 
+    /** @var string */
     protected $table = 'e_document_signers';
 
     /**

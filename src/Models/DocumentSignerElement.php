@@ -7,6 +7,7 @@ use NIIT\ESign\Enum\ElementType;
 
 class DocumentSignerElement extends Model
 {
+    /** @var string */
     protected $table = 'e_document_signer_elements';
 
     /**

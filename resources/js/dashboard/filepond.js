@@ -6,7 +6,7 @@ import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 FilePond.registerPlugin(FilePondPluginFileValidateSize);
 FilePond.registerPlugin(FilePondPluginFileValidateType);
 
-FilePond.create(document.querySelectorAll('.filepond'), {
+FilePond.create(document.querySelector('input[type="file"]'), {
     allowReplace: false,
     allowRevert: false,
     allowRemove: false,

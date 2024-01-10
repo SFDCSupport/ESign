@@ -15,6 +15,7 @@ class Document extends Model implements Attachable, HasLocalePreference
 {
     use Userstamps;
 
+    /** @var string */
     protected $table = 'e_documents';
 
     /**
