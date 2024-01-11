@@ -15,26 +15,34 @@
             <div class="space-y">
                 <div class="space-y-inner">
                     <a
-                        href=""
+                        href="{{ route('esign.documents.show', $document) }}"
                         class="text-secondary"
                         title="{{ __('esign::label.edit') }}"
                     >
                         <i class="fa fa-edit"></i>
                     </a>
                     <a
-                        href=""
+                        href="{{ route('esign.documents.copy', $document) }}"
                         class="text-secondary"
                         title="{{ __('esign::label.copy') }}"
                     >
                         <i class="fa fa-copy"></i>
                     </a>
-                    <a
-                        href=""
-                        class="text-secondary"
-                        title="{{ __('esign::label.delete') }}"
+                    <form
+                        method="POST"
+                        action="{{ route('esign.documents.destroy', $document) }}"
                     >
-                        <i class="fa fa-trash"></i>
-                    </a>
+                        @method('DELETE')
+                        @csrf
+                        <a
+                            href="{{ route('esign.documents.destroy', $document) }}"
+                            class="text-secondary"
+                            title="{{ __('esign::label.delete') }}"
+                            onclick="event.preventDefault();this.closest('form').submit();"
+                        >
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </form>
                 </div>
             </div>
         </div>

@@ -10,7 +10,7 @@
 @pushonce('css')
     <link
         rel="stylesheet"
-        href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css"
+        href="{{ url('vendor/esign/css/dropzone-6.0.0.css') }}"
         type="text/css"
     />
 @endpushonce
@@ -41,7 +41,7 @@
 </div>
 
 @push('js')
-    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script src="{{ url('vendor/esign/js/dropzone-6.0.0.min.js') }}"></script>
     <script>
         Dropzone.autoDiscover = false;
 

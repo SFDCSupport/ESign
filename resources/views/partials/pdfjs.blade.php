@@ -2,8 +2,6 @@
     <script src="{{ url('vendor/esign/js/pdf.js') }}?legacy"></script>
     <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?3.0.0-beta.3"></script>
     <script type="module">
-        // pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-
         $(() => {
             const pdfViewer = $('#pdfViewer');
             const url = pdfViewer.data('url');

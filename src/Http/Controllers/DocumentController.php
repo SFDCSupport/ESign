@@ -57,7 +57,7 @@ class DocumentController extends Controller
     {
         $document->delete();
 
-        return back();
+        return back() ?? redirect()->route('esign.documents.index');
     }
 
     public function bulkDestroy(DocumentRequest $request)
@@ -72,7 +72,14 @@ class DocumentController extends Controller
     public function copy(Document $document)
     {
         $replica = $document->replicate();
-        $replica->save();
+        $replica->push();
+
+        $document->relations = [];
+        $document->load('document');
+
+        if ($document->document()->exists()) {
+            $replica->document()->save($document->document);
+        }
 
         return redirect()->route('esign.documents.show', $replica);
     }
