@@ -38,8 +38,24 @@
             </div>
         </div>
 
-        @include('esign::documents.partials.dropzone', [])
+        @php($dropZoneID = \Illuminate\Support\Str::random(12))
+
+        @include('esign::partials.dropzone', [
+            'id' => $dropZoneID,
+        ])
     </section>
 
     @include('esign::documents.modals.add-document')
+
+    @push('js')
+        <script>
+            $(function() {
+                $(document).on("click", "#uploadDocument", () => {
+                    $("#{{ $dropZoneID }}").trigger("click");
+                });
+            });
+        </script>
+    @endpush
 </x-esign::layout-app>
+
+

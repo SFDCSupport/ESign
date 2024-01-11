@@ -34,7 +34,7 @@
                         data-url="{{ $document->document->url }}"
                     ></div>
                 @else
-                    @include('esign::documents.partials.dropzone', ['page' => 'inner'])
+                    @include('esign::partials.dropzone', ['page' => 'inner'])
                 @endif
             </main>
             <div
