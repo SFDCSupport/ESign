@@ -8,18 +8,17 @@
         <meta name="document-id" content="{{ $documentId ?? '' }}" />
         <title>
             {{ __('esign::label.app_name').(! blank($title) ? ' - '.$title : '') }}
-            
         </title>
 
-        @stack('headJs')
-
-        {{
-            Vite::useHotFile('vendor/esign/esign.hot')
-                ->useBuildDirectory('vendor/esign')
-                ->withEntryPoints(['resources/sass/app.scss', 'resources/js/app.js'])
-        }}
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+        <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet" />
+        <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet"/>
+        <link href="{{ url('vendor/esign/css/bootstrap.min.css') }}" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+        <link href="{{ url('vendor/esign/css/style.css') }}" rel="stylesheet">
 
         @stack('css')
+        @stack('headJs')
     </head>
     <body>
         <noscript>
@@ -30,6 +29,9 @@
         </noscript>
         <x-esign::partials.header />
         {{ $slot }}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="{{ url('vendor/esign/js/bootstrap.bundle.min.js') }}"></script>
+        @include('esign::partials.common-scripts')
         @stack('js')
     </body>
 </html>

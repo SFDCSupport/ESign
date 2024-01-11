@@ -18,6 +18,9 @@ class InstallCommand extends Command
 
     public function handle(): int
     {
-        return 0;
+        $this->callSilent('vendor:publish', ['--tag' => 'esign-assets', '--force' => true]);
+        $this->callSilent('vendor:publish', ['--tag' => 'esign-migrations', '--force' => true]);
+
+        return 1;
     }
 }

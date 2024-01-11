@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        @include('esign::documents.partials.filepond-uploader')
+        @include('esign::documents.partials.dropzone', [])
     </section>
 
     @include('esign::documents.modals.add-document')

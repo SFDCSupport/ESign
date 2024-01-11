@@ -9,11 +9,13 @@
     <meta name="generator" content="Hugo 0.118.2">
     <title>Digital Signature</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet" />
     <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-    <link href="css/style.css" rel="stylesheet">
+    <link href="../assets/css/style.css" rel="stylesheet">
+      <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+      <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 
   <meta name="theme-color" content="#712cf9">
 
@@ -139,7 +141,7 @@
 
 <div class="container-fluid">
   <div class="row">
-   
+
 
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -153,23 +155,33 @@
           </button>
         </div>
       </div>
-      
+
       <div class="container">
         <div class="row">
-        
+
           <main class="col-md-12 ms-sm-auto col-lg-12 pb-4 mb-2">
-          
+
             <div class="filepond-section-custom">
-              <input type="file" 
+              <input type="file"
               class="filepond"
               name="filepond"
               data-max-file-size="3MB"
               data-max-files="3" />
             </div>
           </main> <!--End Main Tag-->
-      
+
         </div>
       </div>
+
+        <div class="container">
+            <div class="row">
+                <div>
+                    <form class="dropzone" action="#" method="post" enctype="multipart/form-data">
+                        <input type="file" name="file" />
+                    </form>
+                </div>
+            </div>
+        </div>
 
     </main> <!--End Main Tag-->
 
@@ -180,7 +192,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
-         
+
           <div class="sel">
             <div class='txt'>First Party </div>
             <div class="options hide ">
@@ -215,12 +227,12 @@
               <img src="images/clock.png">
               <span class="text-xs mt-1">Date</span></div>
           </a>
-      
+
         </div>
       </div>
     </div>
 
-    
+
   </div>
 </div>
 
@@ -247,7 +259,7 @@
               Send Emails
             </label>
           </div>
-         
+
         </form>
       </div>
       <div class="modal-footer">
@@ -260,14 +272,14 @@
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="js/bootstrap.bundle.min.js"></script>
+<script src="../assets/js/bootstrap.bundle.min.js"></script>
 <script src='https://unpkg.com/filepond-plugin-file-encode/dist/filepond-plugin-file-encode.min.js'></script>
 <script src='https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.min.js'></script>
 <script src='https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.min.js'></script>
 <script src='https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.js'></script>
 <script src='https://unpkg.com/filepond/dist/filepond.min.js'></script>
 
-<script src='js/script.js'></script>
+<script src='../assets/js/script.js'></script>
 
 
 </body>

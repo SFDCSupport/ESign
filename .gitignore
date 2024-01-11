@@ -8,6 +8,7 @@ phpstan.neon
 vendor
 node_modules
 tests/TestSupport/temp/
+ref
 public/storage
 testbench.yaml
 */**/*.bak
