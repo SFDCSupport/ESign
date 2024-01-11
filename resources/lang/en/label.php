@@ -27,4 +27,9 @@ return [
     'document_add_modal_submit' => 'Create',
     'document_name' => 'Document Name',
     'document_name_placeholder' => 'Document Name Placeholder',
+    'signature_pad' => 'Signature Pad',
+    'text' => 'Text',
+    'date' => 'Date',
+    'timestamp' => 'Timestamp',
+    'textarea' => 'Textarea',
 ];

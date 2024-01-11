@@ -29,6 +29,8 @@
                         page.render(renderContext);
                     });
                 }
+
+                $(document).trigger('canvas:ready');
             });
         };
 

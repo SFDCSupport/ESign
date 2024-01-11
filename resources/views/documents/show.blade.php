@@ -88,121 +88,21 @@
                             </div>
                         </div>
                         <div class="icons-box">
-                            <a href="" class="icons-box-btn bg-white">
-                                <div
-                                    class="flex items-center flex-col px-2 py-2"
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        strokeWidth="2"
-                                        class="tabler-icon tabler-icon-text-size"
+                            @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
+                                @php([$label, $icon] = $data)
+
+                                <a href="" class="icons-box-btn bg-white">
+                                    <div
+                                        class="flex items-center flex-col px-2 py-2"
                                     >
-                                        <path d="M3 7v-2h13v2"></path>
-                                        <path d="M10 5v14"></path>
-                                        <path d="M12 19h-4"></path>
-                                        <path d="M15 13v-1h6v1"></path>
-                                        <path d="M18 12v7"></path>
-                                        <path d="M17 19h2"></path>
-                                    </svg>
-                                    <span class="text-xs mt-1">Text</span>
-                                </div>
-                            </a>
-                            <a href="" class="icons-box-btn bg-white">
-                                <div
-                                    class="flex items-center flex-col px-2 py-2"
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        strokeWidth="2"
-                                        class="tabler-icon tabler-icon-writing-sign"
-                                    >
-                                        <path
-                                            d="M3 19c3.333 -2 5 -4 5 -6c0 -3 -1 -3 -2 -3s-2.032 1.085 -2 3c.034 2.048 1.658 2.877 2.5 4c1.5 2 2.5 2.5 3.5 1c.667 -1 1.167 -1.833 1.5 -2.5c1 2.333 2.333 3.5 4 3.5h2.5"
-                                        ></path>
-                                        <path
-                                            d="M20 17v-12c0 -1.121 -.879 -2 -2 -2s-2 .879 -2 2v12l2 2l2 -2z"
-                                        ></path>
-                                        <path d="M16 7h4"></path>
-                                    </svg>
-                                    <span class="text-xs mt-1">Signature</span>
-                                </div>
-                            </a>
-                            <a href="" class="icons-box-btn bg-white">
-                                <div
-                                    class="flex items-center flex-col px-2 py-2"
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        strokeWidth="2"
-                                        class="tabler-icon tabler-icon-calendar-event"
-                                    >
-                                        <path
-                                            d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"
-                                        ></path>
-                                        <path d="M16 3l0 4"></path>
-                                        <path d="M8 3l0 4"></path>
-                                        <path d="M4 11l16 0"></path>
-                                        <path d="M8 15h2v2h-2z"></path>
-                                    </svg>
-                                    <span class="text-xs mt-1">Date</span>
-                                </div>
-                            </a>
-                            <a href="" class="icons-box-btn bg-white">
-                                <div
-                                    class="flex items-center flex-col px-2 py-2"
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        strokeWidth="2"
-                                        class="tabler-icon tabler-icon-rubber-stamp"
-                                    >
-                                        <path
-                                            d="M21 17.85h-18c0 -4.05 1.421 -4.05 3.79 -4.05c5.21 0 1.21 -4.59 1.21 -6.8a4 4 0 1 1 8 0c0 2.21 -4 6.8 1.21 6.8c2.369 0 3.79 0 3.79 4.05z"
-                                        ></path>
-                                        <path d="M5 21h14"></path>
-                                    </svg>
-                                    <span class="text-xs mt-1">Stamp</span>
-                                </div>
-                            </a>
+                                        <i class="{{ $icon }}"></i>
+                                        <span class="text-xs mt-1">
+                                            {{ $label }}
+                                        </span>
+                                    </div>
+                                </a>
+                            @endforeach
                         </div>
-                        <a href="" class="icons-box-btn bg-white">
-                            <div class="flex items-center flex-col px-2 py-2">
-                                <img src="images/clock.png" />
-                                <span class="text-xs mt-1">Date</span>
-                            </div>
-                        </a>
                     </div>
                 </div>
             </div>
@@ -213,11 +113,9 @@
 
     @pushonce('js')
         <script>
-            $(document).on('canvas:rendered', (e, canvas) => {
-                canvas.on('dragover', (e) => {
-                    e.preventDefault();
-                });
-            });
+            const addedElements = [];
+
+            $(() => {});
         </script>
     @endpushonce
 </x-esign::layout>
