@@ -8,7 +8,7 @@
         } else {
             root.bootbox = factory(root.jQuery);
         }
-    }(this, function init($, undefined) {
+    })(this, function init($, undefined) {
         'use strict';
 
         let exports = {};
@@ -17,22 +17,22 @@
         exports.VERSION = VERSION;
 
         let locales = {
-            'en': {
+            en: {
                 OK: '{{ __('survey::survey.ok') }}',
                 CANCEL: '{{ __('survey::survey.cancel') }}',
-                CONFIRM: '{{ __('survey::survey.ok') }}'
-            }
+                CONFIRM: '{{ __('survey::survey.ok') }}',
+            },
         };
 
         let templates = {
             dialog: '<div class="bootbox modal" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-body"><div class="bootbox-body"></div></div></div></div></div>',
             header: '<div class="modal-header"><h5 class="modal-title"></h5></div>',
             footer: '<div class="modal-footer"></div>',
-            closeButton: '<button type="button" class="bootbox-close-button close" aria-hidden="true" aria-label="Close"><span aria-hidden="true">×</span></button>',
+            closeButton:
+                '<button type="button" class="bootbox-close-button close" aria-hidden="true" aria-label="Close"><span aria-hidden="true">×</span></button>',
             button: '<button type="button" class="btn"></button>',
             option: '<option value=""></option>',
         };
-
 
         let defaults = {
             backdrop: 'static',
@@ -51,9 +51,8 @@
             reusable: false,
             relatedTarget: null,
             size: null,
-            id: null
+            id: null,
         };
-
 
         exports.setDefaults = function () {
             let values = {};
@@ -69,23 +68,20 @@
             return exports;
         };
 
-
         exports.hideAll = function () {
             $('.bootbox').modal('hide');
 
             return exports;
         };
 
-
         exports.init = function (_$) {
             return init(_$ || $);
         };
 
-
         exports.dialog = function (options) {
             if ($.fn.modal === undefined) {
                 throw new Error(
-                    '"$.fn.modal" is not defined; please double check you have included the Bootstrap JavaScript library. See https://getbootstrap.com/docs/5.1/getting-started/introduction/ for more details.'
+                    '"$.fn.modal" is not defined; please double check you have included the Bootstrap JavaScript library. See https://getbootstrap.com/docs/5.1/getting-started/introduction/ for more details.',
                 );
             }
 
@@ -94,11 +90,16 @@
             if ($.fn.modal.Constructor.VERSION) {
                 options.fullBootstrapVersion = $.fn.modal.Constructor.VERSION;
                 let i = options.fullBootstrapVersion.indexOf('.');
-                options.bootstrap = options.fullBootstrapVersion.substring(0, i);
+                options.bootstrap = options.fullBootstrapVersion.substring(
+                    0,
+                    i,
+                );
             } else {
                 options.bootstrap = '2';
                 options.fullBootstrapVersion = '2.3.2';
-                console.warn('Bootbox will *mostly* work with Bootstrap 2, but we do not officially support it. Please upgrade, if possible.');
+                console.warn(
+                    'Bootbox will *mostly* work with Bootstrap 2, but we do not officially support it. Please upgrade, if possible.',
+                );
             }
 
             let dialog = $(templates.dialog);
@@ -109,7 +110,7 @@
             let buttons = options.buttons;
 
             let callbacks = {
-                onEscape: options.onEscape
+                onEscape: options.onEscape,
             };
 
             body.find('.bootbox-body').html(options.message);
@@ -134,11 +135,11 @@
                     button.html(b.label);
 
                     if (b.id) {
-                        button.attr({'id': b.id});
+                        button.attr({ id: b.id });
                     }
 
                     if (b.disabled === true) {
-                        button.prop({disabled: true});
+                        button.prop({ disabled: true });
                     }
 
                     footer.append(button);
@@ -158,12 +159,16 @@
             }
 
             if (options.id) {
-                dialog.attr({'id': options.id});
+                dialog.attr({ id: options.id });
             }
 
             if (options.size) {
                 if (options.fullBootstrapVersion.substring(0, 3) < '3.1') {
-                    console.warn('"size" requires Bootstrap 3.1.0 or higher. You appear to be using ' + options.fullBootstrapVersion + '. Please upgrade to use this option.');
+                    console.warn(
+                        '"size" requires Bootstrap 3.1.0 or higher. You appear to be using ' +
+                            options.fullBootstrapVersion +
+                            '. Please upgrade to use this option.',
+                    );
                 }
 
                 switch (options.size) {
@@ -181,8 +186,14 @@
                     case 'xl':
                         innerDialog.addClass('modal-xl');
 
-                        if (options.fullBootstrapVersion.substring(0, 3) < '4.2') {
-                            console.warn('Using size "xl"/"extra-large" requires Bootstrap 4.2.0 or higher. You appear to be using ' + options.fullBootstrapVersion + '. Please upgrade to use this option.');
+                        if (
+                            options.fullBootstrapVersion.substring(0, 3) < '4.2'
+                        ) {
+                            console.warn(
+                                'Using size "xl"/"extra-large" requires Bootstrap 4.2.0 or higher. You appear to be using ' +
+                                    options.fullBootstrapVersion +
+                                    '. Please upgrade to use this option.',
+                            );
                         }
                         break;
                 }
@@ -192,7 +203,11 @@
                 innerDialog.addClass('modal-dialog-scrollable');
 
                 if (options.fullBootstrapVersion.substring(0, 3) < '4.3') {
-                    console.warn('Using "scrollable" requires Bootstrap 4.3.0 or higher. You appear to be using ' + options.fullBootstrapVersion + '. Please upgrade to use this option.');
+                    console.warn(
+                        'Using "scrollable" requires Bootstrap 4.3.0 or higher. You appear to be using ' +
+                            options.fullBootstrapVersion +
+                            '. Please upgrade to use this option.',
+                    );
                 }
             }
 
@@ -223,20 +238,26 @@
                 innerDialog.addClass('modal-dialog-centered');
 
                 if (options.fullBootstrapVersion < '4.0.0') {
-                    console.warn('"centerVertical" requires Bootstrap 4.0.0-beta.3 or higher. You appear to be using ' + options.fullBootstrapVersion + '. Please upgrade to use this option.');
+                    console.warn(
+                        '"centerVertical" requires Bootstrap 4.0.0-beta.3 or higher. You appear to be using ' +
+                            options.fullBootstrapVersion +
+                            '. Please upgrade to use this option.',
+                    );
                 }
             }
 
             if (!options.reusable) {
-                dialog.one('hide.bs.modal', {dialog: dialog}, unbindModal);
-                dialog.one('hidden.bs.modal', {dialog: dialog}, destroyModal);
+                dialog.one('hide.bs.modal', { dialog: dialog }, unbindModal);
+                dialog.one('hidden.bs.modal', { dialog: dialog }, destroyModal);
             }
 
             if (options.onHide) {
                 if ($.isFunction(options.onHide)) {
                     dialog.on('hide.bs.modal', options.onHide);
                 } else {
-                    throw new Error('Argument supplied to "onHide" must be a function');
+                    throw new Error(
+                        'Argument supplied to "onHide" must be a function',
+                    );
                 }
             }
 
@@ -244,7 +265,9 @@
                 if ($.isFunction(options.onHidden)) {
                     dialog.on('hidden.bs.modal', options.onHidden);
                 } else {
-                    throw new Error('Argument supplied to "onHidden" must be a function');
+                    throw new Error(
+                        'Argument supplied to "onHidden" must be a function',
+                    );
                 }
             }
 
@@ -252,17 +275,25 @@
                 if ($.isFunction(options.onShow)) {
                     dialog.on('show.bs.modal', options.onShow);
                 } else {
-                    throw new Error('Argument supplied to "onShow" must be a function');
+                    throw new Error(
+                        'Argument supplied to "onShow" must be a function',
+                    );
                 }
             }
 
-            dialog.one('shown.bs.modal', {dialog: dialog}, focusPrimaryButton);
+            dialog.one(
+                'shown.bs.modal',
+                { dialog: dialog },
+                focusPrimaryButton,
+            );
 
             if (options.onShown) {
                 if ($.isFunction(options.onShown)) {
                     dialog.on('shown.bs.modal', options.onShown);
                 } else {
-                    throw new Error('Argument supplied to "onShown" must be a function');
+                    throw new Error(
+                        'Argument supplied to "onShown" must be a function',
+                    );
                 }
             }
 
@@ -290,13 +321,17 @@
                 }
             });
 
-            dialog.on('click', '.modal-footer button:not(.disabled)', function (e) {
-                let callbackKey = $(this).data('bb-handler');
+            dialog.on(
+                'click',
+                '.modal-footer button:not(.disabled)',
+                function (e) {
+                    let callbackKey = $(this).data('bb-handler');
 
-                if (callbackKey !== undefined) {
-                    processCallback(e, dialog, callbacks[callbackKey]);
-                }
-            });
+                    if (callbackKey !== undefined) {
+                        processCallback(e, dialog, callbacks[callbackKey]);
+                    }
+                },
+            );
 
             dialog.on('click', '.bootbox-close-button', function (e) {
                 processCallback(e, dialog, callbacks.onEscape);
@@ -313,7 +348,7 @@
             dialog.modal({
                 backdrop: options.backdrop,
                 keyboard: false,
-                show: false
+                show: false,
             });
 
             if (options.show) {
@@ -323,14 +358,20 @@
             return dialog;
         };
 
-
         exports.alert = function () {
             let options;
 
-            options = mergeDialogOptions('alert', ['ok'], ['message', 'callback'], arguments);
+            options = mergeDialogOptions(
+                'alert',
+                ['ok'],
+                ['message', 'callback'],
+                arguments,
+            );
 
             if (options.callback && !$.isFunction(options.callback)) {
-                throw new Error('alert requires the "callback" property to be a function when provided');
+                throw new Error(
+                    'alert requires the "callback" property to be a function when provided',
+                );
             }
 
             options.buttons.ok.callback = options.onEscape = function () {
@@ -344,11 +385,15 @@
             return exports.dialog(options);
         };
 
-
         exports.confirm = function () {
             let options;
 
-            options = mergeDialogOptions('confirm', ['cancel', 'confirm'], ['message', 'callback'], arguments);
+            options = mergeDialogOptions(
+                'confirm',
+                ['cancel', 'confirm'],
+                ['message', 'callback'],
+                arguments,
+            );
 
             if (!$.isFunction(options.callback)) {
                 throw new Error('confirm requires a callback');
@@ -389,22 +434,16 @@
             return options;
         }
 
-
         function mergeArguments(defaults, args, properties) {
-            return $.extend(
-                true,
-                {},
-                defaults,
-                mapArguments(args, properties)
-            );
+            return $.extend(true, {}, defaults, mapArguments(args, properties));
         }
-
 
         function mergeDialogOptions(className, labels, properties, args) {
             let locale;
             if (args && args[0]) {
                 locale = args[0].locale || defaults.locale;
-                let swapButtons = args[0].swapButtonOrder || defaults.swapButtonOrder;
+                let swapButtons =
+                    args[0].swapButtonOrder || defaults.swapButtonOrder;
 
                 if (swapButtons) {
                     labels = labels.reverse();
@@ -413,19 +452,14 @@
 
             let baseOptions = {
                 className: 'bootbox-' + className,
-                buttons: args[0].buttons || createLabels(labels, locale)
+                buttons: args[0].buttons || createLabels(labels, locale),
             };
 
             return validateButtons(
-                mergeArguments(
-                    baseOptions,
-                    args,
-                    properties
-                ),
-                labels
+                mergeArguments(baseOptions, args, properties),
+                labels,
             );
         }
-
 
         function validateButtons(options, buttons) {
             let allowedButtons = {};
@@ -435,13 +469,18 @@
 
             each(options.buttons, function (key) {
                 if (allowedButtons[key] === undefined) {
-                    throw new Error('button key "' + key + '" is not allowed (options are ' + buttons.join(' ') + ')');
+                    throw new Error(
+                        'button key "' +
+                            key +
+                            '" is not allowed (options are ' +
+                            buttons.join(' ') +
+                            ')',
+                    );
                 }
             });
 
             return options;
         }
-
 
         function createLabels(labels, locale) {
             let buttons = {};
@@ -452,20 +491,18 @@
                 let value = argument.toUpperCase();
 
                 buttons[key] = {
-                    label: getText(value, locale)
+                    label: getText(value, locale),
                 };
             }
 
             return buttons;
         }
 
-
         function getText(key, locale) {
             let labels = locales[locale];
 
             return labels ? labels[key] : locales.en[key];
         }
-
 
         function sanitize(options) {
             let buttons;
@@ -476,15 +513,24 @@
             }
 
             if (!options.message) {
-                throw new Error('"message" option must not be null or an empty string.');
+                throw new Error(
+                    '"message" option must not be null or an empty string.',
+                );
             }
 
             options = $.extend({}, defaults, options);
 
             if (!options.backdrop) {
-                options.backdrop = (options.backdrop === false || options.backdrop === 0) ? false : 'static';
+                options.backdrop =
+                    options.backdrop === false || options.backdrop === 0
+                        ? false
+                        : 'static';
             } else {
-                options.backdrop = typeof options.backdrop === 'string' && options.backdrop.toLowerCase() === 'static' ? 'static' : true;
+                options.backdrop =
+                    typeof options.backdrop === 'string' &&
+                    options.backdrop.toLowerCase() === 'static'
+                        ? 'static'
+                        : true;
             }
 
             if (!options.buttons) {
@@ -498,12 +544,14 @@
             each(buttons, function (key, button, index) {
                 if ($.isFunction(button)) {
                     button = buttons[key] = {
-                        callback: button
+                        callback: button,
                     };
                 }
 
                 if ($.type(button) !== 'object') {
-                    throw new Error('button with key "' + key + '" must be an object');
+                    throw new Error(
+                        'button with key "' + key + '" must be an object',
+                    );
                 }
 
                 if (!button.label) {
@@ -529,11 +577,9 @@
             return options;
         }
 
-
         function getKeyLength(obj) {
             return Object.keys(obj).length;
         }
-
 
         function each(collection, iterator) {
             let index = 0;
@@ -542,18 +588,15 @@
             });
         }
 
-
         function focusPrimaryButton(e) {
             e.data.dialog.find('.bootbox-accept').first().trigger('focus');
         }
-
 
         function destroyModal(e) {
             if (e.target === e.data.dialog[0]) {
                 e.data.dialog.remove();
             }
         }
-
 
         function unbindModal(e) {
             if (e.target === e.data.dialog[0]) {
@@ -562,12 +605,12 @@
             }
         }
 
-
         function processCallback(e, dialog, callback) {
             e.stopPropagation();
             e.preventDefault();
 
-            let preserveDialog = $.isFunction(callback) && callback.call(dialog, e) === false;
+            let preserveDialog =
+                $.isFunction(callback) && callback.call(dialog, e) === false;
 
             if (!preserveDialog) {
                 dialog.modal('hide');
@@ -575,5 +618,5 @@
         }
 
         return exports;
-    }));
+    });
 </script>

@@ -25,8 +25,6 @@
                             icon="plus"
                             class="btn-outline-secondary"
                             id="createDocumentBtn"
-                            data-bs-toggle="modal"
-                            data-bs-target="#addDocumentModal"
                         />
                     </div>
                 </div>
@@ -51,11 +49,17 @@
         <script>
             $(function() {
                 $(document).on("click", "#uploadDocument", () => {
-                    $("#{{ $dropZoneID }}").trigger("click");
+                    $('#{{ $dropZoneID }}').trigger("click");
+                }).on("click", "#createDocumentBtn", () => {
+                    $(document).trigger("modal:add-document:show", {
+                        callback: (r) => {
+                            if (r && r.redirect) {
+                                window.location.assign(r.redirect);
+                            }
+                        }
+                    });
                 });
             });
         </script>
     @endpush
 </x-esign::layout-app>
-
-
