@@ -8,11 +8,16 @@ $(() => {
 
     $(document).on('click', '#uploadDocument', () => {
         $(document).trigger("filepond:show-uploader");
-    }).on("click", "#saveDocumentBtn", () => {
+    }).on("click", "#saveDocumentBtn", (e) => {
         $.post(
             createDocumentForm.attr("action"),
             createDocumentForm.serialize()
         ).done((r) => {
+            if(e.relatedTarget === null && r.redirect) {
+                window.location.assign(r.redirect);
+                return;
+            }
+
             if (r.id && r.redirect) {
                 $(document).trigger("document:created", {
                     id: r.id,
