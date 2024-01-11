@@ -58,7 +58,7 @@
                 headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 init: function () {
                     this.on('addedfile', function (file) {
-                        if (isOuterPageDropzone) {
+                        if (isOuterPageDropzone()) {
                             $(document).trigger('modal:add-document:show', {
                                 callback: (r) => {
                                     if (r && r.id) {
@@ -74,6 +74,8 @@
                                     }
                                 },
                             });
+                        } else {
+                            file.id = getDocumentId();
                         }
                     })
                         .on('complete', function () {
@@ -83,8 +85,7 @@
                             console.log('drop');
                         })
                         .on('processing', function (file) {
-                            console.log(file);
-                            if (null === file.id) {
+                            if (isOuterPageDropzone() && null === file.id) {
                                 this.removeFile(file);
                             }
                         })
@@ -94,15 +95,15 @@
                             }
                         })
                         .on('success', function (file, response) {
-                            console.log('success');
-                            if (
-                                isOuterPageDropzone &&
-                                _dropzoneEle.data('redirect')
-                            ) {
-                                $(location).attr(
-                                    'href',
-                                    _dropzoneEle.data('redirect'),
-                                );
+                            if (isOuterPageDropzone()) {
+                                if (_dropzoneEle.data('redirect')) {
+                                    $(location).attr(
+                                        'href',
+                                        _dropzoneEle.data('redirect'),
+                                    );
+                                }
+                            } else {
+                                location.reload(true);
                             }
                         })
                         .on('removedfile', function (file) {

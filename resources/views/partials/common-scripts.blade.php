@@ -1,11 +1,12 @@
 <script>
-    const getCSRFToken = () => {};
+    const getCSRFToken = () =>
+        $('meta[name="csrf-token"]').attr('content') || null;
+    const getDocumentId = () =>
+        $('meta[name="document-id"]').attr('content') || null;
 
     $.ajaxSetup({
         headers: {
-            'X-CSRF-TOKEN': document
-                .querySelector('meta[name="csrf-token"]')
-                .getAttribute('content'),
+            'X-CSRF-TOKEN': getCSRFToken(),
         },
     });
 </script>

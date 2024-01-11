@@ -1,16 +1,7 @@
 @pushonce('js')
     <script src="{{ url('vendor/esign/js/pdf.js') }}?legacy"></script>
     <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?3.0.0-beta.3"></script>
-    <script type="module">
-        $(() => {
-            const pdfViewer = $('#pdfViewer');
-            const url = pdfViewer.data('url');
-
-            if (url) {
-                loadPDF(url, pdfViewer);
-            }
-        });
-
+    <script>
         const loadPDF = (url, viewer) => {
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
             pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -40,5 +31,14 @@
                 }
             });
         };
+
+        $(() => {
+            const pdfViewer = $('#pdfViewer');
+            const url = pdfViewer.data('url');
+
+            if (url) {
+                loadPDF(url, pdfViewer);
+            }
+        });
     </script>
 @endpushonce
