@@ -1,4 +1,4 @@
-<x-esign::layout-app :title="__('esign::label.dashboard')">
+<x-esign::layout :title="__('esign::label.dashboard')">
     @pushonce('css')
         <style></style>
     @endpushonce
@@ -64,4 +64,4 @@
             });
         </script>
     @endpush
-</x-esign::layout-app>
+</x-esign::layout>

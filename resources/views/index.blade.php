@@ -1,4 +1,4 @@
-<x-esign::layout-signing>
+<x-esign::layout :title="$title" :signerId="$signer->id">
     @pushonce('css')
         <style></style>
     @endpushonce
@@ -155,4 +155,4 @@
     @pushonce('js')
         <script type="module"></script>
     @endpushonce
-</x-esign::layout-signing>
+</x-esign::layout>

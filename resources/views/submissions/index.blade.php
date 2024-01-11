@@ -1,4 +1,4 @@
-<x-esign::layout-app :title="__('esign::label.submissions')">
+<x-esign::layout :title="__('esign::label.submissions')">
     <section class="grey-bg-section border-top">
         <div class="container">
             <div class="row">
@@ -62,4 +62,4 @@
     </section>
 
     @include('esign::documents.modals.send-mail-to-recipient', compact('document'))
-</x-esign::layout-app>
+</x-esign::layout>

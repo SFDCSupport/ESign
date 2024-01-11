@@ -1,4 +1,4 @@
-<x-esign::layout-app :title="$document->title" :documentId="$document->id">
+<x-esign::layout :title="$document->title" :documentId="$document->id">
     <div class="container-fluid">
         <div class="row">
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -220,4 +220,4 @@
             });
         </script>
     @endpushonce
-</x-esign::layout-app>
+</x-esign::layout>

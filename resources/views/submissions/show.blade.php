@@ -1,3 +1,6 @@
-<x-esign::layout-app :title="__('esign::label.submissions')">
+<x-esign::layout
+    :title="__('esign::label.submissions')"
+    :documentId="$document->id"
+>
     XYZ
-</x-esign::layout-app>
+</x-esign::layout>
