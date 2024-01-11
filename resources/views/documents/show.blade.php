@@ -12,7 +12,7 @@
                                 type="button"
                                 class="btn btn-outline-dark"
                                 data-bs-toggle="modal"
-                                data-bs-target="#sendrecipientModal"
+                                data-bs-target="#sendRecipientModal"
                             >
                                 <i class="fas fa-user-plus"></i>
                                 {{ __('esign::label.send') }}
@@ -33,6 +33,8 @@
                         id="pdfViewer"
                         data-url="{{ $document->document->url }}"
                     ></div>
+
+                    @include('esign::documents.modals.send-mail-to-recipient', compact('document'))
                 @else
                     @include('esign::partials.dropzone', ['page' => 'inner'])
                 @endif

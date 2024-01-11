@@ -32,4 +32,6 @@ return [
     'date' => 'Date',
     'timestamp' => 'Timestamp',
     'textarea' => 'Textarea',
+    'send_to_recipients' => 'Send to Recipients',
+    'no_submissions_add_recipients' => '<h2>There are no Submissions </h2><p>Send an invitation to fill and complete the form</p>',
 ];
