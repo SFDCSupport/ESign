@@ -208,4 +208,6 @@
             </div>
         </div>
     </div>
+
+    @include('esign::partials.pdfjs')
 </x-esign::layout-app>
