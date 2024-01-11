@@ -1,0 +1,55 @@
+/*
+ * @author : Anand Pilania
+ * @mailto : Anand.Pilania@niit.com
+ * @updated : 1/11/24, 5:50 PM
+ */
+
+@font-face {
+    font-family: Poppins;
+    src: url("../fonts/Poppins-Regular.eot");
+    src: url("../fonts/Poppins-Regular.woff") format("woff");
+    src: url("../fonts/Poppins-Regular.woff2") format("woff2");
+    src: url("../fonts/Poppins-Regular.ttf") format("trueType");
+}
+
+@font-face {
+    font-family: Poppins-Medium;
+    src: url("../fonts/Poppins-Medium.eot");
+    src: url("../fonts/Poppins-Medium.woff") format("woff");
+    src: url("../fonts/Poppins-Medium.woff2") format("woff2");
+    src: url("../fonts/Poppins-Medium.ttf") format("trueType");
+}
+
+@font-face {
+    font-family: Poppins-SemiBold;
+    src: url("../fonts/Poppins-SemiBold.eot");
+    src: url("../fonts/Poppins-SemiBold.woff") format("woff");
+    src: url("../fonts/Poppins-SemiBold.woff2") format("woff2");
+    src: url("../fonts/Poppins-SemiBold.ttf") format("trueType");
+}
+
+/*---End google font --*/
+
+@font-face {
+    font-family: "Font Awesome 6 Free";
+    src: url("../fonts/Font-Awesome-6-Brands-Regular-400.eot");
+    src: url("../fonts/Font-Awesome-6-Brands-Regular-400.woff") format("woff");
+    src: url("../fonts/Font-Awesome-6-Brands-Regular-400.woff2") format("woff2");
+    src: url("../fonts/Font-Awesome-6-Brands-Regular-400.ttf") format("trueType");
+}
+
+@font-face {
+    font-family: "Font Awesome 6 Free";
+    src: url("../fonts/Font-Awesome-6-Free-Regular-400.eot");
+    src: url("../fonts/Font-Awesome-6-Free-Regular-400.woff") format("woff");
+    src: url("../fonts/Font-Awesome-6-Free-Regular-400.woff2") format("woff2");
+    src: url("../fonts/Font-Awesome-6-Free-Regular-400.ttf") format("trueType");
+}
+
+@font-face {
+    font-family: "Font Awesome 6 Free";
+    src: url("../fonts/Font-Awesome-6-Free-Solid-900.eot");
+    src: url("../fonts/Font-Awesome-6-Free-Solid-900.woff") format("woff");
+    src: url("../fonts/Font-Awesome-6-Free-Solid-900.woff2") format("woff2");
+    src: url("../fonts/Font-Awesome-6-Free-Solid-900.ttf") format("trueType");
+}

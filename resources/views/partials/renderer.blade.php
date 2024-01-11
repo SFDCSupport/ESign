@@ -32,6 +32,8 @@
             });
         };
 
+        const renderElements = (elements) => {};
+
         $(() => {
             const pdfViewer = $('#pdfViewer');
             const url = pdfViewer.data('url');

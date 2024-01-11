@@ -209,5 +209,15 @@
         </div>
     </div>
 
-    @include('esign::partials.pdfjs')
+    @include('esign::partials.renderer')
+
+    @pushonce('js')
+        <script>
+            $(document).on('canvas:rendered', (e, canvas) => {
+                canvas.on('dragover', (e) => {
+                    e.preventDefault();
+                });
+            });
+        </script>
+    @endpushonce
 </x-esign::layout-app>
