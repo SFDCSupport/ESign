@@ -20,14 +20,11 @@ class Controller extends Base
 {
     use Auditable, AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function remove(Request $request)
+    public function remove(Request $request, $type)
     {
         $data = $request->validate([
-            'type' => 'required',
             'id' => 'required|exists:e_documents,id',
         ]);
-
-        $type = $data['type'];
 
         abort_if(! method_exists(Document::class, ($method = Str::camel($type))), 400);
 
@@ -42,12 +39,11 @@ class Controller extends Base
         return response(null, Response::HTTP_NO_CONTENT);
     }
 
-    public function upload(Request $request)
+    public function upload(Request $request, $type)
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required|exists:e_documents,id',
-            'type' => 'required|string',
-            'document' => 'required|file|mimes:pdf', //'required|image|mimes:jpg,png,jpeg|max:2048',
+            'file' => 'required|file|mimes:pdf', //'required|image|mimes:jpg,png,jpeg|max:2048',
         ], [
             'id.required' => __('esign::validations.required_document_id'),
         ]);
@@ -59,8 +55,7 @@ class Controller extends Base
         $data = $validator->validated();
 
         $id = $data['id'];
-        $type = $data['type'];
-        $file = $request->file('document');
+        $file = $request->file('file');
 
         abort_if(! method_exists(Document::class, ($method = Str::camel($type))), 400);
 

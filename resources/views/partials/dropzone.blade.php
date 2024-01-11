@@ -45,13 +45,73 @@
     <script>
         Dropzone.autoDiscover = false;
 
-        $(function () {
-            $('#{{ $id }}').dropzone({
+        $(() => {
+            const _dropzoneEle = $('#{{ $id }}');
+            const isOuterPageDropzone = () =>
+                _dropzoneEle.data('page') === 'outer';
+
+            _dropzoneEle.dropzone({
                 url: '/esign/upload/document',
                 uploadMultiple: {{ $multiple ? 'true' : 'false' }},
                 maxFilesize: {{ $maxFileSize / 1000 }},
                 acceptedFiles: '{!! $allowed !!}',
                 headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                init: function () {
+                    this.on('addedfile', function (file) {
+                        if (isOuterPageDropzone) {
+                            $(document).trigger('modal:add-document:show', {
+                                callback: (r) => {
+                                    if (r && r.id) {
+                                        file.id = r.id;
+                                        _dropzoneEle.data(
+                                            'redirect',
+                                            r.redirect || '',
+                                        );
+
+                                        this.processFile(file);
+                                    } else {
+                                        this.removeFile(file);
+                                    }
+                                },
+                            });
+                        }
+                    })
+                        .on('complete', function () {
+                            console.log('complete');
+                        })
+                        .on('drop', function () {
+                            console.log('drop');
+                        })
+                        .on('processing', function (file) {
+                            console.log(file);
+                            if (null === file.id) {
+                                this.removeFile(file);
+                            }
+                        })
+                        .on('sending', function (file, xhr, formData) {
+                            if (file.id) {
+                                formData.append('id', file.id);
+                            }
+                        })
+                        .on('success', function (file, response) {
+                            console.log('success');
+                            if (
+                                isOuterPageDropzone &&
+                                _dropzoneEle.data('redirect')
+                            ) {
+                                $(location).attr(
+                                    'href',
+                                    _dropzoneEle.data('redirect'),
+                                );
+                            }
+                        })
+                        .on('removedfile', function (file) {
+                            console.log('removedfile');
+                        })
+                        .on('error', function (file, response) {
+                            console.log('error');
+                        });
+                },
             });
         });
     </script>

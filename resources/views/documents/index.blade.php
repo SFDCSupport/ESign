@@ -47,18 +47,20 @@
 
     @push('js')
         <script>
-            $(function() {
-                $(document).on("click", "#uploadDocument", () => {
-                    $('#{{ $dropZoneID }}').trigger("click");
-                }).on("click", "#createDocumentBtn", () => {
-                    $(document).trigger("modal:add-document:show", {
-                        callback: (r) => {
-                            if (r && r.redirect) {
-                                window.location.assign(r.redirect);
-                            }
-                        }
+            $(function () {
+                $(document)
+                    .on('click', '#uploadDocument', () => {
+                        $('#{{ $dropZoneID }}').trigger('click');
+                    })
+                    .on('click', '#createDocumentBtn', () => {
+                        $(document).trigger('modal:add-document:show', {
+                            callback: (r) => {
+                                if (r && r.redirect) {
+                                    $(location).attr('href', r.redirect);
+                                }
+                            },
+                        });
                     });
-                });
             });
         </script>
     @endpush
