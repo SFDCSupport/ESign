@@ -17,7 +17,9 @@ class Audit extends Model
     /**
      * @var array<string,string>
      */
-    protected $casts = [];
+    protected $casts = [
+        'metadata' => 'json',
+    ];
 
     /**
      * @return BelongsTo<Document, Audit>

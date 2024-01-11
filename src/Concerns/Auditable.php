@@ -9,14 +9,14 @@ use NIIT\ESign\Models\DocumentSigner;
 
 trait Auditable
 {
-    public function logAuditTrait(Document $document, string $event, ?DocumentSigner $signer = null, array $metadata = []): Audit
+    public function logAuditTrait(Document $document, string $event, ?DocumentSigner $signer = null, ?array $metadata = null): Audit
     {
         $model = new Audit;
 
         $model->event = $event;
         $model->metadata = $metadata;
-        $model->signer = $signer;
-        $model->document = $document;
+        $model->signer_id = $signer?->id;
+        $model->document_id = $document->id;
 
         $model->save();
 

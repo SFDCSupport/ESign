@@ -18,7 +18,7 @@ Route::middleware(['auth'])
             ->name('templates.bulk-destroy');
         Route::resource('templates', TemplateController::class);
 
-        Route::delete('documents/{document}/signer/destroy', [SignerController::class, 'bulkDestroy'])
+        Route::delete('documents/{document}/signers/destroy', [SignerController::class, 'bulkDestroy'])
             ->name('documents.signers.bulk-destroy');
         Route::resource('documents.signers', SignerController::class)
             ->except(['create', 'edit', 'show']);
@@ -38,10 +38,13 @@ Route::middleware(['auth'])
     });
 
 // SIGNING ROUTES
+Route::get('signers/{signer}/mail', [SigningController::class, 'mailTrackingPixel'])
+    ->name('signing.mail-pixel');
+
 Route::name('signing.')
     ->middleware([
         SigningMiddleware::class,
     ])->group(function () {
-        Route::get('/{document}', [SigningController::class, 'index']);
-        Route::post('/{document}', [SigningController::class, 'store']);
+        Route::get('/{signer}', [SigningController::class, 'index']);
+        Route::post('/{signer}', [SigningController::class, 'store']);
     });

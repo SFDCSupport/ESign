@@ -1,6 +1,11 @@
 <?php
+/*
+ * @author : Anand Pilania
+ * @mailto : Anand.Pilania@niit.com
+ * @updated : 1/10/24, 4:52 PM
+ */
 
-namespace NIIT\ESign;
+namespace NIIT\ESign\Support;
 
 use Illuminate\Support\Collection;
 

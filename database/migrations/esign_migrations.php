@@ -82,7 +82,7 @@ return new class extends Migration
             $table->integer('height');
             $table->timestamps();
             $table->softDeletes();
-            $table->userStamps(['created_by']);
+            $table->userStamps();
         });
 
         Schema::create('e_document_submissions', function (Blueprint $table) {
