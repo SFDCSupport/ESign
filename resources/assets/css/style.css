@@ -12,6 +12,7 @@ body{
 #sidebarMenu{
   min-height: 98vh;
   padding: 15px;
+  background: #f8f9fa !important;
 }
 
 /*
@@ -134,25 +135,33 @@ body{
 }
 
 .icons-box-btn{
-    padding: 10px;
-    border-radius: 4px;
-    box-shadow: 0 1px 5px rgba(33,51,67,.12);
-    position: relative;
-    width: 48%;
-    margin: 1%;
-    text-align: center;
-    color: #4c4e53 !important;
-    text-decoration: none;
-    display: flex;
+  padding: 3px;
+  border-radius: 4px;
+  box-shadow: 0 1px 5px rgba(33,51,67,.12);
+  position: relative;
+  width: 98%;
+  margin: 2% 1%;
+  text-align: left;
+  color: #4c4e53 !important;
+  text-decoration: none;
+  display: flex;
   flex-direction: column;
   flex-basis: 100%;
   flex: 1;
+  min-width: 98%;
+  justify-items: left;
+  border-left: 3px solid #0d6efd;
+}
+
+.icons-box-btn svg {
+  width: 40px;
+  text-align: left;
 }
 
 .text-xs {
-  font-size: .75rem;
+  font-size: .8rem;
   line-height: 1rem;
-  display: block;
+  display: inline-flex;
 }
 
 .wrap-doc{
