@@ -73,6 +73,11 @@ body{
   margin-bottom: 20px;
 }
 
+.document-template-cards a{
+  color: #4c4e53;
+  text-decoration: none;
+}
+
 .grey-bg-section{
   background-color: #f6f9fc;
   padding: 20px 0 50px;
@@ -99,14 +104,19 @@ body{
 }
 
 .space-y-inner a{
+  height: 28px;
   display: block;
-  width: 20px;
+  width: 28px;
+  line-height: 28px;
   font-size: .8rem;
-  padding: 4px;
+  padding: 0px;
+  text-align: center;
+  border-radius: 100px;
 }
 
 .space-y-inner a:hover{
-  color: #2470dc !important;
+  background-color: #333;
+  color: #fff !important;
 }
 
 /**
@@ -345,6 +355,7 @@ body{
 .dropzone.dz-clickable{
   background-color: #dae6ff;
   border: 1px dashed #6782b8;
+  box-shadow: 0 1px 5px rgba(33,51,67,.12);
 }
 
 .dropzone.dz-clickable h3{
@@ -359,4 +370,12 @@ body{
 #pdfViewer canvas{
   margin: 15px auto;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+}
+
+.header-bottom-section{
+  box-shadow: rgba(26, 26, 26, 0.2) 0px 0px 2px;
+}
+
+.shadow{
+  box-shadow: 0 2px 4px rgba(33,51,67,.12) !important;
 }
