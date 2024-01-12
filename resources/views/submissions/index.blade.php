@@ -4,29 +4,33 @@
             <main class="col-md-12 ms-sm-auto col-lg-12 pb-0 mb-0">
                 <div class="container">
                     <div
-                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pb-2 mb-0"
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
                     >
-                        <h1 class="h2">{{ $document->title }}</h1>
+                        <h4 class="h4 mb-0">{{ $document->title }}</h4>
                         <div class="btn-toolbar mb-2 mb-md-0">
                             <div class="btn-group me-2">
                                 <x-esign::partials.button
                                     :value="__('esign::label.copy_link')"
                                     icon="link"
+                                    class="btn-sm btn-outline-secondary"
                                 />
                             </div>
                             <x-esign::partials.button
                                 :value="__('esign::label.archive')"
                                 icon="archive"
+                                class="btn-sm btn-outline-secondary"
                             />
                             <x-esign::partials.button
                                 :value="__('esign::label.clone')"
                                 :redirectUrl="route('esign.documents.copy', $document)"
                                 icon="copy"
+                                class="btn-sm btn-outline-secondary"
                             />
                             <x-esign::partials.button
                                 :value="__('esign::label.edit')"
                                 :redirectUrl="route('esign.documents.edit', $document)"
                                 icon="edit"
+                                class="btn-sm btn-outline-secondary"
                             />
                         </div>
                     </div>

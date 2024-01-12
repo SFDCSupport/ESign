@@ -3,7 +3,7 @@
   <section class="header-bottom-section">
     <div class="container-fluid">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0">
-            <h6 class="h6">{{ $document->title }}</h6>
+            <h4 class="h4 mb-0">{{ $document->title }}</h4>
             <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="btn-group me-2">
                     <button
