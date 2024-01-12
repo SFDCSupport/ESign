@@ -20,6 +20,7 @@
                     <button
                         id="saveBtn"
                         type="button"
+                        onclick="saveBtnAction()"
                         class="btn btn-primary d-flex align-items-center gap-1"
                     >
                         <i class="fas fa-save"></i>
