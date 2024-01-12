@@ -15,7 +15,7 @@
     />
 @endpushonce
 
-<div class="container">
+<div class="container pt-3 pb-2">
     <div class="row">
         <div class="col-sm-12">
         <div

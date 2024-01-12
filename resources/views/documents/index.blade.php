@@ -7,9 +7,9 @@
         <section class="mb-2">
             <div class="container">
                 <div
-                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-1 mb-0"
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-1 mb-3 border-bottom"
                 >
-                    <h1 class="h2">
+                    <h1 class="h2 mb-2">
                         {{ __('esign::label.document_templates') }}
                     </h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
