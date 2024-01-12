@@ -1,5 +1,5 @@
 <template id="addDocumentModalTemplate">
-    <form id="createDocumentForm">
+    <form id="createDocumentForm" onkeydown="return event.key !== 'Enter';">
         @csrf
 
         <input type="hidden" name="mode" value="create" />

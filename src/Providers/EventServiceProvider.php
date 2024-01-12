@@ -15,6 +15,10 @@ use NIIT\ESign\Listeners\SendStatusListener;
 use NIIT\ESign\Listeners\SigningCompletedListener;
 use NIIT\ESign\Listeners\SigningStartedListener;
 use NIIT\ESign\Listeners\SigningStatusListener;
+use NIIT\ESign\Models\Document;
+use NIIT\ESign\Models\DocumentSigner;
+use NIIT\ESign\Observers\DocumentObserver;
+use NIIT\ESign\Observers\SignerObserver;
 
 class EventServiceProvider extends Base
 {
@@ -42,5 +46,8 @@ class EventServiceProvider extends Base
     public function boot(): void
     {
         parent::boot();
+
+        Document::observe(DocumentObserver::class);
+        DocumentSigner::observe(SignerObserver::class);
     }
 }

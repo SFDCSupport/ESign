@@ -4,6 +4,7 @@ namespace NIIT\ESign\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Events\SendDocumentLink;
 use NIIT\ESign\Http\Requests\DocumentRequest;
 use NIIT\ESign\Models\Document;
@@ -38,12 +39,16 @@ class DocumentController extends Controller
 
     public function show(Document $document)
     {
+        if ($document->status === DocumentStatus::PENDING) {
+            return redirect()->route('esign.documents.submissions.index', $document);
+        }
+
         return view('esign::documents.show', compact('document'));
     }
 
     public function edit(Document $document)
     {
-        return view('esign::documents.create', compact('document'));
+        return redirect()->route('esign.documents.show', $document);
     }
 
     public function update(DocumentRequest $request, Document $document)

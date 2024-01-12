@@ -36,8 +36,8 @@ enum ElementType: string
             'signature_pad' => 'fa-solid fa-signature',
             'text' => 'fa-solid fa-font',
             'date' => 'fa-regular fa-calendar',
-            'email' => 'fa-solid fa-mail',
-            'textarea' => '',
+            'email' => 'fa-solid fa-envelope',
+            'textarea' => 'fa-regular fa-square',
         };
     }
 }

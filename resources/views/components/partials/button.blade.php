@@ -2,6 +2,7 @@
     'disabled' => false,
     'type' => 'button',
     'value' => null,
+    'redirectUrl' => '',
 ])
 <button
     {{ $disabled ? 'disabled' : '' }}
@@ -11,6 +12,7 @@
             'class' => 'btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 me-2',
         ])
     }}
+    {{ $redirectUrl ? 'onclick=location.href="'.$redirectUrl.'"' : '' }}
 >
     @if ($attributes->has('icon'))
         <i class="fa fa-{{ $attributes->get('icon') }}"></i>

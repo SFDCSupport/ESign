@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 class DevCommand extends Command
 {
     /** @var string */
-    protected $name = 'esign:dev-install {--tenant}';
+    protected $signature = 'esign:dev-install {--tenant}';
 
     /** @var string */
     protected $description = '...';

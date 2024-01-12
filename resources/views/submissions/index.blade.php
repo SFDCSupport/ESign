@@ -14,17 +14,18 @@
                                     icon="link"
                                 />
                             </div>
-
                             <x-esign::partials.button
                                 :value="__('esign::label.archive')"
                                 icon="archive"
                             />
                             <x-esign::partials.button
                                 :value="__('esign::label.clone')"
+                                :redirectUrl="route('esign.documents.copy', $document)"
                                 icon="copy"
                             />
                             <x-esign::partials.button
                                 :value="__('esign::label.edit')"
+                                :redirectUrl="route('esign.documents.edit', $document)"
                                 icon="edit"
                             />
                         </div>
