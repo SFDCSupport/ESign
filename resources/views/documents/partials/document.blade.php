@@ -10,7 +10,7 @@
             </p>
             <p class="user-date text-secondary mb-1">
                 <i class="fas fa-calendar-alt"></i>
-                <span>{{ $document->created_at }}</span>
+                <span>{{ $document->created_at->format('d-M-Y H:i A') }}</span>
             </p>
             <div class="space-y">
                 <div class="space-y-inner">
