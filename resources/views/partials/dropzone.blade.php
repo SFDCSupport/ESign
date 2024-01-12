@@ -17,6 +17,7 @@
 
 <div class="container">
     <div class="row">
+        <div class="col-sm-12">
         <div
             id="{{ $id }}"
             class="dropzone"
@@ -37,6 +38,7 @@
                 </p>
             </div>
         </div>
+    </div>
     </div>
 </div>
 

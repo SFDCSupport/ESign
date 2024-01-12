@@ -61,6 +61,7 @@ body{
   border-radius: 4px;
   box-shadow: 0 1px 5px rgba(33,51,67,.12);
   position: relative;
+  margin-bottom: 15px;
 }
 
 .document-template-cards h5{
@@ -187,9 +188,8 @@ body{
   border-radius: 50px;
   padding: 10px;
 }
-
 .filepond-section-custom{
-  padding: 40px 0px 15px;
+  padding: 20px 0px 15px;
 }
 
 .filepond-section-custom .filepond--drip{
@@ -279,3 +279,61 @@ body{
   background-color: #10b981 ;
 }
 
+.send-btn-light{
+
+}
+
+.add-doc-sec{
+  padding: 15px 0;
+}
+
+.edit-doc-name{
+  position: relative;
+  padding-right: 20px;
+}
+
+.edit-docs-file{
+  position: relative;
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+    margin: 10px auto;
+}
+
+.edit-docs-file img{
+  max-width: 100%;
+}
+
+.edit-doc-text{
+  position: absolute;
+  right: 2px;
+  color: #4c4e53;
+  top: 1px;
+  display: none;
+}
+
+.edit-doc-name:hover .edit-doc-text{
+  display: block;
+}
+
+.replace-doc-btn{
+  position: absolute;
+  top:5px;
+  left: 50%;
+  margin-left: -37px;
+  border-radius: 100px;
+  padding: 2px 12px;
+  display: none;
+}
+
+.edit-docs-file:hover .replace-doc-btn{
+  display: block;
+}
+
+.dropzone.dz-clickable{
+  background-color: #dae6ff;
+  border: 1px dashed #6782b8;
+}
+
+.dropzone.dz-clickable h3{
+  color: rgb(0, 85, 255);
+}
