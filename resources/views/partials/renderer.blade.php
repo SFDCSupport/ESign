@@ -3,19 +3,9 @@
     <script src="{{ url('/vendor/esign/js/fabric.min.js') }}?4.6.0"></script>
     <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?3.0.0-beta.3"></script>
     <script>
-        let addLock = true;
-        let forceAddLock = true;
-        let currentScale = 1.5;
-        let currentCursor = null;
-        let currentTextScale = 1;
-        let activeCanvas = null;
-        let activeCanvasPointer = null;
-        let hasModifications = false;
-
         const pdfRenderTasks = [];
         const pdfPages = [];
         const canvasEditions = [];
-        const svgCollections = [];
 
         const loadPDF = (url, viewer) => {
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
@@ -32,8 +22,10 @@
 
                     toast('info', `Loading page: ${numPages}`);
 
+                    const promises = [];
+
                     for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-                        pdfDoc.getPage(pageNum).then((page) => {
+                        const promise = pdfDoc.getPage(pageNum).then((page) => {
                             let scale = 1.5;
                             let viewport = page.getViewport({ scale: scale });
 
@@ -140,16 +132,82 @@
                             canvasEdition
                                 .on('mouse:move', function (e) {})
                                 .on('mouse:down:before', function (e) {})
-                                .on('mouse:down', function (e) {})
+                                .on('mouse:down', function (e) {
+                                    if (e.target) {
+                                        const dataType = e.target.dataType;
+
+                                        switch (dataType) {
+                                            case 'signature_pad':
+                                                console.log('signature pad');
+                                                break;
+                                            case 'text':
+                                                const textObject = e.target;
+                                                const inputBox =
+                                                    document.createElement(
+                                                        'input',
+                                                    );
+                                                inputBox.type = 'text';
+                                                inputBox.value =
+                                                    textObject.text;
+                                                inputBox.style.position =
+                                                    'absolute';
+                                                inputBox.style.left =
+                                                    textObject.left + 'px';
+                                                inputBox.style.top =
+                                                    textObject.top + 'px';
+                                                inputBox.style.width =
+                                                    textObject.width + 'px';
+                                                inputBox.style.height =
+                                                    textObject.height + 'px';
+
+                                                canvasEdition.remove(
+                                                    textObject,
+                                                );
+                                                document.body.appendChild(
+                                                    inputBox,
+                                                );
+
+                                                inputBox.addEventListener(
+                                                    'blur',
+                                                    () => {
+                                                        textObject.set(
+                                                            'text',
+                                                            inputBox.value,
+                                                        );
+                                                        canvasEdition.add(
+                                                            textObject,
+                                                        );
+                                                        document.body.removeChild(
+                                                            inputBox,
+                                                        );
+                                                        canvasEdition.renderAll();
+                                                    },
+                                                );
+
+                                                break;
+                                            default:
+                                                console.warn(
+                                                    'Unknown data type:',
+                                                    dataType,
+                                                );
+                                                break;
+                                        }
+                                    }
+                                })
                                 .on('object:scaling', (e) => {})
                                 .on('object:scaled', function (e) {})
                                 .on('text:changed', function (e) {});
 
+                            canvasEdition.pageIndex = pageIndex;
                             canvasEditions.push(canvasEdition);
                         });
+
+                        promises.push(promise);
                     }
 
-                    $(document).trigger('canvas:ready');
+                    Promise.all(promises).then(() => {
+                        $(document).trigger('canvas:ready');
+                    });
                 })
                 .catch((error) => {
                     toast('error', `Error loading PDF: ${error}`);
@@ -160,13 +218,56 @@
                     toast('success', `PDF loading process completed.`);
                     console.log('PDF loading process completed.');
                 });
+
+            return true;
+        };
+
+        const loadObjectsFromData = (canvasEdition, objectData) => {
+            objectData.forEach((objInfo) => {
+                console.log(objInfo.page, canvasEditions.pageIndex + 1);
+                if (objInfo.page === canvasEdition.pageIndex + 1) {
+                    let newObj;
+                    const defaultObj = {
+                        left: objInfo.x,
+                        top: objInfo.y,
+                        width: objInfo.width,
+                        height: objInfo.height,
+                        fill: 'red',
+                        selectable: false,
+                        lockScaling: true,
+                        lockMovement: true,
+                    };
+
+                    switch (objInfo.type) {
+                        case 'text':
+                            newObj = new fabric.Rect({
+                                ...defaultObj,
+                                fill: 'blue',
+                            });
+                            break;
+                        case 'signature_pad':
+                            newObj = new fabric.Rect({
+                                ...defaultObj,
+                                fill: 'pink',
+                            });
+                            break;
+                        default:
+                            console.warn('Unknown data type:', objInfo.type);
+                            return;
+                    }
+
+                    newObj.dataType = objInfo.type;
+                    canvasEdition.add(newObj);
+                }
+            });
         };
 
         const saveBtnAction = () => {
             canvasEditions.forEach((canvasEdition, pageIndex) => {
                 canvasEdition.forEachObject((obj) => {
                     console.log('Object Info:', {
-                        page: pageIndex + 1,
+                        page: canvasEdition.pageIndex + 1,
+                        type: obj.dataType,
                         x: obj.left,
                         y: obj.top,
                         width: obj.width,
@@ -298,10 +399,10 @@
                 cornerSize: 18,
             });
 
+            fabricObject.dataType = data.dataType;
+
             return fabricObject;
         };
-
-        const renderElements = (elements) => {};
 
         $(() => {
             const pdfViewer = $('#pdfViewer');
@@ -309,6 +410,45 @@
 
             if (url) {
                 loadPDF(url, pdfViewer);
+
+                $(document).on('canvas:ready', () => {
+                    const loadedObjectData = [
+                        {
+                            page: 1,
+                            type: 'signature_pad',
+                            x: 202,
+                            y: 150,
+                            width: 61.28,
+                            height: 18.08,
+                        },
+                        {
+                            page: 1,
+                            type: 'text',
+                            x: 295,
+                            y: 320,
+                            width: 204.4,
+                            height: 60.02559999999999,
+                        },
+                        {
+                            page: 1,
+                            type: 'email',
+                            x: 332,
+                            y: 216,
+                            width: 213.76000000000002,
+                            height: 60.02559999999999,
+                        },
+                    ];
+
+                    if (!blank(loadedObjectData)) {
+                        canvasEditions.forEach((canvasEdition) => {
+                            canvasEdition.clear();
+                            loadObjectsFromData(
+                                canvasEdition,
+                                loadedObjectData,
+                            );
+                        });
+                    }
+                });
             }
 
             if (!getSignerId()) {
