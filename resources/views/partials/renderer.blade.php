@@ -23,25 +23,32 @@
             pdfjsLib.GlobalWorkerOptions.workerSrc =
                 '/vendor/esign/js/pdf.worker.js?legacy';
 
-            pdfjsLib.getDocument(url).promise.then((pdfDoc) => {
-                const numPages = pdfDoc.numPages;
+            $(document).trigger('loader:show');
 
-                for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-                    pdfDoc.getPage(pageNum).then((page) => {
-                        let scale = 1.5;
-                        let viewport = page.getViewport({ scale: scale });
+            pdfjsLib
+                .getDocument(url)
+                .promise.then((pdfDoc) => {
+                    const numPages = pdfDoc.numPages;
 
-                        if (viewport.width > viewer[0].clientWidth - 40) {
-                            viewport = page.getViewport({ scale: 1 });
-                            scale =
-                                (viewer[0].clientWidth - 40) / viewport.width;
-                            viewport = page.getViewport({ scale: scale });
-                        }
+                    toast('info', `Loading page: ${numPages}`);
 
-                        currentScale = scale;
-                        let pageIndex = page.pageNumber - 1;
+                    for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+                        pdfDoc.getPage(pageNum).then((page) => {
+                            let scale = 1.5;
+                            let viewport = page.getViewport({ scale: scale });
 
-                        viewer.append(`
+                            if (viewport.width > viewer[0].clientWidth - 40) {
+                                viewport = page.getViewport({ scale: 1 });
+                                scale =
+                                    (viewer[0].clientWidth - 40) /
+                                    viewport.width;
+                                viewport = page.getViewport({ scale: scale });
+                            }
+
+                            currentScale = scale;
+                            let pageIndex = page.pageNumber - 1;
+
+                            viewer.append(`
                             <div class="position-relative mt-1 ms-1 me-1 d-inline-block" id="canvas-container-${pageIndex}">
                                 <canvas id="canvas-pdf-${pageIndex}" class="shadow-sm canvas-pdf"></canvas>
                                 <div class="position-absolute top-0 start-0">
@@ -50,82 +57,109 @@
                             </div>
                         `);
 
-                        const canvasPdf = $(`#canvas-pdf-${pageIndex}`);
-                        const canvasEditionHTML = $(
-                            `#canvas-edition-${pageIndex}`,
-                        );
-                        const context = canvasPdf[0].getContext('2d');
+                            const canvasPdf = $(`#canvas-pdf-${pageIndex}`);
+                            const canvasEditionHTML = $(
+                                `#canvas-edition-${pageIndex}`,
+                            );
+                            const context = canvasPdf[0].getContext('2d');
 
-                        canvasPdf[0].height = viewport.height;
-                        canvasPdf[0].width = viewport.width;
-                        canvasEditionHTML[0].height = canvasPdf[0].height;
-                        canvasEditionHTML[0].width = canvasPdf[0].width;
+                            canvasPdf[0].height = viewport.height;
+                            canvasPdf[0].width = viewport.width;
+                            canvasEditionHTML[0].height = canvasPdf[0].height;
+                            canvasEditionHTML[0].width = canvasPdf[0].width;
 
-                        const renderContext = {
-                            canvasContext: context,
-                            viewport: viewport,
-                            enhanceTextSelection: true,
-                        };
+                            const renderContext = {
+                                canvasContext: context,
+                                viewport: viewport,
+                                enhanceTextSelection: true,
+                            };
 
-                        const renderTask = page.render(renderContext);
+                            const renderTask = page.render(renderContext);
 
-                        pdfRenderTasks.push(renderTask);
-                        pdfPages.push(page);
+                            renderTask.promise.then(
+                                () => {
+                                    const msg = `Page ${pageNum} successfully rendered.`;
+                                    toast('info', msg);
+                                    console.log(msg);
+                                },
+                                (error) => {
+                                    toast(
+                                        'error',
+                                        `Error rendering page ${pageNum}: ${error}`,
+                                    );
+                                    console.error(
+                                        `Error rendering page ${pageNum}:`,
+                                        error,
+                                    );
+                                },
+                            );
 
-                        const canvasEdition = new fabric.Canvas(
-                            'canvas-edition-' + pageIndex,
-                            {
-                                selection: false,
-                                allowTouchScrolling: true,
-                            },
-                        );
+                            pdfRenderTasks.push(renderTask);
+                            pdfPages.push(page);
 
-                        $(`#canvas-container-${pageIndex}`).on(
-                            'drop',
-                            function (e) {
-                                e.preventDefault();
+                            const canvasEdition = new fabric.Canvas(
+                                'canvas-edition-' + pageIndex,
+                                {
+                                    selection: false,
+                                    allowTouchScrolling: true,
+                                },
+                            );
 
-                                const offsetX =
-                                    e.originalEvent.clientX -
-                                    e.currentTarget.offsetLeft;
-                                const offsetY =
-                                    e.originalEvent.clientY -
-                                    e.currentTarget.offsetTop;
+                            $(`#canvas-container-${pageIndex}`).on(
+                                'drop',
+                                function (e) {
+                                    e.preventDefault();
 
-                                const draggedData = JSON.parse(
-                                    e.originalEvent.dataTransfer.getData(
-                                        'text/plain',
-                                    ),
-                                );
-                                const dataType = draggedData.dataType;
-                                const text = draggedData.text;
-                                const height = draggedData.height || 50;
-                                const width = draggedData.width || 100;
+                                    const offsetX =
+                                        e.originalEvent.clientX -
+                                        e.currentTarget.offsetLeft;
+                                    const offsetY =
+                                        e.originalEvent.clientY -
+                                        e.currentTarget.offsetTop;
 
-                                const fabricObject = createFabricObject(
-                                    { dataType, text, height, width },
-                                    offsetX,
-                                    offsetY,
-                                );
+                                    const draggedData = JSON.parse(
+                                        e.originalEvent.dataTransfer.getData(
+                                            'text/plain',
+                                        ),
+                                    );
+                                    const dataType = draggedData.dataType;
+                                    const text = draggedData.text;
+                                    const height = draggedData.height || 50;
+                                    const width = draggedData.width || 100;
 
-                                canvasEdition.add(fabricObject);
-                            },
-                        );
+                                    const fabricObject = createFabricObject(
+                                        { dataType, text, height, width },
+                                        offsetX,
+                                        offsetY,
+                                    );
 
-                        canvasEdition
-                            .on('mouse:move', function (e) {})
-                            .on('mouse:down:before', function (e) {})
-                            .on('mouse:down', function (e) {})
-                            .on('object:scaling', (e) => {})
-                            .on('object:scaled', function (e) {})
-                            .on('text:changed', function (e) {});
+                                    canvasEdition.add(fabricObject);
+                                },
+                            );
 
-                        canvasEditions.push(canvasEdition);
-                    });
-                }
+                            canvasEdition
+                                .on('mouse:move', function (e) {})
+                                .on('mouse:down:before', function (e) {})
+                                .on('mouse:down', function (e) {})
+                                .on('object:scaling', (e) => {})
+                                .on('object:scaled', function (e) {})
+                                .on('text:changed', function (e) {});
 
-                $(document).trigger('canvas:ready');
-            });
+                            canvasEditions.push(canvasEdition);
+                        });
+                    }
+
+                    $(document).trigger('canvas:ready');
+                })
+                .catch((error) => {
+                    toast('error', `Error loading PDF: ${error}`);
+                    console.error('Error loading PDF:', error);
+                })
+                .finally(() => {
+                    $(document).trigger('loader:hide');
+                    toast('success', `PDF loading process completed.`);
+                    console.log('PDF loading process completed.');
+                });
         };
 
         const createFabricObject = (data, offsetX, offsetY) => {
@@ -142,45 +176,44 @@
             const commonStyles = {
                 left: offsetX,
                 top: offsetY,
+                originX: 'center',
+                originY: 'center',
+                textAlign: 'center',
                 width: data.width,
                 height: data.height,
                 selectable: true,
                 hasControls: true,
                 hasBorders: true,
+                hasRotatingPoint: false,
+                centerTransform: true,
+                lockUniScaling: true,
+                transparentCorners: false,
                 cornerRadius: 20,
                 strokeWidth: 4,
+                padding: 8,
                 stroke: '#333333',
                 fill: '#fefefe',
                 color: '#333333',
-                hasRotatingPoint: false,
-                centerTransform: true,
-                originX: 'center',
-                originY: 'center',
-                lockUniScaling: true,
-                transparentCorners: false,
-                padding: 8,
+                backgroundColor: '#fee7e7',
             };
 
             switch (data.dataType) {
-                case 'signature':
+                case 'signature_pad':
                     fabricObject = new fabric.Text('Signature', {
                         ...commonStyles,
                         fontSize: 16,
-                        fill: '#fefefe',
+                        strokeWidth: 0,
+                        color: '#ffffff',
                         backgroundColor: '#000000',
                     });
                     break;
-                case 'text':
+                default:
                     fabricObject = new fabric.IText(data.text, {
                         ...commonStyles,
                         fontSize: 16,
                         strokeWidth: 0,
                         fill: '#333333',
-                        backgroundColor: '#fefefe',
                     });
-                    break;
-                default:
-                    fabricObject = new fabric.Rect(commonStyles);
                     break;
             }
 
