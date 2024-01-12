@@ -15,6 +15,10 @@ body{
   background: #f8f9fa !important;
 }
 
+.sidebar{
+  background: #f8f9fa !important; 
+}
+
 /*
  * Sidebar
  */
@@ -345,4 +349,14 @@ body{
 
 .dropzone.dz-clickable h3{
   color: rgb(0, 85, 255);
+}
+
+#pdfViewer{
+  background-color: #f5f5fa;
+  text-align: center;
+}
+
+#pdfViewer canvas{
+  margin: 15px auto;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
 }
