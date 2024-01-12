@@ -2,7 +2,6 @@
 
 namespace NIIT\ESign;
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider as Base;
@@ -29,9 +28,7 @@ class ESignServiceProvider extends Base
 
     public function boot(): void
     {
-        if (! Blueprint::hasMacro('userStamps')) {
-            (new ESign)->registerUserStampsMacro();
-        }
+        (new ESign)->registerMacros();
 
         Route::name(self::NAME.'.')
             ->prefix(self::NAME)

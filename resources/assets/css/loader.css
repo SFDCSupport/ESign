@@ -1,0 +1,378 @@
+/*
+ * @author : Anand Pilania
+ * @mailto : Anand.Pilania@niit.com
+ * @updated : 01/02/23, 11:46 am
+ */
+
+#loader {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+    background-color: rgb(0, 0, 0, 0.1);
+    backdrop-filter: blur(1px);
+}
+
+.bouncing-bar {
+    display: flex;
+}
+
+.line {
+    height: 20px;
+    width: 4px;
+    background: #002d80;
+    margin-right: 4px;
+    border-radius: 6px;
+    animation: line-bounce 1s infinite ease-in-out;
+}
+
+.line:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.line:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.line:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.line:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+@keyframes line-bounce {
+    0% {
+        transform: scale(1);
+    }
+    20% {
+        transform: scale(1, 2);
+    }
+    40% {
+        transform: scale(1);
+    }
+}
+
+.loading-border {
+    background: rgba(0, 0, 0, 0.09);
+    display: inline-block;
+    position: relative;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+}
+
+.loading-border::before, .loading-border::after,
+.loading-border .loading-text::before,
+.loading-border .loading-text::after {
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
+    background: red;
+    content: "";
+    opacity: 0;
+    position: absolute;
+    transition: opacity 1s ease;
+}
+
+.loading-border::before, .loading-border::after {
+    height: 2px;
+    width: 0;
+}
+
+.loading-border::before {
+    right: 0;
+    top: 0;
+}
+
+.loading-border::after {
+    bottom: 0;
+    left: 0;
+}
+
+.loading-border .loading-text::before,
+.loading-border .loading-text::after {
+    height: 0;
+    width: 2px;
+}
+
+.loading-border .loading-text::before {
+    left: 0;
+    top: 0;
+}
+
+.loading-border .loading-text::after {
+    bottom: 0;
+    right: 0;
+}
+
+.loading-border:hover::before, .loading-border:hover::after,
+.loading-border:hover .loading-text::before,
+.loading-border:hover .loading-text::after {
+    opacity: 1;
+}
+
+.loading-border:hover::before {
+    -webkit-animation-name: loading-border-top;
+    animation-name: loading-border-top;
+    -webkit-animation-duration: 2.8s;
+    animation-duration: 2.8s;
+}
+
+.loading-border:hover::after {
+    -webkit-animation-name: loading-border-bottom;
+    animation-name: loading-border-bottom;
+    -webkit-animation-delay: 0.7s;
+    animation-delay: 0.7s;
+    -webkit-animation-duration: 2.8s;
+    animation-duration: 2.8s;
+}
+
+.loading-border:hover .loading-text::before {
+    -webkit-animation-name: loading-border-loading-text-left;
+    animation-name: loading-border-loading-text-left;
+    -webkit-animation-delay: 0.35s;
+    animation-delay: 0.35s;
+    -webkit-animation-duration: 2.8s;
+    animation-duration: 2.8s;
+}
+
+.loading-border:hover .loading-text::after {
+    -webkit-animation-name: loading-border-loading-text-right;
+    animation-name: loading-border-loading-text-right;
+    -webkit-animation-delay: 1.05s;
+    animation-delay: 1.05s;
+    -webkit-animation-duration: 2.8s;
+    animation-duration: 2.8s;
+}
+
+@-webkit-keyframes loading-border-top {
+    0% {
+        left: auto;
+        right: 0;
+        width: 0;
+    }
+    12.5% {
+        left: auto;
+        right: 0;
+        width: 100%;
+    }
+    12.6% {
+        left: 0;
+        right: auto;
+    }
+    50% {
+        width: 100%;
+    }
+    62.5% {
+        width: 0;
+    }
+    100% {
+        left: 0;
+        right: auto;
+        width: 0;
+    }
+}
+
+@keyframes loading-border-top {
+    0% {
+        left: auto;
+        right: 0;
+        width: 0;
+    }
+    12.5% {
+        left: auto;
+        right: 0;
+        width: 100%;
+    }
+    12.6% {
+        left: 0;
+        right: auto;
+    }
+    50% {
+        width: 100%;
+    }
+    62.5% {
+        width: 0;
+    }
+    100% {
+        left: 0;
+        right: auto;
+        width: 0;
+    }
+}
+
+@-webkit-keyframes loading-border-bottom {
+    0% {
+        right: auto;
+        left: 0;
+        width: 0;
+    }
+    12.5% {
+        right: auto;
+        left: 0;
+        width: 100%;
+    }
+    12.6% {
+        right: 0;
+        left: auto;
+    }
+    50% {
+        width: 100%;
+    }
+    62.5% {
+        width: 0;
+    }
+    100% {
+        right: 0;
+        left: auto;
+        width: 0;
+    }
+}
+
+@keyframes loading-border-bottom {
+    0% {
+        right: auto;
+        left: 0;
+        width: 0;
+    }
+    12.5% {
+        right: auto;
+        left: 0;
+        width: 100%;
+    }
+    12.6% {
+        right: 0;
+        left: auto;
+    }
+    50% {
+        width: 100%;
+    }
+    62.5% {
+        width: 0;
+    }
+    100% {
+        right: 0;
+        left: auto;
+        width: 0;
+    }
+}
+
+@-webkit-keyframes loading-border-loading-text-left {
+    0% {
+        bottom: auto;
+        top: 0;
+        height: 0;
+    }
+    12.5% {
+        bottom: auto;
+        top: 0;
+        height: 100%;
+    }
+    12.6% {
+        bottom: 0;
+        top: auto;
+    }
+    50% {
+        height: 100%;
+    }
+    62.5% {
+        height: 0;
+    }
+    100% {
+        bottom: 0;
+        top: auto;
+        height: 0;
+    }
+}
+
+@keyframes loading-border-loading-text-left {
+    0% {
+        bottom: auto;
+        top: 0;
+        height: 0;
+    }
+    12.5% {
+        bottom: auto;
+        top: 0;
+        height: 100%;
+    }
+    12.6% {
+        bottom: 0;
+        top: auto;
+    }
+    50% {
+        height: 100%;
+    }
+    62.5% {
+        height: 0;
+    }
+    100% {
+        bottom: 0;
+        top: auto;
+        height: 0;
+    }
+}
+
+@-webkit-keyframes loading-border-loading-text-right {
+    0% {
+        top: auto;
+        bottom: 0;
+        height: 0;
+    }
+    12.5% {
+        top: auto;
+        bottom: 0;
+        height: 100%;
+    }
+    12.6% {
+        top: 0;
+        bottom: auto;
+    }
+    50% {
+        height: 100%;
+    }
+    62.5% {
+        height: 0;
+    }
+    100% {
+        top: 0;
+        bottom: auto;
+        height: 0;
+    }
+}
+
+@keyframes loading-border-loading-text-right {
+    0% {
+        top: auto;
+        bottom: 0;
+        height: 0;
+    }
+    12.5% {
+        top: auto;
+        bottom: 0;
+        height: 100%;
+    }
+    12.6% {
+        top: 0;
+        bottom: auto;
+    }
+    50% {
+        height: 100%;
+    }
+    62.5% {
+        height: 0;
+    }
+    100% {
+        top: 0;
+        bottom: auto;
+        height: 0;
+    }
+}

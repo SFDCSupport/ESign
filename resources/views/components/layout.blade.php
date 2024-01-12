@@ -24,12 +24,15 @@
             href="{{ url('vendor/esign/css/fontawesome-6.3.min.css') }}"
             rel="stylesheet"
         />
+
+        <x-esign::loader />
+        @stack('css')
+
         <link
             href="{{ url('vendor/esign/css/style.css') }}"
             rel="stylesheet"
         />
 
-        @stack('css')
         @stack('headJs')
     </head>
     <body>
@@ -39,7 +42,7 @@
                 Site not functional without JavaScript enabled
             </div>
         </noscript>
-        <x-esign::loader />
+        @stack('body')
         <x-esign::partials.header />
         {{ $slot }}
         <script src="{{ url('vendor/esign/js/jquery.min.js') }}"></script>

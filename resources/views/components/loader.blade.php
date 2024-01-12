@@ -1,13 +1,23 @@
-<div id="loader" style="display: none">
-    <div class="bouncing-bar">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-    </div>
-</div>
+@prependonce('css')
+    <link
+        rel="stylesheet"
+        href="{{ url('vendor/esign/css/loader.css') }}"
+        type="text/css"
+    />
+@endprependonce
 
-@pushonce('js')
+@prependonce('body')
+    <div id="loader" style="display: none">
+        <div class="bouncing-bar">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+@endprependonce
+
+@prependonce('js')
     <script>
         const loader = (function () {
             const ele = function () {
@@ -39,4 +49,4 @@
             $(document).on('loader:toggle', loader.toggle);
         });
     </script>
-@endpushonce
+@endprependonce

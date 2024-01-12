@@ -57,6 +57,8 @@
             global: true,
             beforeSend: function (x) {},
             complete: function (x, s) {
+                $(document).trigger('loader:hide');
+
                 if (x.responseJSON) {
                     if (
                         (errors = x.responseJSON.errors ?? undefined) !==
