@@ -17,13 +17,14 @@
                             <x-esign::partials.button
                                 id="uploadDocument"
                                 :value="__('esign::label.upload')"
-                                class="btn-outline-secondary"
+                                icon="upload"
+                                class="btn-secondary"
                             />
                         </div>
                         <x-esign::partials.button
                             :value="__('esign::label.create')"
                             icon="plus"
-                            class="btn-outline-secondary"
+                            class="btn-primary"
                             id="createDocumentBtn"
                         />
                     </div>
