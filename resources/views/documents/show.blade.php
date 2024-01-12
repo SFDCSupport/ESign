@@ -98,7 +98,11 @@
                             @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
                                 @php([$label, $icon] = $data)
 
-                                <a href="" class="icons-box-btn bg-white">
+                                <a
+                                    href="javascript: void(0);"
+                                    class="draggable icons-box-btn bg-white"
+                                    data-type="{{ $type }}"
+                                >
                                     <div
                                         class="flex items-center flex-col px-2 py-2"
                                     >

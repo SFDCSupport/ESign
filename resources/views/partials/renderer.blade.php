@@ -80,98 +80,45 @@
                             },
                         );
 
-                        $(`#canvas-container-${pageIndex}`).on('drop', (e) => {
-                            console.log('e');
-                        });
+                        $(`#canvas-container-${pageIndex}`).on(
+                            'drop',
+                            function (e) {
+                                e.preventDefault();
+
+                                const offsetX =
+                                    e.originalEvent.clientX -
+                                    e.currentTarget.offsetLeft;
+                                const offsetY =
+                                    e.originalEvent.clientY -
+                                    e.currentTarget.offsetTop;
+
+                                const draggedData = JSON.parse(
+                                    e.originalEvent.dataTransfer.getData(
+                                        'text/plain',
+                                    ),
+                                );
+                                const dataType = draggedData.dataType;
+                                const text = draggedData.text;
+                                const height = draggedData.height || 50;
+                                const width = draggedData.width || 100;
+
+                                const fabricObject = createFabricObject(
+                                    { dataType, text, height, width },
+                                    offsetX,
+                                    offsetY,
+                                );
+
+                                canvasEdition.add(fabricObject);
+                            },
+                        );
 
                         canvasEdition
-                            .on('mouse:move', function (e) {
-                                activeCanvas = this;
-                                activeCanvasPointer = e.pointer;
-                            })
-                            .on('mouse:down:before', function (e) {
-                                currentCursor = this.defaultCursor;
-                            })
-                            .on('mouse:down', function (e) {
-                                if (e.target) {
-                                    this.defaultCursor = 'default';
-
-                                    return;
-                                }
-
-                                const selectedInput = $(
-                                    'input[name="svg-to-add"]:checked',
-                                );
-
-                                if (
-                                    currentCursor === 'default' &&
-                                    selectedInput.length > 0
-                                ) {
-                                    this.defaultCursor = 'copy';
-                                }
-
-                                if (currentCursor !== 'copy') {
-                                    return;
-                                }
-
-                                if (selectedInput.length <= 0) {
-                                    return;
-                                }
-
-                                createAndAddSVGToCanvas(
-                                    this,
-                                    selectedInput.val(),
-                                    e.pointer.x,
-                                    e.pointer.y,
-                                    selectedInput.data().length,
-                                );
-
-                                if (addLock) {
-                                    return;
-                                }
-
-                                selectedInput
-                                    .prop('checked', true)
-                                    .trigger('change');
-                            })
-                            .on('object:scaling', (e) => {
-                                if (e.transform.action === 'scaleX') {
-                                    e.target.scaleY = e.target.scaleX;
-                                }
-                                if (e.transform.action === 'scaleY') {
-                                    e.target.scaleX = e.target.scaleY;
-                                }
-                            })
-                            .on('object:scaled', function (e) {
-                                if (e.target instanceof fabric.IText) {
-                                    currentTextScale = e.target.scaleX;
-                                    return;
-                                }
-
-                                const item = getSvgItem(e.target.svgOrigin);
-
-                                if (item) {
-                                    item.scale =
-                                        (e.target.width * e.target.scaleX) /
-                                        e.target.canvas.width;
-                                }
-                            })
-                            .on('text:changed', function (e) {
-                                if ((!e.target) instanceof fabric.IText) {
-                                    return;
-                                }
-
-                                const textLinesMaxWidth =
-                                    e.target.textLines.reduce(
-                                        (max, _, i) =>
-                                            Math.max(
-                                                max,
-                                                e.target.getLineWidth(i),
-                                            ),
-                                        0,
-                                    );
-                                e.target.set({ width: textLinesMaxWidth });
-                            });
+                            .on('mouse:move', function (e) {})
+                            .on('mouse:down:before', function (e) {})
+                            .on('mouse:down', function (e) {})
+                            .on('object:scaling', (e) => {})
+                            .on('object:scaled', function (e) {})
+                            .on('text:changed', function (e) {});
 
                         canvasEditions.push(canvasEdition);
                     });
@@ -181,87 +128,63 @@
             });
         };
 
-        const getSvgItem = (svg) => {
-            for (let i in svgCollections) {
-                const svgItem = svgCollections[i];
+        const createFabricObject = (data, offsetX, offsetY) => {
+            let fabricObject;
+            const deleteIcon =
+                "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Ebene_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='595.275px' height='595.275px' viewBox='200 215 230 470' xml:space='preserve'%3E%3Ccircle style='fill:%23F44336;' cx='299.76' cy='439.067' r='218.516'/%3E%3Cg%3E%3Crect x='267.162' y='307.978' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -222.6202 340.6915)' style='fill:white;' width='65.545' height='262.18'/%3E%3Crect x='266.988' y='308.153' transform='matrix(0.7071 0.7071 -0.7071 0.7071 398.3889 -83.3116)' style='fill:white;' width='65.544' height='262.179'/%3E%3C/g%3E%3C/svg%3E";
+            const img = document.createElement('img');
+            img.src = deleteIcon;
 
-                if (svgItem.svg === svg) {
-                    return svgItem;
-                }
+            fabric.Object.prototype.transparentCorners = false;
+            fabric.Object.prototype.cornerColor = 'blue';
+            fabric.Object.prototype.cornerStyle = 'circle';
+
+            const commonStyles = {
+                left: offsetX,
+                top: offsetY,
+                width: data.width,
+                height: data.height,
+                selectable: true,
+                hasControls: true,
+                hasBorders: true,
+                cornerRadius: 20,
+                strokeWidth: 4,
+                stroke: '#333333',
+                fill: '#fefefe',
+                color: '#333333',
+                hasRotatingPoint: false,
+                centerTransform: true,
+                originX: 'center',
+                originY: 'center',
+                lockUniScaling: true,
+                transparentCorners: false,
+                padding: 8,
+            };
+
+            switch (data.dataType) {
+                case 'signature':
+                    fabricObject = new fabric.Text('Signature', {
+                        ...commonStyles,
+                        fontSize: 16,
+                        fill: '#fefefe',
+                        backgroundColor: '#000000',
+                    });
+                    break;
+                case 'text':
+                    fabricObject = new fabric.IText(data.text, {
+                        ...commonStyles,
+                        fontSize: 16,
+                        strokeWidth: 0,
+                        fill: '#333333',
+                        backgroundColor: '#fefefe',
+                    });
+                    break;
+                default:
+                    fabricObject = new fabric.Rect(commonStyles);
+                    break;
             }
 
-            return null;
-        };
-
-        const addObjectInCanvas = (canvas, item) => {
-            item.on('selected', function (event) {
-                $(
-                    '#svg_object_actions,#svg_selected_container, #btn_svn_select',
-                ).removeClass('d-none');
-            });
-
-            item.on('deselected', function (event) {
-                if ($('input[name="svg_to_add"]:checked').length > 0) {
-                    $('#svg_selected_container').removeClass('d-none');
-                } else {
-                    $('btn_svn_select').removeClass('d-none');
-                }
-                $('svg_object_actions').addClass('d-none');
-            });
-
-            return canvas.add(item);
-        };
-
-        const createAndAddSVGToCanvas = (canvas, item, x, y, height = null) => {
-            $('#saveBtn').removeAttr('disabled').prop('disabled', false);
-
-            hasModifications = true;
-
-            height = height || 100;
-
-            if (item === 'text') {
-                let textbox = new fabric.Textbox('Text to modify', {
-                    left: x,
-                    top: y - 20,
-                    fontSize: 20,
-                    direction: direction,
-                    fontFamily: 'Monospace',
-                });
-
-                addObjectInCanvas(canvas, textbox).setActiveObject(textbox);
-
-                textbox.keysMap[13] = 'exitEditing';
-                textbox.lockScalingFlip = true;
-                textbox.scaleX = currentTextScale;
-                textbox.scaleY = currentTextScale;
-                textbox.enterEditing();
-                textbox.selectAll();
-
-                return;
-            }
-
-            fabric.loadSVGFromURL(item, function (objects, options) {
-                let svg = fabric.util.groupSVGElements(objects, options);
-
-                svg.svgOrigin = item;
-                svg.lockScalingFlip = true;
-                svg.scaleToHeight(height);
-
-                if (svg.getScaledWidth() > 200) {
-                    svg.scaleToWidth(200);
-                }
-
-                let svgItem = getSvgItem(item);
-
-                if (svgItem && svgItem.scale) {
-                    svg.scaleToWidth(canvas.width * svgItem.scale);
-                }
-
-                svg.top = y - svg.getScaledHeight() / 2;
-                svg.left = x - svg.getScaledWidth() / 2;
-
-                addObjectInCanvas(canvas, svg);
-            });
+            return fabricObject;
         };
 
         const renderElements = (elements) => {};
@@ -272,6 +195,27 @@
 
             if (url) {
                 loadPDF(url, pdfViewer);
+            }
+
+            if (!getSignerId()) {
+                $('.draggable').on('dragstart', function (e) {
+                    const dataType = $(this).data('type');
+                    const text = $(this).find('.text-xs').text();
+                    const height = $(this).data('height') || 50;
+                    const width = $(this).data('width') || 100;
+
+                    const data = {
+                        dataType,
+                        text,
+                        height,
+                        width,
+                    };
+
+                    e.originalEvent.dataTransfer.setData(
+                        'text/plain',
+                        JSON.stringify(data),
+                    );
+                });
             }
         });
     </script>
