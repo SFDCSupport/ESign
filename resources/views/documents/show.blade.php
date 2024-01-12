@@ -1,38 +1,38 @@
 <x-esign::layout :title="$document->title" :documentId="$document->id">
-  
-  <section class="header-bottom-section">
-    <div class="container-fluid">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0">
-            <h4 class="h4">{{ $document->title }}</h4>
-            <div class="btn-toolbar mb-2 mb-md-0">
-                <div class="btn-group me-2">
+    <section class="header-bottom-section">
+        <div class="container-fluid">
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
+            >
+                <h4 class="h4">{{ $document->title }}</h4>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button
+                            type="button"
+                            class="btn btn-outline-dark"
+                            data-bs-toggle="modal"
+                            data-bs-target="#sendRecipientModal"
+                        >
+                            <i class="fas fa-user-plus"></i>
+                            {{ __('esign::label.send') }}
+                        </button>
+                    </div>
                     <button
+                        id="saveBtn"
                         type="button"
-                        class="btn btn-outline-dark"
-                        data-bs-toggle="modal"
-                        data-bs-target="#sendRecipientModal"
+                        class="btn btn-primary d-flex align-items-center gap-1"
                     >
-                        <i class="fas fa-user-plus"></i>
-                        {{ __('esign::label.send') }}
+                        <i class="fas fa-save"></i>
+                        {{ __('esign::label.save') }}
                     </button>
                 </div>
-                <button
-                    type="button"
-                    class="btn btn-primary d-flex align-items-center gap-1"
-                >
-                    <i class="fas fa-save"></i>
-                    {{ __('esign::label.save') }}
-                </button>
             </div>
         </div>
-    </div>
-  </section>
+    </section>
 
     <div class="container-fluid">
         <div class="row">
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                
-
                 @if ($document->document?->exists())
                     <div
                         id="pdfViewer"
