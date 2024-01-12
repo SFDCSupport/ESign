@@ -25,7 +25,7 @@ class SigningCompletedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Order Shipped',
+            subject: 'Signing Completed',
             using: [
                 function (Email $message) {
                     // ...

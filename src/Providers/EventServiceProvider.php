@@ -3,12 +3,18 @@
 namespace NIIT\ESign\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as Base;
-use NIIT\ESign\Events\SendDocumentLink;
+use NIIT\ESign\Events\DocumentStatusChanged;
+use NIIT\ESign\Events\ReadStatusChanged;
+use NIIT\ESign\Events\SendStatusChanged;
 use NIIT\ESign\Events\SigningProcessCompleted;
 use NIIT\ESign\Events\SigningProcessStarted;
-use NIIT\ESign\Listeners\SendSigningLink;
+use NIIT\ESign\Events\SigningStatusChanged;
+use NIIT\ESign\Listeners\DocumentStatusListener;
+use NIIT\ESign\Listeners\ReadStatusListener;
+use NIIT\ESign\Listeners\SendStatusListener;
 use NIIT\ESign\Listeners\SigningCompletedListener;
 use NIIT\ESign\Listeners\SigningStartedListener;
+use NIIT\ESign\Listeners\SigningStatusListener;
 
 class EventServiceProvider extends Base
 {
@@ -16,8 +22,17 @@ class EventServiceProvider extends Base
         SigningProcessStarted::class => [
             SigningStartedListener::class,
         ],
-        SendDocumentLink::class => [
-            SendSigningLink::class,
+        DocumentStatusChanged::class => [
+            DocumentStatusListener::class,
+        ],
+        SendStatusChanged::class => [
+            SendStatusListener::class,
+        ],
+        ReadStatusChanged::class => [
+            ReadStatusListener::class,
+        ],
+        SigningStatusChanged::class => [
+            SigningStatusListener::class,
         ],
         SigningProcessCompleted::class => [
             SigningCompletedListener::class,

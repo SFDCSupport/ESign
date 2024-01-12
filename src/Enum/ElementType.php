@@ -11,7 +11,7 @@ enum ElementType: string
     case SIGNATURE_PAD = 'signature_pad';
     case TEXT = 'text';
     case DATE = 'date';
-    case TIMESTAMP = 'timestamp';
+    case EMAIL = 'email';
     case TEXTAREA = 'textarea';
 
     public static function withIcons(bool $withText = false): array
@@ -36,7 +36,7 @@ enum ElementType: string
             'signature_pad' => 'fa-solid fa-signature',
             'text' => 'fa-solid fa-font',
             'date' => 'fa-regular fa-calendar',
-            'timestamp' => 'fa-solid fa-business-time',
+            'email' => 'fa-solid fa-mail',
             'textarea' => '',
         };
     }

@@ -9,6 +9,7 @@ enum DocumentStatus: string
     use EnumSupport;
 
     case DRAFT = 'draft';
+    case PENDING = 'pending';
     case ACTIVE = 'active';
     case INACTIVE = 'in-active';
     case ARCHIVED = 'archived';

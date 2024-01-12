@@ -18,27 +18,29 @@
 <div class="container pt-3 pb-2">
     <div class="row">
         <div class="col-sm-12">
-        <div
-            id="{{ $id }}"
-            class="dropzone"
-            data-page="{{ $page }}"
-            data-multiple="{{ $multiple }}"
-            data-max-files="{{ $maxFiles }}"
-            data-max-size="{{ $maxFileSize }}"
-            data-allowed="{{ $allowed }}"
-        >
-            <div class="dz-default dz-message">
-                <h3>{{ $title ?? 'Drop files here or click to upload.' }}</h3>
-                <p class="text-muted">
-                    {{ $desc ?? 'Any related files you can upload' }}
-                    <br />
-                    <small>
-                        One file can be max {{ $maxFileSize / 1000 }} MB
-                    </small>
-                </p>
+            <div
+                id="{{ $id }}"
+                class="dropzone"
+                data-page="{{ $page }}"
+                data-multiple="{{ $multiple }}"
+                data-max-files="{{ $maxFiles }}"
+                data-max-size="{{ $maxFileSize }}"
+                data-allowed="{{ $allowed }}"
+            >
+                <div class="dz-default dz-message">
+                    <h3>
+                        {{ $title ?? 'Drop files here or click to upload.' }}
+                    </h3>
+                    <p class="text-muted">
+                        {{ $desc ?? 'Any related files you can upload' }}
+                        <br />
+                        <small>
+                            One file can be max {{ $maxFileSize / 1000 }} MB
+                        </small>
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 </div>
 

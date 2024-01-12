@@ -7,7 +7,9 @@ use NIIT\ESign\Enum\AttachmentType;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\ElementType;
 use NIIT\ESign\Enum\NotificationSequence;
-use NIIT\ESign\Enum\SignerStatus;
+use NIIT\ESign\Enum\ReadStatus;
+use NIIT\ESign\Enum\SendStatus;
+use NIIT\ESign\Enum\SigningStatus;
 
 return new class extends Migration
 {
@@ -63,7 +65,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('document_id')->constrained('e_documents');
             $table->string('email')->nullable();
-            $table->enum('status', SignerStatus::values())->nullable();
+            $table->enum('signing_status', SigningStatus::values())->default(SigningStatus::NOT_SIGNED);
+            $table->enum('read_status', ReadStatus::values())->default(ReadStatus::NOT_OPENED);
+            $table->enum('send_status', SendStatus::values())->default(SendStatus::NOT_SENT);
             $table->integer('priority')->default(0);
             $table->timestamps();
             $table->softDeletes();

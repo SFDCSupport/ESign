@@ -4,9 +4,11 @@ namespace NIIT\ESign\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use NIIT\ESign\Events\DocumentOpenedBySigner;
-use NIIT\ESign\Events\DocumentSignedBySigner;
-use NIIT\ESign\Events\MailReceivedBySigner;
+use NIIT\ESign\Enum\ReadStatus;
+use NIIT\ESign\Enum\SigningStatus;
+use NIIT\ESign\Events\ReadStatusChanged;
+use NIIT\ESign\Events\SigningProcessStarted;
+use NIIT\ESign\Events\SigningStatusChanged;
 use NIIT\ESign\Http\Requests\SigningRequest;
 use NIIT\ESign\Models\DocumentSigner;
 
@@ -14,14 +16,14 @@ class SigningController extends Controller
 {
     public function index(Request $request, DocumentSigner $signer)
     {
-        DocumentOpenedBySigner::dispatch($signer);
+        SigningProcessStarted::dispatch($signer);
 
         return view('esign::index');
     }
 
     public function store(SigningRequest $request, DocumentSigner $signer)
     {
-        DocumentSignedBySigner::dispatch($signer);
+        SigningStatusChanged::dispatch($signer, SigningStatus::SIGNED);
 
         return response(null, Response::HTTP_NO_CONTENT);
     }
@@ -38,7 +40,7 @@ class SigningController extends Controller
             ->header('Last-Modified', 'Wed, 11 Jan 2006 12:59:00 GMT')
             ->header('Pragma', 'no-cache');
 
-        MailReceivedBySigner::dispatch($signer);
+        ReadStatusChanged::dispatch($signer, ReadStatus::OPENED);
 
         return $response;
     }
