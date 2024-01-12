@@ -195,11 +195,11 @@ body{
 
 .send-recipients-sec{
   border: 1px solid #b6c7d6;
-  background-color: #fff;
-  padding: 40px;
-  max-width: 600px;
-  margin: 10px auto;
-  border-radius: 3px;
+  background-color: #f6f9fc;
+  padding: 50px 20px;
+  max-width: 100%;
+  margin: 5px auto;
+  border-radius: 5px;
   box-shadow: 0 1px 5px rgba(33,51,67,.12);
   position: relative;
 }

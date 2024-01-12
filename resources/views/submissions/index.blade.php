@@ -69,9 +69,9 @@
     </div>
 
     @if ($document->signers->count() <= 0)
-        <section class="grey-bg-section border-top">
-            <div class="send-recipients-sec mt-5">
-                <div class="text-center max-w-lg">
+        <section class="container">
+            <div class="send-recipients-sec mt-0">
+                <div class="text-center">
                     {!! __('esign::label.no_submissions_add_recipients') !!}
 
                     <div class="Submissions-btns-grp">
