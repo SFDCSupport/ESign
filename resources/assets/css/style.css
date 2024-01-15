@@ -344,6 +344,18 @@ body{
   box-shadow: 0 1px 5px rgba(33,51,67,.12);
 }
 
+.nav.nav-tabs .nav-link.active{
+  color: rgb(0, 85, 255) !important;
+  border-top: 4px solid #05f;
+  border-radius: 5px 5px 0px 0px;
+}
+
+.nav.nav-tabs .nav-link{
+  color: #333 !important;
+  border-top: 4px;
+  padding: 17px;
+}
+
 .dropzone.dz-clickable h3{
   color: rgb(0, 85, 255);
 }
@@ -498,3 +510,17 @@ body{
   .add-party:hover{
     border: 1px dashed #cfcfcf;
   }
+
+  .dark-bg-card {
+    background: #eeeeee !important;
+}
+
+.bodysubject{
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+canvas#signature-pad{
+  max-width: 100%;
+  width: 100%;
+}
