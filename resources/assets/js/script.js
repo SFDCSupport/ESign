@@ -35,20 +35,3 @@ $(document).on('dragleave', function(e) {
     $("#dropzone").hide();
   }, 25);
 });
-
-var sel = $('.sel'),
-    txt = $('.txt'),
-    options = $('.options');
-
-sel.click(function (e) {
-    e.stopPropagation();
-    options.show();
-});
-
-
-options.children('div').click(function (e) {
-    e.stopPropagation();
-    txt.text($(this).text());
-    $(this).addClass('selected').siblings('div').removeClass('selected');
-    options.hide();
-});
