@@ -7,7 +7,6 @@
         const pdfRenderTasks = [];
         const pdfPages = [];
         const canvasEditions = [];
-        const signingModal = $('#signing_modal');
 
         const loadPDF = (url, viewer) => {
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
@@ -203,9 +202,10 @@
                                                 break;
                                         }
 
-                                        signingModal
-                                            .attr('type', type)
-                                            .modal('show');
+                                        $(document).trigger(
+                                            'signing-modal:show',
+                                            type,
+                                        );
                                     }
                                 })
                                 .on('object:scaling', function (e) {})

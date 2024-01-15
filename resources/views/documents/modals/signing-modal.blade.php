@@ -59,6 +59,7 @@
                 <label>
                     <input
                         type="text"
+                        id="typedSignature"
                         class="form-control form-control-lg"
                         placeholder="{{ __('esign::label.my_signature') }}"
                     />
@@ -85,7 +86,9 @@
 @pushonce('js')
     <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?3.0.0-beta.3"></script>
     <script>
+        const signingModal = $('#signing_modal');
         let signaturePad = null;
+
         const createSignaturePad = function () {
             signaturePad = new SignaturePad(
                 document.getElementById('signature-pad'),
@@ -109,10 +112,30 @@
         };
 
         $(() => {
-            $(document).on('click', '#signature-pad-reset', function (e) {
-                signaturePad.clear();
-                e.preventDefault();
-            });
+            $(document)
+                .on('click', '#signature-pad-reset', function (e) {
+                    signaturePad.clear();
+                    e.preventDefault();
+                })
+                .on('signing-modal:clear:signature-pad', () => {
+                    $('#signature-pad-reset').trigger('click');
+                })
+                .on('signing-modal:show', function (e, type = null) {
+                    signingModal.data('type', type).modal('show');
+                })
+                .on('signing-modal:hide', () => {
+                    signingModal.modal('hide');
+                })
+                .on('hidden.bs.modal', '#signing_modal', () => {
+                    $(document).trigger('signing-modal:clear:signature-pad');
+                    signingModal.removeAttr('data-type');
+                    signingModal.find('input#typedSignature').val('');
+                    signingModal
+                        .find('button.nav-link')
+                        .removeAttr('disabled')
+                        .prop('disabled', false);
+                    signingModal.find('button.nav-link:first').trigger('click');
+                });
 
             createSignaturePad();
         });
