@@ -204,7 +204,10 @@
 
                                         $(document).trigger(
                                             'signing-modal:show',
-                                            type,
+                                            {
+                                                type: type,
+                                                obj: e.target,
+                                            },
                                         );
                                     }
                                 })
@@ -521,6 +524,31 @@
                     );
                 });
             }
+
+            $(document).on('pad-to-fabric', (e, data) => {
+                let newObj;
+                const oldObj = data.obj;
+                const canvas = oldObj.canvas;
+
+                canvas.remove(oldObj);
+
+                if (data.type === 'signature_pad') {
+                    fabric.Image.fromURL(
+                        svgToDataUrl(trimSvgWhitespace(data.svg)),
+                        (newImg) => {
+                            newImg.set({
+                                left: oldObj.left,
+                                top: oldObj.top,
+                                width: oldObj.width,
+                                height: oldObj.height,
+                            });
+
+                            canvas.add(newImg);
+                            canvas.renderAll();
+                        },
+                    );
+                }
+            });
         });
     </script>
 @endpushonce

@@ -76,7 +76,7 @@
         >
             {{ __('esign::label.close') }}
         </button>
-        <button type="button" class="btn btn-primary">
+        <button type="button" class="btn btn-primary" id="addSigningBtn">
             <i class="fa fa-check-circle"></i>
             {{ __('esign::label.create') }}
         </button>
@@ -84,10 +84,11 @@
 </x-esign::modal>
 
 @pushonce('js')
-    <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?3.0.0-beta.3"></script>
+    <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?4.1.7"></script>
     <script>
         const signingModal = $('#signing_modal');
         let signaturePad = null;
+        let signingObj = null;
 
         const createSignaturePad = function () {
             signaturePad = new SignaturePad(
@@ -96,17 +97,6 @@
                     penColor: 'rgb(0, 0, 0)',
                     minWidth: 1,
                     maxWidth: 2,
-                    onEnd: function () {
-                        const file = new File(
-                            [dataURLtoBlob(signaturePad.toDataURL())],
-                            'draw.png',
-                            {
-                                type: 'image/png',
-                            },
-                        );
-                        let data = new FormData();
-                        data.append('file', file);
-                    },
                 },
             );
         };
@@ -120,13 +110,20 @@
                 .on('signing-modal:clear:signature-pad', () => {
                     $('#signature-pad-reset').trigger('click');
                 })
-                .on('signing-modal:show', function (e, type = null) {
-                    signingModal.data('type', type).modal('show');
+                .on('signing-modal:show', function (e, data) {
+                    if (!data.type) {
+                        return;
+                    }
+
+                    signingObj = data.obj;
+
+                    signingModal.attr('data-type', data.type).modal('show');
                 })
                 .on('signing-modal:hide', () => {
                     signingModal.modal('hide');
                 })
                 .on('hidden.bs.modal', '#signing_modal', () => {
+                    signingObj = null;
                     $(document).trigger('signing-modal:clear:signature-pad');
                     signingModal.removeAttr('data-type');
                     signingModal.find('input#typedSignature').val('');
@@ -135,6 +132,25 @@
                         .removeAttr('disabled')
                         .prop('disabled', false);
                     signingModal.find('button.nav-link:first').trigger('click');
+                })
+                .on('click', '#addSigningBtn', (e) => {
+                    const type = signingModal.data('type');
+
+                    if (blank(type) || blank(signingObj)) {
+                        toast('error', 'Something went wrong!');
+
+                        return;
+                    }
+
+                    if (type === 'signature_pad') {
+                        $(document).trigger('pad-to-fabric', {
+                            type: type,
+                            obj: signingObj,
+                            svg: signaturePad.toSVG(),
+                        });
+                    }
+
+                    $(document).trigger('signing-modal:hide');
                 });
 
             createSignaturePad();
