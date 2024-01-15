@@ -80,8 +80,8 @@ return new class extends Migration
             $table->foreignUuid('signer_id')->constrained('e_document_signers');
             $table->enum('type', ElementType::values());
             $table->integer('on_page');
-            $table->integer('x_axis');
-            $table->integer('y_axis');
+            $table->integer('offset_x');
+            $table->integer('offset_y');
             $table->integer('width');
             $table->integer('height');
             $table->timestamps();
