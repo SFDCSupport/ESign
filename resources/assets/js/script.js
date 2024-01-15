@@ -35,3 +35,27 @@ $(document).on('dragleave', function(e) {
     $("#dropzone").hide();
   }, 25);
 });
+
+
+$(document).ready(function() {
+ $document= $(document);
+  var sel = $('.sel'),
+    txt = $('.txt'),
+    options = $('.options');
+
+    $(document).on('click', '.txt', function (e) {
+    console.log('jjj')
+    e.stopPropagation();
+    options.toggleClass('hide');
+  });
+
+
+options.children('div').click(function (e) {
+    e.stopPropagation();
+    txt.text($(this).text());
+    $(this).addClass('selected').siblings('div').removeClass('selected');
+    options.hide();
+});
+
+});
+

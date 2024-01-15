@@ -69,14 +69,16 @@
                     <div
                         class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto"
                     >
-                    <div class="form-group">
-                        <select class="form-select mb-2" aria-label="Default select example">
-                          <option selected>First Party</option>
-                          <option value="1">Second Party</option>
-                          <option value="2">Third Party</option>
-                        </select>
-                      </div>
-                      
+                    <div class="sel">
+                        <div class='txt'>First Party </div>
+                        <div class="options hide ">
+                            <div class="option-party first-party-option" value=""><span class="bullet"></span> First Party</div>
+                            <div class="option-party second-party-option" value=""><span class="bullet"></span> Second Party</div>
+                            <div class="option-party third-party-option" value=""><span class="bullet"></span> Third Party</div>
+                        </div>
+                    </div>
+
+                    
                         <div class="icons-box">
                             @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
                                 @php([$label, $icon] = $data)

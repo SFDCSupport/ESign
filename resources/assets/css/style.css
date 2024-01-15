@@ -398,3 +398,7 @@ body{
 .btn{
   border-radius: 0.175rem !important;
 }
+
+.toast{
+  margin-bottom: .5rem !important;
+}
