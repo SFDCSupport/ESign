@@ -69,16 +69,33 @@
                     <div
                         class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto"
                     >
-                    <div class="sel">
-                        <div class='txt'>First Party </div>
-                        <div class="options hide ">
-                            <div class="option-party first-party-option" value=""><span class="bullet"></span> First Party</div>
-                            <div class="option-party second-party-option" value=""><span class="bullet"></span> Second Party</div>
-                            <div class="option-party third-party-option" value=""><span class="bullet"></span> Third Party</div>
-                        </div>
+                    <div class="select-party">
+                        <div class="dropdown_c dropdown_click">
+                            <div class="selecteddropdown">
+                             <span>First Party</span>
+                             <a href="#" class="add-party"><i class="fa fa-plus"></i></a>
+                            </div>
+                            <div class="drop-content">
+                              <ul>
+                                <li>
+                                    <a href="#" class="" value="">First Party </a> 
+                                    <a href="#" value="" class="deleted-party"><i class="fa fa-trash"></i></a>
+                                </li>
+                                <li>
+                                    <a href="#" class="" value="">Second Party</a>
+                                    <a href="#" value="" class="deleted-party"><i class="fa fa-trash"></i></a>
+                                </li>
+                                <li>
+                                    <a href="#" class="" value="">Third Party</a>
+                                    <a href="#" value="" class="deleted-party"><i class="fa fa-trash"></i></a>
+                                </li>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
                     </div>
 
-                    
+
                         <div class="icons-box">
                             @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
                                 @php([$label, $icon] = $data)
@@ -114,4 +131,6 @@
             $(() => {});
         </script>
     @endpushonce
+
+   
 </x-esign::layout>

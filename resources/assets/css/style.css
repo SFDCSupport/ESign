@@ -63,7 +63,7 @@ body{
 .document-template-cards{
   border: 0px;
   padding: 10px;
-  border-radius: 4px;
+  border-radius: 14px;
   box-shadow: 0 1px 5px rgba(33,51,67,.12);
   position: relative;
   margin-bottom: 15px;
@@ -74,12 +74,12 @@ body{
 }
 
 .document-template-cards a{
-  color: #4c4e53;
+  color:#2e2e2e;
   text-decoration: none;
 }
 
 .grey-bg-section{
-  background-color: #f6f9fc;
+  background-color: #efefef;
   padding: 20px 0 50px;
 }
 
@@ -242,40 +242,7 @@ body{
   left: auto;
 }
 
-.sel {
-  width: 100%;
-  min-height: 40px;
-  box-sizing: border-box;
-  cursor: pointer;
-  margin-bottom: 10px;
-}
-.sel .txt {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background: #fff;
-}
-.sel .selected {
-  background-color: #31A9B9;
-}
-.hide {
-  display: none;
-}
-.sel .options {
-  background: #fff;
-  padding: 7px;
-  border: 1px solid #ddd;
-  box-shadow: 0 1px 5px rgba(33,51,67,.12);
-  border-radius: 4px;
-}
-.sel .options div {
-  transition: all 0.2s ease-out;
-  padding: 10px;
-  border-radius: 100px;
-}
-.sel .options div:hover {
-  background-color: #ddd;
-}
+
 
 .add-part-btn{
   max-width: 260px;
@@ -287,24 +254,6 @@ body{
   max-width: 20px;
 }
 
-.sel .option-party .bullet{
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 100px;
-}
-
-.first-party-option .bullet{
-  background-color: #f00;
-}
-
-.second-party-option .bullet{
-  background-color: #0ea5e9;
-}
-
-.third-party-option .bullet{
-  background-color: #10b981 ;
-}
 
 .send-btn-light{
   color: #0d6efd !important;
@@ -402,3 +351,128 @@ body{
 .toast{
   margin-bottom: .5rem !important;
 }
+
+.toast-danger{
+  background-color: #e84c3d;
+  color: #fff;
+  border: 1px solid #e84c3d;
+}
+
+.toast-warning{
+  background-color: #f39c11;
+  color: #fff;
+  border: 1px solid #f39c11;
+}
+
+.toast-info{
+  background-color: #3598db;
+  color: #fff;
+  border: 1px solid #3598db;
+  display: none !important;
+}
+
+.toast-success{
+  background-color: #00bc8c;
+  color: #fff;
+  border: 1px solid #00bc8c;
+}
+
+.dropdown_c{
+  position:relative;
+  margin:10px 0px;
+  z-index: 2;
+  }
+  
+   .selecteddropdown span{
+    display:flex; 
+    background: #fff;
+    width:100%;
+    border-radius:5px;
+    color:#131313;
+    border: 1px solid #ddd;
+
+  }
+  
+   .selecteddropdown  span{
+    cursor:pointer; 
+    display:flex; 
+    padding:10px 15px;
+    margin:0;
+  }
+  
+   .drop-content{
+    position:relative; 
+  }
+  
+   .drop-content ul{
+    position: absolute;
+    left: 0px;
+    top: -3px;
+    display: none;
+    list-style: none;
+    width: 100%;
+    background: #fff;
+    border-top: 0;
+    border-radius: 0 0 5px 5px;
+    border: 1px solid #ddd;
+    padding: 5px !important;
+    box-shadow: 0 1px 5px rgba(33,51,67,.12);
+  }
+  
+  .drop-content ul li{
+    position: relative;
+    border-radius: 20px;
+  }
+
+   .drop-content ul li a{
+    display: flex;
+    padding: 8px 17px;
+    text-decoration: none;
+    color: #131313;
+    text-decoration: none;
+    cursor: pointer;
+    
+  }
+  
+   .drop-content ul li:hover{
+      background: #e7e7e7;
+  }
+  
+  .deleted-party{
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    padding: 4px !important;
+    background: transparent !important;
+    margin-top: -12px;
+    font-size: .8rem;
+    color: #e30b0b !important;
+    display: none;
+    opacity: 0;
+  }
+
+  .drop-content ul li:hover .deleted-party{
+     display: block;
+     opacity: 1;
+  }
+
+  .add-party{
+    position: absolute;
+    right: 7px;
+    top: 50%;
+    padding: 3px 4px 4px 4px !important;
+    background: transparent !important;
+    margin-top: -14px;
+    font-size: .9rem;
+    color: #333 !important;
+    width: 30px;
+    height: 30px;
+    border-radius: 2px;
+    text-align: center;
+    border: 1px dashed #fff;
+   
+  }
+
+  .add-party:hover{
+    border: 1px dashed #cfcfcf;
+  }

@@ -50,6 +50,7 @@
         <script src="{{ url('vendor/esign/js/bootstrap.min.js') }}"></script>
         <script src="{{ url('vendor/esign/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ url('vendor/esign/js/jquery.validate.js') }}"></script>
+        <script src="{{ url('vendor/esign/js/script.js') }}"></script>
         <x-esign::bootbox />
         <x-esign::notify />
         @include('esign::partials.common-scripts')
