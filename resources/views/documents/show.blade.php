@@ -33,7 +33,26 @@
 
     <div class="container-fluid">
         <div class="row">
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+            <div class="col-sm-2">
+                <div class="add-doc-sec">
+          
+                  <div class="edit-docs-file">
+                    <img src="">
+                    <a href="#" class="btn btn-sm btn-dark replace-doc-btn">Replace</a>
+                    <a href="#" class="edit-docs-btn"><i class="fa fa-pen"></i></a>
+                  </div>
+          
+                  <div class="flex pb-2 pt-1.5">
+                    <div class="edit-doc-name">Partner Portal Guide.pdf 
+                      <a href="#" class="edit-doc-text"><i class="fa fa-pen"></i></a>
+                    </div>
+                  </div>
+        
+                </div>
+              </div>
+
+            <main class="col-md-7 ms-sm-auto col-lg-7 px-md-4">
                 @if ($document->document?->exists())
                     <div
                         id="pdfViewer"
@@ -45,9 +64,7 @@
                     @include('esign::partials.dropzone', ['page' => 'inner'])
                 @endif
             </main>
-            <div
-                class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary"
-            >
+            <div class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary">
                 <div
                     class="offcanvas-md offcanvas-end bg-body-tertiary"
                     tabindex="-1"
@@ -115,6 +132,11 @@
                                                 <i class="fa fa-trash"></i>
                                             </a>
                                         </li>
+
+                                            <a href="#" class="add-party-btn" value="">
+                                             <i class="fa fa-user-plus"></i> &nbsp; Add <span>Fourth</span> Party
+                                            </a>
+                                       
                                     </ul>
                                 </div>
                             </div>

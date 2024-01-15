@@ -286,13 +286,22 @@ body{
     border: 1px solid #e8e8e8;
     border-radius: 4px;
     margin: 10px auto;
+    min-height: 100px;
 }
 
 .edit-docs-file img{
   max-width: 100%;
 }
 
-
+.add-party-btn{
+  display: block;
+  padding: 8px 17px;
+  color: #333 !important;
+  text-decoration: none;
+  background: #e7e7e7;
+  border-radius: 20px;
+  margin: 6px 0;
+}
 
 .edit-doc-text{
   position: absolute;
