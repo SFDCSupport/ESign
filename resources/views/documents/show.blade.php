@@ -43,6 +43,7 @@
                         <div id="previewViewer"></div>
                         <a
                             href="javascript: void(0);"
+                            id="replaceBtn"
                             class="btn btn-sm btn-dark replace-doc-btn"
                         >
                             {{ __('esign::label.replace') }}
@@ -66,16 +67,24 @@
             </div>
 
             <main class="col-md-7 ms-sm-auto col-lg-7 px-md-4">
-                @if ($document->document?->exists())
+                @php($documentExists = $document->document?->exists())
+
+                @if ($documentExists)
                     <div
                         id="pdfViewer"
                         data-url="{{ $document->document->url }}"
                     ></div>
 
                     @include('esign::documents.modals.send-mail-to-recipient', compact('document'))
-                @else
-                    @include('esign::partials.dropzone', ['page' => 'inner'])
                 @endif
+
+                @php($dropZoneID = \Illuminate\Support\Str::random(12))
+
+                @include('esign::partials.dropzone', [
+                    'page' => 'inner',
+                    'id' => $dropZoneID,
+                    'hidden' => $documentExists
+                ])
             </main>
             <div
                 class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary"
@@ -195,7 +204,13 @@
         <script>
             const addedElements = [];
 
-            $(() => {});
+            $(() => {
+                @isset($dropZoneID)
+                $(document).on("click", "#replaceBtn", () => {
+                    $('#{{ $dropZoneID }}').trigger("click");
+                });
+                @endisset
+            });
         </script>
     @endpushonce
 </x-esign::layout>

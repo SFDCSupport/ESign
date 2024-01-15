@@ -5,6 +5,7 @@
     'maxFiles' => 1,
     'maxFileSize' => 1024 * 3,
     'allowed' => '.pdf',
+    'hidden' => false,
 ])
 
 @pushonce('css')
@@ -15,7 +16,7 @@
     />
 @endpushonce
 
-<div class="container pt-3 pb-2">
+<div class="container pt-3 pb-2 {{ $hidden ? 'd-none' : '' }}">
     <div class="row">
         <div class="col-sm-12">
             <div
