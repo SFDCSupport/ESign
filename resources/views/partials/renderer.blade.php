@@ -3,11 +3,12 @@
     <script src="{{ url('/vendor/esign/js/fabric.min.js') }}?4.6.0"></script>
     <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?3.0.0-beta.3"></script>
     <script>
-        const isSigning = getSignerId();
+        const isSigning = true; //getSignerId();
         const rendered = {};
         const pdfRenderTasks = [];
         const pdfPages = [];
         const canvasEditions = [];
+        let signaturePad = null;
 
         const loadPDF = (url, viewer) => {
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
@@ -494,7 +495,7 @@
             if (!isSigning) {
                 $('.draggable').on('dragstart', function (e) {
                     const type = $(this).data('type');
-                    const text = $(this).find('.text-xs').text();
+                    const text = $(this).find('span').text();
                     const height = $(this).data('height') || 50;
                     const width = $(this).data('width') || 100;
 

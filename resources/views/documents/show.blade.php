@@ -1,4 +1,8 @@
 <x-esign::layout :title="$document->title" :documentId="$document->id">
+    @pushonce('footJs')
+        <script src="{{ url('vendor/esign/js/script.js') }}"></script>
+    @endpushonce
+
     <section class="header-bottom-section">
         <div class="container-fluid">
             <div
@@ -33,24 +37,33 @@
 
     <div class="container-fluid">
         <div class="row">
-
             <div class="col-sm-2">
                 <div class="add-doc-sec">
-          
-                  <div class="edit-docs-file">
-                    <img src="">
-                    <a href="#" class="btn btn-sm btn-dark replace-doc-btn">Replace</a>
-                    <a href="#" class="edit-docs-btn"><i class="fa fa-pen"></i></a>
-                  </div>
-          
-                  <div class="flex pb-2 pt-1.5">
-                    <div class="edit-doc-name">Partner Portal Guide.pdf 
-                      <a href="#" class="edit-doc-text"><i class="fa fa-pen"></i></a>
+                    <div class="edit-docs-file">
+                        <img src="" />
+                        <a
+                            href="javascript: void(0);"
+                            class="btn btn-sm btn-dark replace-doc-btn"
+                        >
+                            {{ __('esign::label.replace') }}
+                        </a>
+                        <a href="javascript: void(0);" class="edit-docs-btn">
+                            <i class="fa fa-pen"></i>
+                        </a>
                     </div>
-                  </div>
-        
+                    <div class="flex pb-2 pt-1.5">
+                        <div class="edit-doc-name">
+                            {{ $document->title }}
+                            <a
+                                href="javascript: void(0);"
+                                class="edit-doc-text"
+                            >
+                                <i class="fa fa-pen"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
-              </div>
+            </div>
 
             <main class="col-md-7 ms-sm-auto col-lg-7 px-md-4">
                 @if ($document->document?->exists())
@@ -64,7 +77,9 @@
                     @include('esign::partials.dropzone', ['page' => 'inner'])
                 @endif
             </main>
-            <div class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary">
+            <div
+                class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary"
+            >
                 <div
                     class="offcanvas-md offcanvas-end bg-body-tertiary"
                     tabindex="-1"
@@ -133,10 +148,16 @@
                                             </a>
                                         </li>
 
-                                            <a href="#" class="add-party-btn" value="">
-                                             <i class="fa fa-user-plus"></i> &nbsp; Add <span>Fourth</span> Party
-                                            </a>
-                                       
+                                        <a
+                                            href="#"
+                                            class="add-party-btn"
+                                            value=""
+                                        >
+                                            <i class="fa fa-user-plus"></i>
+                                            &nbsp; Add
+                                            <span>Fourth</span>
+                                            Party
+                                        </a>
                                     </ul>
                                 </div>
                             </div>
