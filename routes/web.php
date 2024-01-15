@@ -12,7 +12,7 @@ use NIIT\ESign\Http\Middleware\SigningMiddleware;
 Route::any('/upload/{type}', [Controller::class, 'upload']);
 
 // ADMIN ROUTES
-Route::middleware(['auth'])
+Route::middleware('auth')
     ->group(function () {
         Route::delete('templates/destroy', [DocumentController::class, 'bulkDestroy'])
             ->name('templates.bulk-destroy');
