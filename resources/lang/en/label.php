@@ -36,4 +36,5 @@ return [
     'no_submissions_add_recipients' => '<h2>There are no Submissions </h2><p>Send an invitation to fill and complete the form</p>',
     'preview' => 'Preview',
     'replace' => 'Replace',
+    'my_signature' => 'My Signature',
 ];

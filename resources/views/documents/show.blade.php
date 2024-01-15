@@ -206,9 +206,9 @@
 
             $(() => {
                 @isset($dropZoneID)
-                $(document).on("click", "#replaceBtn", () => {
-                    $('#{{ $dropZoneID }}').trigger("click");
-                });
+                    $(document).on("click", "#replaceBtn", () => {
+                        $('#{{ $dropZoneID }}').trigger("click");
+                    });
                 @endisset
             });
         </script>

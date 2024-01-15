@@ -8,6 +8,7 @@
         const pdfRenderTasks = [];
         const pdfPages = [];
         const canvasEditions = [];
+        const signingModal = $('#signing_modal');
         let signaturePad = null;
 
         const loadPDF = (url, viewer) => {
@@ -191,47 +192,9 @@
                                                 break;
                                             case 'text':
                                                 const textObject = e.target;
-                                                const inputBox =
-                                                    document.createElement(
-                                                        'input',
-                                                    );
-                                                inputBox.type = 'text';
-                                                inputBox.value =
-                                                    textObject.text;
-                                                inputBox.style.position =
-                                                    'absolute';
-                                                inputBox.style.left =
-                                                    textObject.left + 'px';
-                                                inputBox.style.top =
-                                                    textObject.top + 'px';
-                                                inputBox.style.width =
-                                                    textObject.width + 'px';
-                                                inputBox.style.height =
-                                                    textObject.height + 'px';
-
-                                                canvasEdition.remove(
-                                                    textObject,
-                                                );
-                                                document.body.appendChild(
-                                                    inputBox,
-                                                );
-
-                                                inputBox.addEventListener(
-                                                    'blur',
-                                                    () => {
-                                                        textObject.set(
-                                                            'text',
-                                                            inputBox.value,
-                                                        );
-                                                        canvasEdition.add(
-                                                            textObject,
-                                                        );
-                                                        document.body.removeChild(
-                                                            inputBox,
-                                                        );
-                                                        canvasEdition.renderAll();
-                                                    },
-                                                );
+                                                textObject.set({
+                                                    selectable: true,
+                                                });
 
                                                 break;
                                             default:
@@ -241,6 +204,10 @@
                                                 );
                                                 break;
                                         }
+
+                                        signingModal
+                                            .attr('type', type)
+                                            .modal('show');
                                     }
                                 })
                                 .on('object:scaling', function (e) {})
@@ -338,6 +305,7 @@
                               selectable: false,
                               lockScaling: true,
                               lockMovement: true,
+                              hoverCusror: 'pointer',
                           }
                         : {
                               fontSize: 14,
@@ -558,3 +526,5 @@
         });
     </script>
 @endpushonce
+
+@include('esign::documents.modals.signing-modal')
