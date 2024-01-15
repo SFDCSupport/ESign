@@ -6,12 +6,5 @@ $(".dropdown_click .selecteddropdown").on('click', function() {
 $(".dropdown_click .drop-content ul li a").on('click', function() {
   // var bindText = $(this).html();
   $(".dropdown_click .selecteddropdown  span").html($(this).html());
-  $(".dropdown_click .drop-content ul").slideUp();
+  $(".dropdown_click .drop-content ul").slideUp(100);
 }); 
-
-
-$(document).bind('click', function(e) {
-  var $clickhide = $(e.target);
-  if (! $clickhide.parents().hasClass("dropdown_c"))
-      $(".dropdown_c .drop-content ul").slideUp('1000');
-});
