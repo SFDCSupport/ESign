@@ -13,6 +13,9 @@ body{
   min-height: 98vh;
   padding: 15px;
   background: #f8f9fa !important;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 30px;
 }
 
 .sidebar{
@@ -379,7 +382,6 @@ body{
   background-color: #3598db;
   color: #fff;
   border: 1px solid #3598db;
-  display: none !important;
 }
 
 .toast-success{
