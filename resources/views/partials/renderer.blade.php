@@ -41,7 +41,50 @@
                             }
 
                             currentScale = scale;
+
                             let pageIndex = page.pageNumber - 1;
+
+                            if (pageNum === 1) {
+                                const pdfViewer =
+                                    document.getElementById('previewViewer');
+                                const pdfViewerCanvas =
+                                    document.createElement('canvas');
+                                pdfViewer.appendChild(pdfViewerCanvas);
+                                const pdfViewerContext =
+                                    pdfViewerCanvas.getContext('2d');
+                                const pdfViewerViewport = page.getViewport({
+                                    scale: 1,
+                                });
+
+                                pdfViewerCanvas.height = pdfViewer.clientHeight;
+                                pdfViewerCanvas.width = pdfViewer.clientWidth;
+
+                                const pdfViewerScale = Math.min(
+                                    pdfViewerCanvas.width /
+                                        pdfViewerViewport.width,
+                                    pdfViewerCanvas.height /
+                                        pdfViewerViewport.height,
+                                );
+                                const pdfViewerScaledViewport =
+                                    page.getViewport({ pdfViewerScale });
+
+                                const pdfViewerRenderTask = page.render({
+                                    canvasContext: pdfViewerContext,
+                                    viewport: pdfViewerScaledViewport,
+                                    transform: [
+                                        1,
+                                        0,
+                                        0,
+                                        -1,
+                                        0,
+                                        pdfViewerCanvas.height,
+                                    ],
+                                });
+
+                                pdfViewerRenderTask.promise.then(() => {
+                                    console.log(`Preview page rendered`);
+                                });
+                            }
 
                             viewer.append(`
                             <div class="position-relative mt-1 ms-1 me-1 d-inline-block" id="canvas-container-${pageIndex}">

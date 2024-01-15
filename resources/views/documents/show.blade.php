@@ -40,7 +40,7 @@
             <div class="col-sm-2">
                 <div class="add-doc-sec">
                     <div class="edit-docs-file">
-                        <img src="" />
+                        <div id="previewViewer"></div>
                         <a
                             href="javascript: void(0);"
                             class="btn btn-sm btn-dark replace-doc-btn"
