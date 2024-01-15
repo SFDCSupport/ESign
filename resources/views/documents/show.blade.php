@@ -69,7 +69,6 @@
                     <div
                         class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto"
                     >
-<<<<<<< HEAD
                         <div class="select-party">
                             <div class="dropdown_c dropdown_click">
                                 <div class="selecteddropdown">
@@ -117,31 +116,6 @@
                                             </a>
                                         </li>
                                     </ul>
-=======
-                        <div class="sel">
-                            <div class="txt">First Party</div>
-                            <div class="options hide">
-                                <div
-                                    class="option-party first-party-option"
-                                    value=""
-                                >
-                                    <span class="bullet"></span>
-                                    First Party
-                                </div>
-                                <div
-                                    class="option-party second-party-option"
-                                    value=""
-                                >
-                                    <span class="bullet"></span>
-                                    Second Party
-                                </div>
-                                <div
-                                    class="option-party third-party-option"
-                                    value=""
-                                >
-                                    <span class="bullet"></span>
-                                    Third Party
->>>>>>> 6ba1239 (WIP: canvas;)
                                 </div>
                             </div>
                         </div>
