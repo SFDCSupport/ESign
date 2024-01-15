@@ -13,7 +13,7 @@
 
 <div
     class="modal fade"
-    @if ($backdrop) data-backdrop="{{ $backdrop }}" @endif
+    @if ($backdrop) data-bs-backdrop="{{ $backdrop }}" @endif
     id="{{ $id }}"
     tabindex="-1"
     role="dialog"

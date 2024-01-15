@@ -1,7 +1,6 @@
 @pushonce('js')
     <script src="{{ url('vendor/esign/js/pdf.js') }}?legacy"></script>
     <script src="{{ url('/vendor/esign/js/fabric.min.js') }}?4.6.0"></script>
-    <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?3.0.0-beta.3"></script>
     <script>
         const isSigning = true; //getSignerId();
         const rendered = {};
@@ -9,7 +8,6 @@
         const pdfPages = [];
         const canvasEditions = [];
         const signingModal = $('#signing_modal');
-        let signaturePad = null;
 
         const loadPDF = (url, viewer) => {
             const pdfjsLib = window['pdfjs-dist/build/pdf'];

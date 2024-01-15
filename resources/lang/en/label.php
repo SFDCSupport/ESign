@@ -37,4 +37,6 @@ return [
     'preview' => 'Preview',
     'replace' => 'Replace',
     'my_signature' => 'My Signature',
+    'enter_text' => 'Enter Text',
+    'draw_freehand' => 'Draw Freehand',
 ];
