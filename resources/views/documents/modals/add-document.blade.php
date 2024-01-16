@@ -32,11 +32,11 @@
                     message: $('#addDocumentModalTemplate').html(),
                     closeButton: false,
                     backdrop: 'static',
-                    size: 'lg',
+                    size: 'md',
                     buttons: {
                         cancel: {
                             label: '{{ __('esign::label.close') }}',
-                            className: 'light-btn',
+                            className: 'btn-secondary',
                             callback: callback(false),
                         },
                         ok: {

@@ -586,3 +586,7 @@ body{
 canvas#signature-pad{
   max-width: 100%;
 }
+
+.esign_banner{
+  max-width: 680px;
+}
