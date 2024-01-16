@@ -101,9 +101,7 @@
                     aria-labelledby="sidebarMenuLabel"
                 >
                     <div class="offcanvas-header">
-                        <h5 class="offcanvas-title" id="sidebarMenuLabel">
-                            Create New Document
-                        </h5>
+                        <h5 class="offcanvas-title" id="sidebarMenuLabel"></h5>
                         <button
                             type="button"
                             class="btn-close"
@@ -125,47 +123,18 @@
                                 </div>
                                 <div class="drop-content">
                                     <ul>
-                                        <li>
-                                            <a href="#" class="" value="">
-                                                First Party
-                                            </a>
-                                            <a
-                                                href="#"
-                                                value=""
-                                                class="deleted-party"
-                                            >
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="" value="">
-                                                Second Party
-                                            </a>
-                                            <a
-                                                href="#"
-                                                value=""
-                                                class="deleted-party"
-                                            >
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="" value="">
-                                                Third Party
-                                            </a>
-                                            <a
-                                                href="#"
-                                                value=""
-                                                class="deleted-party"
-                                            >
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                        </li>
+                                        @if ($document->signers->count() > 0)
+                                            @foreach ($document->signers as $signer)
+                                                @include('esign::documents.partials.party', compact('signer'))
+                                            @endforeach
+                                        @else
+                                            @include('esign::documents.partials.party')
+                                        @endif
 
                                         <a
-                                            href="#"
+                                            id="partyAdd"
+                                            href="javascript: void(0)"
                                             class="add-party-btn"
-                                            value=""
                                         >
                                             <i class="fa fa-user-plus"></i>
                                             &nbsp; Add

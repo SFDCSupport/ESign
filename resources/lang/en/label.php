@@ -43,4 +43,5 @@ return [
     'in_active' => 'In-Active',
     'archived' => 'Archived',
     'signature' => 'Signature',
+    'party' => 'Party',
 ];

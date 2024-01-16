@@ -65,6 +65,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('document_id')->constrained('e_documents');
             $table->string('email')->nullable();
+            $table->string('label');
             $table->enum('signing_status', SigningStatus::values())->default(SigningStatus::NOT_SIGNED);
             $table->enum('read_status', ReadStatus::values())->default(ReadStatus::NOT_OPENED);
             $table->enum('send_status', SendStatus::values())->default(SendStatus::NOT_SENT);
@@ -79,6 +80,7 @@ return new class extends Migration
             $table->foreignUuid('document_id')->constrained('e_documents');
             $table->foreignUuid('signer_id')->constrained('e_document_signers');
             $table->enum('type', ElementType::values());
+            $table->string('label');
             $table->integer('on_page');
             $table->integer('offset_x');
             $table->integer('offset_y');

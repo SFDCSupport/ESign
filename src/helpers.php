@@ -47,3 +47,21 @@ if (! function_exists('convertPHPSizeToBytes')) {
         };
     }
 }
+
+if (! function_exists('ordinal')) {
+    function ordinal(int $number): string
+    {
+        if ($number % 100 >= 11 && $number % 100 <= 13) {
+            $suffix = 'th';
+        } else {
+            $suffix = match ($number % 10) {
+                1 => 'st',
+                2 => 'nd',
+                3 => 'rd',
+                default => 'th',
+            };
+        }
+
+        return $number.$suffix;
+    }
+}
