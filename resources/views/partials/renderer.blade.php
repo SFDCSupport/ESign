@@ -569,6 +569,8 @@
                 const canvas = oldObj.canvas;
 
                 if (data.eleType === 'signature_pad' && data.signature) {
+                    canvas.remove(oldObj);
+
                     fabric.Image.fromURL(data.signature, (newImg) => {
                         newImg.set({
                             left: oldObj.left,
@@ -578,19 +580,24 @@
                         const scaleX = oldObj.width / newImg.width;
                         const scaleY = oldObj.height / newImg.height;
                         const minScale = Math.min(scaleX, scaleY);
+                        const customScale =
+                            oldObj instanceof fabric.Image ? 0.23 : null;
 
-                        newImg.scaleToWidth(newImg.width * minScale);
-                        newImg.scaleToHeight(newImg.height * minScale);
+                        newImg.scaleToWidth(
+                            newImg.width * (customScale ?? minScale),
+                        );
+                        newImg.scaleToHeight(
+                            newImg.height * (customScale ?? minScale),
+                        );
 
                         setFabricControl(newImg);
+
                         newImg.eleType = data.eleType;
                         newImg.signature = data.signature;
 
                         canvas.add(newImg);
                     });
                 }
-
-                canvas.remove(oldObj);
             });
         });
     </script>
