@@ -1,4 +1,10 @@
-<x-esign::modal title="" id="signing" role="signingModal" backdrop="static">
+<x-esign::modal
+    size=""
+    title=""
+    id="signing"
+    role="signingModal"
+    backdrop="static"
+>
     <x-slot name="body">
         <nav class="nav nav-tabs" id="nav-tab" role="tablist">
             <button
@@ -111,13 +117,15 @@
                     $('#signature-pad-reset').trigger('click');
                 })
                 .on('signing-modal:show', function (e, data) {
-                    if (!data.type) {
+                    if (!data.eleType) {
                         return;
                     }
 
                     signingObj = data.obj;
 
-                    signingModal.attr('data-type', data.type).modal('show');
+                    signingModal
+                        .attr('data-ele-type', data.eleType)
+                        .modal('show');
                 })
                 .on('signing-modal:hide', () => {
                     signingModal.modal('hide');
@@ -125,7 +133,7 @@
                 .on('hidden.bs.modal', '#signing_modal', () => {
                     signingObj = null;
                     $(document).trigger('signing-modal:clear:signature-pad');
-                    signingModal.removeAttr('data-type');
+                    signingModal.removeAttr('data-ele-type');
                     signingModal.find('input#typedSignature').val('');
                     signingModal
                         .find('button.nav-link')
@@ -134,23 +142,36 @@
                     signingModal.find('button.nav-link:first').trigger('click');
                 })
                 .on('click', '#addSigningBtn', (e) => {
-                    const type = signingModal.data('type');
+                    const eleType = signingModal.data('ele-type');
 
-                    if (blank(type) || blank(signingObj)) {
+                    if (blank(eleType) || blank(signingObj)) {
                         toast('error', 'Something went wrong!');
 
                         return;
                     }
 
-                    if (type === 'signature_pad') {
+                    if (eleType === 'signature_pad') {
                         $(document).trigger('pad-to-fabric', {
-                            type: type,
+                            eleType: eleType,
                             obj: signingObj,
-                            svg: signaturePad.toSVG(),
+                            svg: signaturePad.toDataURL('image/svg+xml'),
                         });
                     }
 
                     $(document).trigger('signing-modal:hide');
+                })
+                .on('fabric-to-pad', function (e, data) {
+                    $.when(
+                        $(document).trigger(
+                            'signing-modal:clear:signature-pad',
+                        ),
+                    )
+                        .then(() => {
+                            $(document).trigger('signing-modal:show', data);
+                        })
+                        .then(() => {
+                            signaturePad.fromDataURL(data.svg);
+                        });
                 });
 
             createSignaturePad();

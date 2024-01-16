@@ -1,6 +1,6 @@
 @pushonce('js')
     <script src="{{ url('vendor/esign/js/pdf.js') }}?legacy"></script>
-    <script src="{{ url('/vendor/esign/js/fabric.min.js') }}?4.6.0"></script>
+    <script src="{{ url('/vendor/esign/js/fabric.min.js') }}?5.3.0"></script>
     <script>
         const isSigning = true; //getSignerId();
         const rendered = {};
@@ -158,13 +158,13 @@
                                             'text/plain',
                                         ),
                                     );
-                                    const type = draggedData.type;
+                                    const eleType = draggedData.eleType;
                                     const text = draggedData.text;
                                     const height = draggedData.height || 50;
                                     const width = draggedData.width || 100;
 
                                     const fabricObject = createFabricObject({
-                                        type,
+                                        eleType,
                                         text,
                                         height,
                                         width,
@@ -181,34 +181,43 @@
                                 .on('mouse:down:before', function (e) {})
                                 .on('mouse:down', function (e) {
                                     if (isSigning && e.target) {
-                                        const type = e.target.type;
+                                        const eleType = e.target.eleType;
+                                        const obj = e.target;
 
-                                        switch (type) {
+                                        switch (eleType) {
                                             case 'signature_pad':
-                                                console.log('signature pad');
+                                                if (!blank(obj.svg)) {
+                                                    $(document).trigger(
+                                                        'fabric-to-pad',
+                                                        {
+                                                            eleType: eleType,
+                                                            obj: obj,
+                                                            svg: obj.svg,
+                                                        },
+                                                    );
+                                                } else {
+                                                    $(document).trigger(
+                                                        'signing-modal:show',
+                                                        {
+                                                            eleType: eleType,
+                                                            obj: e.target,
+                                                        },
+                                                    );
+                                                }
                                                 break;
                                             case 'text':
-                                                const textObject = e.target;
-                                                textObject.set({
+                                                obj.set({
                                                     selectable: true,
                                                 });
 
                                                 break;
                                             default:
                                                 console.warn(
-                                                    'Unknown data type:',
-                                                    type,
+                                                    'Unknown eleType:',
+                                                    eleType,
                                                 );
                                                 break;
                                         }
-
-                                        $(document).trigger(
-                                            'signing-modal:show',
-                                            {
-                                                type: type,
-                                                obj: e.target,
-                                            },
-                                        );
                                     }
                                 })
                                 .on('object:scaling', function (e) {})
@@ -278,7 +287,7 @@
                 canvasEdition.forEachObject((obj) => {
                     console.log('Object Info:', {
                         page: canvasEdition.pageIndex + 1,
-                        type: obj.type,
+                        eleType: obj.eleType,
                         offsetX: obj.left,
                         offsetY: obj.top,
                         width: obj.width,
@@ -352,13 +361,13 @@
                 color: '#333333',
             };
 
-            switch (data.type) {
+            switch (data.eleType) {
                 case 'signature_pad':
                     fabricObject = new fabric.Text('Signature', commonStyles);
                     break;
                 default:
                     fabricObject = new fabric.IText(
-                        data.text || data.type,
+                        data.text || data.eleType,
                         commonStyles,
                     );
                     break;
@@ -441,7 +450,7 @@
 
             fabricObject = setFabricControl(fabricObject);
 
-            fabricObject.type = data.type;
+            fabricObject.eleType = data.eleType;
 
             return fabricObject;
         };
@@ -461,7 +470,7 @@
                     const loadedObjectData = [
                         {
                             page: 1,
-                            type: 'signature_pad',
+                            eleType: 'signature_pad',
                             offsetX: 202,
                             offsetY: 150,
                             width: 61.28,
@@ -469,7 +478,7 @@
                         },
                         {
                             page: 1,
-                            type: 'text',
+                            eleType: 'text',
                             offsetX: 295,
                             offsetY: 320,
                             width: 204.4,
@@ -477,7 +486,7 @@
                         },
                         {
                             page: 1,
-                            type: 'email',
+                            eleType: 'email',
                             offsetX: 332,
                             offsetY: 216,
                             width: 213.76000000000002,
@@ -506,13 +515,13 @@
 
             if (!isSigning) {
                 $('.draggable').on('dragstart', function (e) {
-                    const type = $(this).data('type');
+                    const eleType = $(this).data('type');
                     const text = $(this).find('span').text();
                     const height = $(this).data('height') || 50;
                     const width = $(this).data('width') || 100;
 
                     const data = {
-                        type,
+                        eleType,
                         text,
                         height,
                         width,
@@ -526,27 +535,47 @@
             }
 
             $(document).on('pad-to-fabric', (e, data) => {
-                let newObj;
                 const oldObj = data.obj;
                 const canvas = oldObj.canvas;
 
                 canvas.remove(oldObj);
 
-                if (data.type === 'signature_pad') {
-                    fabric.Image.fromURL(
-                        svgToDataUrl(trimSvgWhitespace(data.svg)),
-                        (newImg) => {
-                            newImg.set({
-                                left: oldObj.left,
-                                top: oldObj.top,
-                                width: oldObj.width,
-                                height: oldObj.height,
-                            });
+                if (data.eleType === 'signature_pad') {
+                    fabric.Image.fromURL(data.svg, (newImg) => {
+                        newImg.set({
+                            left: oldObj.left,
+                            top: oldObj.top,
+                            width: oldObj.width,
+                            height: oldObj.height,
+                        });
+                        setFabricControl(newImg);
+                        newImg.eleType = data.eleType;
+                        newImg.svg = data.svg;
 
-                            canvas.add(newImg);
-                            canvas.renderAll();
-                        },
-                    );
+                        canvas.add(newImg);
+                    });
+                    // const _svg = $(`${data.svg}`)
+                    //     .removeAttr('width').removeAttr('height');
+                    //
+                    // fabric.loadSVGFromString(_svg.prop('outerHTML'), (objects, options) => {
+                    //     const svg = fabric.util.groupSVGElements(objects, {
+                    //         ...options,
+                    //         width: oldObj.width,
+                    //         height: oldObj.height,
+                    //     });
+                    //
+                    //     svg.set({
+                    //         left: oldObj.left,
+                    //         top: oldObj.top,
+                    //         width: oldObj.width,
+                    //         height: oldObj.height,
+                    //     });
+                    //
+                    //     setFabricControl(svg);
+                    //     svg.eleType = data.eleType;
+                    //
+                    //     canvas.add(svg);
+                    // });
                 }
             });
         });
