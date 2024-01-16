@@ -180,7 +180,7 @@
                                     href="javascript: void(0);"
                                     class="draggable icons-box-btn bg-white"
                                     data-type="{{ $type }}"
-                                >
+                                >  <span class="draggable-left-icon"><i class="fas fa-ellipsis-v"></i><i class="fas fa-ellipsis-v"></i></span>
                                     <div
                                         class="flex items-center flex-col px-2 py-2"
                                     >

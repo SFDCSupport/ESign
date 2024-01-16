@@ -56,14 +56,14 @@
                 role="tabpanel"
                 aria-labelledby="nav-type-tab"
             >
-                <label>
+                <p>
                     <input
                         type="text"
                         id="typedSignature"
                         class="form-control form-control-lg"
                         placeholder="{{ __('esign::label.my_signature') }}"
                     />
-                </label>
+                </p>
             </div>
         </div>
     </x-slot>
