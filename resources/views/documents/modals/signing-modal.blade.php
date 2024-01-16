@@ -18,7 +18,7 @@
                 aria-selected="true"
             >
                 <i class="fa fa-pen-nib"></i>
-                {{ __('esign::label.draw_freehand') }}
+                {{ __('esign::label.signature') }}
             </button>
             <button
                 class="nav-link ps-2 ps-md-3 pe-2 pe-md-3"
@@ -31,7 +31,7 @@
                 aria-selected="false"
             >
                 <i class="fa fa-font"></i>
-                {{ __('esign::label.enter_text') }}
+                {{ __('esign::label.text') }}
             </button>
         </nav>
         <div class="tab-content mt-3" id="nav-svg-add">
@@ -167,13 +167,13 @@
                         ),
                     )
                         .then(() => {
-                            $(document).trigger('signing-modal:show', data);
-                        })
-                        .then(() => {
                             signaturePad.fromDataURL(data.signature, {
                                 width: 462,
                                 height: 200,
                             });
+                        })
+                        .then(() => {
+                            $(document).trigger('signing-modal:show', data);
                         });
                 });
 

@@ -35,9 +35,11 @@
         </div>
     </section>
 
+    @php($isSigningRoute = request()->routeIs('esign.signing.*'))
+
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-sm-2 @if($isSigningRoute) d-none @endif">
                 <div class="add-doc-sec">
                     <div class="edit-docs-file">
                         <div id="previewViewer"></div>
@@ -66,7 +68,9 @@
                 </div>
             </div>
 
-            <main class="col-md-7 ms-sm-auto col-lg-7 px-md-4">
+            <main
+                class="@if($isSigningRoute) col-12 @else col-md-7 ms-sm-auto col-lg-7 px-md-4 @endif"
+            >
                 @php($documentExists = $document->document?->exists())
 
                 @if ($documentExists)
@@ -87,7 +91,8 @@
                 ])
             </main>
             <div
-                class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary"
+                id="recipientsContainer"
+                class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary @if($isSigningRoute) d-none @endif"
             >
                 <div
                     class="offcanvas-md offcanvas-end bg-body-tertiary"
@@ -210,9 +215,9 @@
 
             $(() => {
                 @isset($dropZoneID)
-                    $(document).on("click", "#replaceBtn", () => {
-                        $('#{{ $dropZoneID }}').trigger("click");
-                    });
+                $(document).on("click", "#replaceBtn", () => {
+                    $('#{{ $dropZoneID }}').trigger("click");
+                });
                 @endisset
             });
         </script>
