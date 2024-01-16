@@ -44,4 +44,10 @@ return [
     'archived' => 'Archived',
     'signature' => 'Signature',
     'party' => 'Party',
+    'nth_party' => ':nth party',
+    'add_nth_party' => 'Add <span>:nth</span> party',
+    'st' => 'st',
+    'nd' => 'nd',
+    'rd' => 'rd',
+    'th' => 'th',
 ];

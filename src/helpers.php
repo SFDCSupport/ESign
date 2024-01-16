@@ -52,13 +52,13 @@ if (! function_exists('ordinal')) {
     function ordinal(int $number): string
     {
         if ($number % 100 >= 11 && $number % 100 <= 13) {
-            $suffix = 'th';
+            $suffix = __('esign::label.th');
         } else {
             $suffix = match ($number % 10) {
-                1 => 'st',
-                2 => 'nd',
-                3 => 'rd',
-                default => 'th',
+                1 => __('esign::label.st'),
+                2 => __('esign::label.nd'),
+                3 => __('esign::label.rd'),
+                default => __('esign::label.th'),
             };
         }
 

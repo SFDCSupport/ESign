@@ -1,12 +1,12 @@
-<li>
-    <a href="javascript: void(0)" id="partyLabel">
-        {{ $signer->label ?? ordinal($loop->iteration ?? 1).' '.__('esign::label.party') }}
+<li class="partyLi">
+    <a href="javascript: void(0)" class="partyLabel">
+        {{ $signer->label ?? __('esign::label.nth_party', ['nth' => ordinal($loop->iteration ?? 1)]) }}
     </a>
     <a
-        id="partyDelete"
-        data-party="{{ $loop->index ?? 0 }}"
+        data-party="{{ $loop->iteration ?? 1 }}"
         href="javascript: void(0)"
-        class="deleted-party"
+        class="deleted-party partyDelete"
+        onclick="partyRemove(this)"
     >
         <i class="fa fa-trash"></i>
     </a>

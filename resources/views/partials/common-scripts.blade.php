@@ -59,10 +59,48 @@
 
         return svgContainer.innerHTML;
     };
+    const ordinal = (number) => {
+        let suffix;
+
+        if (number % 100 >= 11 && number % 100 <= 13) {
+            suffix = '{{ __('esign::label.th') }}';
+        } else {
+            switch (number % 10) {
+                case 1:
+                    suffix = '{{ __('esign::label.st') }}';
+                    break;
+                case 2:
+                    suffix = '{{ __('esign::label.nd') }}';
+                    break;
+                case 3:
+                    suffix = '{{ __('esign::label.rd') }}';
+                    break;
+                default:
+                    suffix = '{{ __('esign::label.th') }}';
+                    break;
+            }
+        }
+
+        return number + suffix;
+    };
 
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': getCSRFToken(),
         },
     });
+
+    $.fn.highestData = function (data = 'party') {
+        let highest = -Infinity;
+
+        this.each(function () {
+            const partyValue = parseInt($(this).attr('data-' + data), 10);
+
+            if (!isNaN(partyValue)) {
+                highest = Math.max(highest, partyValue);
+            }
+        });
+
+        return isFinite(highest) ? highest : null;
+    };
 </script>

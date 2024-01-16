@@ -30,11 +30,10 @@
                             let scale = 1.5;
                             let viewport = page.getViewport({ scale: scale });
 
-                            if (viewport.width > viewer[0].clientWidth - 40) {
+                            if (viewport.width > viewer.clientWidth - 40) {
                                 viewport = page.getViewport({ scale: 1 });
                                 scale =
-                                    (viewer[0].clientWidth - 40) /
-                                    viewport.width;
+                                    (viewer.clientWidth - 40) / viewport.width;
                                 viewport = page.getViewport({ scale: scale });
                             }
 
@@ -43,55 +42,60 @@
                             let pageIndex = page.pageNumber - 1;
 
                             if (pageNum === 1) {
-                                const pdfViewer =
+                                const pdfPreviewer =
                                     document.getElementById('previewViewer');
-                                const pdfViewerCanvas =
+                                const pdfPreviewerCanvas =
                                     document.createElement('canvas');
-                                pdfViewer.appendChild(pdfViewerCanvas);
-                                const pdfViewerContext =
-                                    pdfViewerCanvas.getContext('2d');
-                                const pdfViewerViewport = page.getViewport({
+                                pdfPreviewer.appendChild(pdfPreviewerCanvas);
+                                const pdfPreviewerContext =
+                                    pdfPreviewerCanvas.getContext('2d');
+                                const pdfPreviewerViewport = page.getViewport({
                                     scale: 1,
                                 });
 
-                                pdfViewerCanvas.height = pdfViewer.clientHeight;
-                                pdfViewerCanvas.width = pdfViewer.clientWidth;
+                                pdfPreviewerCanvas.height =
+                                    pdfPreviewer.clientHeight;
+                                pdfPreviewerCanvas.width =
+                                    pdfPreviewer.clientWidth;
 
-                                const pdfViewerScale = Math.min(
-                                    pdfViewerCanvas.width /
-                                        pdfViewerViewport.width,
-                                    pdfViewerCanvas.height /
-                                        pdfViewerViewport.height,
+                                const pdfPreviewerScale = Math.min(
+                                    pdfPreviewerCanvas.width /
+                                        pdfPreviewerViewport.width,
+                                    pdfPreviewerCanvas.height /
+                                        pdfPreviewerViewport.height,
                                 );
-                                const pdfViewerScaledViewport =
-                                    page.getViewport({ pdfViewerScale });
+                                const pdfPreviewerScaledViewport =
+                                    page.getViewport({ pdfPreviewerScale });
 
-                                const pdfViewerRenderTask = page.render({
-                                    canvasContext: pdfViewerContext,
-                                    viewport: pdfViewerScaledViewport,
+                                const pdfPreviewerRenderTask = page.render({
+                                    canvasContext: pdfPreviewerContext,
+                                    viewport: pdfPreviewerScaledViewport,
                                     transform: [
                                         1,
                                         0,
                                         0,
                                         -1,
                                         0,
-                                        pdfViewerCanvas.height,
+                                        pdfPreviewerCanvas.height,
                                     ],
                                 });
 
-                                pdfViewerRenderTask.promise.then(() => {
+                                pdfPreviewerRenderTask.promise.then(() => {
                                     console.log(`Preview page rendered`);
                                 });
                             }
 
-                            viewer.append(`
+                            viewer.insertAdjacentHTML(
+                                'beforeend',
+                                `
                             <div class="position-relative mt-1 ms-1 me-1 d-inline-block" id="canvas-container-${pageIndex}">
                                 <canvas id="canvas-pdf-${pageIndex}" class="shadow-sm canvas-pdf"></canvas>
                                 <div class="position-absolute top-0 start-0">
                                     <canvas id="canvas-edition-${pageIndex}"></canvas>
                                 </div>
                             </div>
-                        `);
+                        `,
+                            );
 
                             const canvasPdf = $(`#canvas-pdf-${pageIndex}`);
                             const canvasEditionHTML = $(
@@ -528,11 +532,57 @@
                 delete fabric.Object.prototype.controls.mtr;
             } catch (e) {}
 
+            $(document)
+                .on('load-pdf', (e, data) => {
+                    if (blank(data.url) || !data.container) {
+                        return;
+                    }
+                    loadPDF(data.url, data.container);
+                })
+                .on('pad-to-fabric', (e, data) => {
+                    const oldObj = data.obj;
+                    const canvas = oldObj.canvas;
+
+                    if (data.eleType === 'signature_pad' && data.signature) {
+                        canvas.remove(oldObj);
+
+                        fabric.Image.fromURL(data.signature, (newImg) => {
+                            newImg.set({
+                                left: oldObj.left,
+                                top: oldObj.top,
+                            });
+
+                            const scaleX = oldObj.width / newImg.width;
+                            const scaleY = oldObj.height / newImg.height;
+                            const minScale = Math.min(scaleX, scaleY);
+                            const customScale =
+                                oldObj instanceof fabric.Image ? 0.23 : null;
+
+                            newImg.scaleToWidth(
+                                newImg.width * (customScale ?? minScale),
+                            );
+                            newImg.scaleToHeight(
+                                newImg.height * (customScale ?? minScale),
+                            );
+
+                            setFabricControl(newImg);
+
+                            newImg.eleType = data.eleType;
+                            newImg.signature = data.signature;
+
+                            canvas.add(newImg);
+                        });
+                    }
+                });
+
             const pdfViewer = $('#pdfViewer');
             const url = pdfViewer.data('url');
 
-            if (url) {
-                loadPDF(url, pdfViewer);
+            if (!blank(url)) {
+                $(document).trigger('load-pdf', {
+                    url: url,
+                    container: pdfViewer[0],
+                });
 
                 $(document).on('canvas:ready', () => {
                     const loadedObjectData = [
@@ -601,42 +651,6 @@
                     );
                 });
             }
-
-            $(document).on('pad-to-fabric', (e, data) => {
-                const oldObj = data.obj;
-                const canvas = oldObj.canvas;
-
-                if (data.eleType === 'signature_pad' && data.signature) {
-                    canvas.remove(oldObj);
-
-                    fabric.Image.fromURL(data.signature, (newImg) => {
-                        newImg.set({
-                            left: oldObj.left,
-                            top: oldObj.top,
-                        });
-
-                        const scaleX = oldObj.width / newImg.width;
-                        const scaleY = oldObj.height / newImg.height;
-                        const minScale = Math.min(scaleX, scaleY);
-                        const customScale =
-                            oldObj instanceof fabric.Image ? 0.23 : null;
-
-                        newImg.scaleToWidth(
-                            newImg.width * (customScale ?? minScale),
-                        );
-                        newImg.scaleToHeight(
-                            newImg.height * (customScale ?? minScale),
-                        );
-
-                        setFabricControl(newImg);
-
-                        newImg.eleType = data.eleType;
-                        newImg.signature = data.signature;
-
-                        canvas.add(newImg);
-                    });
-                }
-            });
         });
     </script>
 @endpushonce

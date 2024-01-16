@@ -116,14 +116,21 @@
                         <div class="select-party">
                             <div class="dropdown_c dropdown_click">
                                 <div class="selecteddropdown">
-                                    <span>First Party</span>
-                                    <a href="#" class="add-party">
+                                    <span>
+                                        {{ __('esign::label.nth_party', ['nth' => ordinal(1)]) }}
+                                    </span>
+                                    <a
+                                        href="javascript: void(0);"
+                                        class="add-party"
+                                    >
                                         <i class="fa fa-plus"></i>
                                     </a>
                                 </div>
                                 <div class="drop-content">
-                                    <ul>
-                                        @if ($document->signers->count() > 0)
+                                    <ul id="partyUl">
+                                        @php($hasSigners = ($totalSigners = $document->signers->count()) > 0)
+
+                                        @if ($hasSigners)
                                             @foreach ($document->signers as $signer)
                                                 @include('esign::documents.partials.party', compact('signer'))
                                             @endforeach
@@ -135,12 +142,8 @@
                                             id="partyAdd"
                                             href="javascript: void(0)"
                                             class="add-party-btn"
-                                        >
-                                            <i class="fa fa-user-plus"></i>
-                                            &nbsp; Add
-                                            <span>Fourth</span>
-                                            Party
-                                        </a>
+                                            onclick="partyAdd()"
+                                        ></a>
                                     </ul>
                                 </div>
                             </div>
@@ -180,7 +183,28 @@
 
     @pushonce('js')
         <script>
-            const addedElements = [];
+            const partyLi = () => $("li.partyLi");
+            const totalParties = () => partyLi().length;
+            const highestParty = () => $("li.partyLi a[data-party]").highestData('party');
+            const partyUpdate = () => {
+                partyLi().find(".partyDelete").toggleClass("d-none", totalParties() <= 1);
+                $('#partyAdd').html('<i class="fa fa-user-plus"></i> ' + '{!! __('esign::label.add_nth_party') !!}'.replace(':nth', ordinal(highestParty() + 1)));
+            };
+            const partyAdd = () => {
+                const _highestParty = highestParty() + 1;
+                const clonedLi = $("li.partyLi:last").clone();
+                clonedLi.find("a.partyLabel").html(
+                    ordinal(_highestParty) + ' {{ __('esign::label.party') }}'
+                );
+                clonedLi.find("a[data-party]").attr("data-party", _highestParty);
+                clonedLi.insertAfter($("ul#partyUl li.partyLi:last"));
+
+                partyUpdate();
+            };
+            const partyRemove = (party) => {
+                $(party).closest("li.partyLi").remove();
+                partyUpdate();
+            };
 
             $(() => {
                 @isset($dropZoneID)
@@ -188,6 +212,12 @@
                     $('#{{ $dropZoneID }}').trigger("click");
                 });
                 @endisset
+
+                $(document).on("party:added", partyUpdate)
+                    .on("party:removed", partyUpdate)
+                    .on("party:updated", partyUpdate);
+
+                partyUpdate();
             });
         </script>
     @endpushonce
