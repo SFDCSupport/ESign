@@ -154,7 +154,7 @@
                         $(document).trigger('pad-to-fabric', {
                             eleType: eleType,
                             obj: signingObj,
-                            svg: signaturePad.toDataURL('image/svg+xml'),
+                            signature: signaturePad.toDataURL(),
                         });
                     }
 
@@ -170,7 +170,10 @@
                             $(document).trigger('signing-modal:show', data);
                         })
                         .then(() => {
-                            signaturePad.fromDataURL(data.svg);
+                            signaturePad.fromDataURL(data.signature, {
+                                width: 462,
+                                height: 200,
+                            });
                         });
                 });
 

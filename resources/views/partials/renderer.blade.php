@@ -186,13 +186,14 @@
 
                                         switch (eleType) {
                                             case 'signature_pad':
-                                                if (!blank(obj.svg)) {
+                                                if (!blank(obj.signature)) {
                                                     $(document).trigger(
                                                         'fabric-to-pad',
                                                         {
                                                             eleType: eleType,
                                                             obj: obj,
-                                                            svg: obj.svg,
+                                                            signature:
+                                                                obj.signature,
                                                         },
                                                     );
                                                 } else {
@@ -356,7 +357,7 @@
                 top: data.offsetY,
                 width: data.width,
                 height: data.height,
-                padding: 8,
+                padding: 5,
                 fill: '#333333',
                 color: '#333333',
             };
@@ -538,45 +539,29 @@
                 const oldObj = data.obj;
                 const canvas = oldObj.canvas;
 
-                canvas.remove(oldObj);
-
-                if (data.eleType === 'signature_pad') {
-                    fabric.Image.fromURL(data.svg, (newImg) => {
+                if (data.eleType === 'signature_pad' && data.signature) {
+                    fabric.Image.fromURL(data.signature, (newImg) => {
                         newImg.set({
                             left: oldObj.left,
                             top: oldObj.top,
-                            width: oldObj.width,
-                            height: oldObj.height,
                         });
+
+                        const scaleX = oldObj.width / newImg.width;
+                        const scaleY = oldObj.height / newImg.height;
+                        const minScale = Math.min(scaleX, scaleY);
+
+                        newImg.scaleToWidth(newImg.width * minScale);
+                        newImg.scaleToHeight(newImg.height * minScale);
+
                         setFabricControl(newImg);
                         newImg.eleType = data.eleType;
-                        newImg.svg = data.svg;
+                        newImg.signature = data.signature;
 
                         canvas.add(newImg);
                     });
-                    // const _svg = $(`${data.svg}`)
-                    //     .removeAttr('width').removeAttr('height');
-                    //
-                    // fabric.loadSVGFromString(_svg.prop('outerHTML'), (objects, options) => {
-                    //     const svg = fabric.util.groupSVGElements(objects, {
-                    //         ...options,
-                    //         width: oldObj.width,
-                    //         height: oldObj.height,
-                    //     });
-                    //
-                    //     svg.set({
-                    //         left: oldObj.left,
-                    //         top: oldObj.top,
-                    //         width: oldObj.width,
-                    //         height: oldObj.height,
-                    //     });
-                    //
-                    //     setFabricControl(svg);
-                    //     svg.eleType = data.eleType;
-                    //
-                    //     canvas.add(svg);
-                    // });
                 }
+
+                canvas.remove(oldObj);
             });
         });
     </script>
