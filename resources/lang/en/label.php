@@ -37,6 +37,10 @@ return [
     'preview' => 'Preview',
     'replace' => 'Replace',
     'my_signature' => 'My Signature',
-    'enter_text' => 'Enter Text',
-    'draw_freehand' => 'Draw Freehand',
+    'draft' => 'Draft',
+    'pending' => 'Pending',
+    'active' => 'Active',
+    'in_active' => 'In-Active',
+    'archived' => 'Archived',
+    'signature' => 'Signature',
 ];
