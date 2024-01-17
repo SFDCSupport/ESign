@@ -595,3 +595,68 @@ canvas#signature-pad{
 .esign_banner{
   max-width: 680px;
 }
+
+.updown-docs-btn{
+
+}
+
+.auto-resizing-content{
+  position: relative;
+  margin: 1.5% 1%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ddd;
+  padding:8px 10px 8px 28px;
+  background-color: #fff;
+  border-radius: 4px;
+}
+
+.type_icons{
+ position: absolute;
+ top: 50%;
+ left: 8px;
+ margin-top: -7px;
+}
+
+.outline-none {
+ outline: 2px solid #0000;
+ outline-offset: 2px;
+}
+
+.edit-resizing-btn{
+opacity: 0;
+cursor: pointer;
+display: inline;
+padding: 3px;
+}
+
+.deleted-required-ele{
+  opacity: 0;
+  display: flex;
+  padding-left: 10px;
+}
+
+.removecontenteditable{
+  color: #333;
+  padding: 2px 5px;
+}
+
+.removecontenteditable:hover{
+  color: #bd2130;
+}
+
+.auto-resizing-content:hover .edit-resizing-btn,
+.auto-resizing-content:hover .deleted-required-ele{
+  opacity: 1;
+}
+
+.contenteditable-content {
+  max-width: 220px;
+  word-break: break-all;
+  font-size: .8rem;
+}
+
+.deleted-required-ele .form-check {
+  min-height: 1.1rem;
+}

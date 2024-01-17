@@ -54,6 +54,7 @@
                         >
                             {{ __('esign::label.replace') }}
                         </a>
+
                         <a href="javascript: void(0);" class="edit-docs-btn">
                             <i class="fa fa-times"></i>
                         </a>
@@ -150,6 +151,40 @@
                                         ></a>
                                     </ul>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="pos_rel auto-resizing-content">
+                            <i class="fa fa-font type_icons"></i>
+                            <div
+                                class="group/contenteditable relative overflow-visible"
+                            >
+                                <span
+                                    dir="auto"
+                                    contenteditable="true"
+                                    class="inline peer contenteditable-content outline-none focus:block"
+                                    style="min-width: 2px"
+                                >
+                                    asdddasdsad
+                                </span>
+                                <span class="edit-resizing-btn">
+                                    <i class="fa fa-pen"></i>
+                                </span>
+                            </div>
+                            <div
+                                class="flex items-center space-x-1 deleted-required-ele align-items-center"
+                            >
+                                <div class="form-check form-switch">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        role="switch"
+                                        id="Requiredfield"
+                                    />
+                                </div>
+                                <a href="#" class="removecontenteditable">
+                                    <i class="fa fa-trash"></i>
+                                </a>
                             </div>
                         </div>
 
