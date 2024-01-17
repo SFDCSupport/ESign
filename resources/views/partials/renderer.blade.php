@@ -545,8 +545,8 @@
             }
 
             if (!isSigning) {
-                const deleteIcon = svgToDataUrl(`@include('esign::partials.icons.x')`);
-                const cloneIcon = svgToDataUrl(`@include('esign::partials.icons.copy')`);
+                const deleteIcon = svgToDataUrl(`@include('esign::partials.icons.x', ['stroke' => 'red'])`);
+                const cloneIcon = svgToDataUrl(`@include('esign::partials.icons.copy', ['stroke' => 'blue'])`);
 
                 const deleteImg = document.createElement('img');
                 deleteImg.src = deleteIcon;
