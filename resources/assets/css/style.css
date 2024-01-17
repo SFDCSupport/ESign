@@ -603,13 +603,9 @@ canvas#signature-pad{
   max-width: 680px;
 }
 
-.updown-docs-btn{
-
-}
-
 .auto-resizing-content{
   position: relative;
-  margin: 1.5% 1%;
+  margin: 4px 1% 13px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -659,11 +655,59 @@ padding: 3px;
 }
 
 .contenteditable-content {
-  max-width: 220px;
+  max-width: 170px;
   word-break: break-all;
   font-size: .8rem;
+  display: inline-block;
+  width: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .deleted-required-ele .form-check {
   min-height: 1.1rem;
+}
+
+.expand-section-bottom{
+  max-width: 680px;
+  position: fixed;
+  bottom: 50px;
+  width: 100%;
+  z-index: 999;
+  bottom: 20px;
+  left: 50%;
+  transform: translate(-50%, -10%);
+}
+
+#expand_form_button{
+  position: fixed;
+  bottom: 1px;
+  width: 100%;
+  text-transform: uppercase;
+  border-radius: 30px !important;
+}
+
+#expand_form_button i{
+  position: absolute;
+  right: 20px;
+  top:50%;
+  margin-top: -8px;
+}
+
+#form_container{
+  position: fixed;
+  bottom: 0px;
+  border-radius: 7px;
+  width: 100%;
+  background: #faf7f5;
+  min-height: 100px;
+  z-index: 1;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+#minimize_form_button{
+  position: absolute;
+  right: 5px;
+  top: 5px;
 }

@@ -94,6 +94,10 @@
                     'id' => $dropZoneID,
                     'hidden' => $documentExists
                 ])
+
+              
+
+
             </main>
             <div
                 id="recipientsContainer"
@@ -154,14 +158,15 @@
                             </div>
                         </div>
 
+                    <div class="editable-section">
                         <div class="pos_rel auto-resizing-content">
                             <i class="fa fa-font type_icons"></i>
                             <div
-                                class="group/contenteditable relative overflow-visible"
+                                class="group/contenteditable relative overflow-visible d-flex align-items-center"
                             >
                                 <span
                                     dir="auto"
-                                    contenteditable="true"
+                                    contenteditable="false"
                                     class="inline peer contenteditable-content outline-none focus:block"
                                     style="min-width: 2px"
                                 >
@@ -187,6 +192,8 @@
                                 </a>
                             </div>
                         </div>
+
+                    </div>
 
                         <div class="icons-box">
                             @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
