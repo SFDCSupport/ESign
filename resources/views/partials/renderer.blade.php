@@ -2,7 +2,7 @@
     <script src="{{ url('vendor/esign/js/pdf.js') }}?legacy"></script>
     <script src="{{ url('/vendor/esign/js/fabric.min.js') }}?5.3.0"></script>
     <script>
-        const isSigning = true; //getSignerId();
+        const isSigning = getSignerId();
         const rendered = {};
         const pdfRenderTasks = [];
         const pdfPages = [];
@@ -159,11 +159,13 @@
                                     }
 
                                     const offsetX =
-                                        e.originalEvent.clientX -
-                                        e.currentTarget.offsetLeft;
+                                        e.layerX ||
+                                        e.originalEvent.layerX ||
+                                        e.originalEvent.offsetX;
                                     const offsetY =
-                                        e.originalEvent.clientY -
-                                        e.currentTarget.offsetTop;
+                                        e.layerY ||
+                                        e.originalEvent.layerY ||
+                                        e.originalEvent.offsetY;
 
                                     const draggedData = JSON.parse(
                                         e.originalEvent.dataTransfer.getData(
@@ -589,16 +591,16 @@
                         {
                             page: 1,
                             eleType: 'signature_pad',
-                            offsetX: 162.38605033473388,
-                            offsetY: 116.14639593789681,
+                            offsetX: 238.34674585238713,
+                            offsetY: 112.34266801044906,
                             width: 78.12,
                             height: 15.819999999999997,
                         },
                         {
-                            page: 1,
+                            page: 2,
                             eleType: 'text',
-                            offsetX: 560.1898118045274,
-                            offsetY: 194.47927125489454,
+                            offsetX: 89.17175300998079,
+                            offsetY: 368.79348783696616,
                             width: 24.85,
                             height: 15.819999999999997,
                         },
@@ -608,7 +610,20 @@
                         canvasEditions.forEach((canvasEdition) => {
                             canvasEdition.clear();
 
-                            loadedObjectData.forEach((objInfo) => {
+                            loadedObjectData.forEach((objInfo, i) => {
+                                const objPage = objInfo.page;
+                                const totalPages = canvasEditions.length;
+
+                                if (blank(objPage) || objPage > totalPages) {
+                                    toast(
+                                        'error',
+                                        `Invalid element ${
+                                            i + 1 + ' ' + objInfo.eleType
+                                        } position on page ${objPage} while total pages are ${totalPages}!`,
+                                    );
+                                    return;
+                                }
+
                                 if (
                                     objInfo.page ===
                                     canvasEdition.pageIndex + 1
