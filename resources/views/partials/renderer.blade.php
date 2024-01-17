@@ -1,4 +1,5 @@
 @pushonce('js')
+    <script src="{{ url('vendor/esign/js/uuid.min.js') }}"></script>
     <script src="{{ url('vendor/esign/js/pdf.js') }}?legacy"></script>
     <script src="{{ url('/vendor/esign/js/fabric.min.js') }}?5.3.0"></script>
     <script>
@@ -399,20 +400,29 @@
 
             canvas.remove(target);
             canvas.requestRenderAll();
+            $(document).trigger('party-element:remove', target.uuid);
         }
 
         function cloneObject(eventData, transform) {
             const target = transform.target;
             const canvas = target.canvas;
+            const _uuid = uuid.v4();
 
             target.clone(function (cloned) {
                 cloned.left += 10;
                 cloned.top += 10;
+                cloned.uuid = _uuid;
                 canvas.add(setFabricControl(cloned));
                 canvas.setActiveObject(cloned);
             });
 
             canvas.requestRenderAll();
+
+            $(document).trigger('party-element:add', {
+                uuid: _uuid,
+                eleType: target.eleType,
+                text: target.text,
+            });
         }
 
         const setFabricControl = (fabricObject) => {
@@ -526,8 +536,10 @@
             fabricObject = setFabricControl(fabricObject);
 
             fabricObject.eleType = data.eleType;
+            fabricObject.uuid = uuid.v4();
 
             $(document).trigger('party-element:add', {
+                uuid: fabricObject.uuid,
                 eleType: data.eleType,
                 text: data.text || fabricObject.text || data.eleType,
             });
@@ -541,6 +553,17 @@
             } catch (e) {}
 
             $(document)
+                .on('party-element:remove', (e, uuid) => {
+                    canvasEditions.forEach((canvasEdition) => {
+                        const obj = canvasEdition
+                            .getObjects()
+                            .find((_obj) => _obj.uuid === uuid);
+
+                        if (!blank(obj)) {
+                            canvasEdition.remove(obj);
+                        }
+                    });
+                })
                 .on('load-pdf', (e, data) => {
                     if (blank(data.url) || !data.container) {
                         return;

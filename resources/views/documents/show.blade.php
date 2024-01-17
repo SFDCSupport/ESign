@@ -162,6 +162,7 @@
                                 <div
                                     class="pos_rel auto-resizing-content addedElement __REQUIRED"
                                     data-element="__INDEX"
+                                    data-uuid="__UUID"
                                 >
                                     <i class="fa fa-font type_icons"></i>
                                     <div
@@ -243,13 +244,14 @@
             const highestParty = () => $("#recipientsContainer li.partyLi a[data-party]").highestData("party");
             const partyAddedElements = () => $('#recipientsContainer .addedElements');
             const highestPartyElement = () => $('#recipientsContainer div.addedElements div.addedElement').highestData('element');
-            const getPartyElementTemplate = (index, label, icon, isRequired = true) => $.trim($('#addedElementTemplate').html())
+            const getPartyElementTemplate = (uuid,index, label, icon, isRequired = true) => $.trim($('#addedElementTemplate').html())
+                    .replace(/__UUID/ig, uuid)
                     .replace(/__INDEX/ig, index)
                     .replace(/__LABEL/ig, label)
                     .replace(/__ICON/ig, icon)
                     .replace(/__CHECKED/ig, isRequired ? 'checked' : '')
                     .replace(/__REQUIRED/ig, isRequired ? 'required' : '');
-            const partyElementAdd = (type, label) => {
+            const partyElementAdd = (uuid, type, label) => {
                 const _highestElement = highestPartyElement() + 1;
                 const _icon = $(`#recipientsContainer a.elementType[data-type="${type}"] i.elementIcon`)
                     .attr('class')
@@ -257,14 +259,19 @@
                     .filter(className => className !== 'elementIcon');
 
                 partyAddedElements().append(
-                    getPartyElementTemplate(_highestElement, label, _icon)
+                    getPartyElementTemplate(uuid, _highestElement, label, _icon)
                 );
 
                 partyElementUpdate();
             };
             const partyElementUpdate = () => {};
             const partyElementRemove = (element) => {
-                $(element).closest('div.addedElement').remove();
+                const _e = $(element);
+                const _element = _e.hasClass('addedElements') ? element : _e.closest('div.addedElement');
+
+                _element.remove();
+                $(document).trigger('party-element:remove', _element.attr('data-uuid'));
+
                 partyElementUpdate();
             };
             const partyElementToggleRequired = (element) => {
@@ -303,9 +310,13 @@
                 $(document).on("party:add", (e, label) => partyUpdate(label))
                     .on("party:update", partyUpdate)
                     .on("party:remove", partyUpdate)
-                    .on('party-element:add', (e, data) => partyElementAdd(data.eleType, data.text))
+                    .on('party-element:add', (e, data) => partyElementAdd(data.uuid, data.eleType, data.text || data.eleType))
+                    .on('party-element:remove', (e, uuid = null) => {
+                        if(uuid && (_ele = partyAddedElements().find(`div.addedElement[data-uuid="${uuid}"]`)).length > 0) {
+                            partyElementRemove(_ele);
+                        }
+                    })
                     .on('party-element:update', partyElementAdd)
-                    .on('party-element:remove', partyElementAdd)
                     .on("click", "#recipientsContainer a.partyLabel", function() {
                         const _t = $(this);
                         const _li = _t.closest("li.partyLi");
