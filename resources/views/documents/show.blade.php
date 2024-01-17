@@ -51,7 +51,7 @@
                             {{ __('esign::label.replace') }}
                         </a>
                         <a href="javascript: void(0);" class="edit-docs-btn">
-                            <i class="fa fa-pen"></i>
+                            <i class="fa fa-times"></i>
                         </a>
                     </div>
                     <div class="flex pb-2 pt-1.5">

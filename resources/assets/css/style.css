@@ -72,8 +72,13 @@ body{
   margin-bottom: 15px;
 }
 
+.document-template-cards:hover{
+  box-shadow: rgba(99, 99, 99, 0.3) 0px 2px 8px 0px;
+}
+
 .document-template-cards h5{
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  color: #05f;
 }
 
 .document-template-cards a{
@@ -192,7 +197,7 @@ body{
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
   position: relative;
-  margin: 1px;
+  margin: -1px;
   color: #a4a4a4;
 }
 
