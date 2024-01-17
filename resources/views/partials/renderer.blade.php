@@ -2,7 +2,7 @@
     <script src="{{ url('vendor/esign/js/pdf.js') }}?legacy"></script>
     <script src="{{ url('/vendor/esign/js/fabric.min.js') }}?5.3.0"></script>
     <script>
-        const isSigning = getSignerId();
+        const isSigning = true; //getSignerId();
         const rendered = {};
         const pdfRenderTasks = [];
         const pdfPages = [];
@@ -589,26 +589,18 @@
                         {
                             page: 1,
                             eleType: 'signature_pad',
-                            offsetX: 202,
-                            offsetY: 150,
-                            width: 61.28,
-                            height: 58.08,
+                            offsetX: 162.38605033473388,
+                            offsetY: 116.14639593789681,
+                            width: 78.12,
+                            height: 15.819999999999997,
                         },
                         {
                             page: 1,
                             eleType: 'text',
-                            offsetX: 295,
-                            offsetY: 320,
-                            width: 204.4,
-                            height: 60.02559999999999,
-                        },
-                        {
-                            page: 1,
-                            eleType: 'email',
-                            offsetX: 332,
-                            offsetY: 216,
-                            width: 213.76000000000002,
-                            height: 60.02559999999999,
+                            offsetX: 560.1898118045274,
+                            offsetY: 194.47927125489454,
+                            width: 24.85,
+                            height: 15.819999999999997,
                         },
                     ];
 

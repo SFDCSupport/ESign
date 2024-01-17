@@ -1,3 +1,10 @@
+@props([
+    'title' => null,
+    'signerID' => null,
+    'documentID' => null,
+    'isSigningRoute' => false,
+])
+
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="auto">
     <head>
@@ -43,7 +50,11 @@
             </div>
         </noscript>
         @stack('body')
-        <x-esign::partials.header />
+
+        @if (! $isSigningRoute)
+            <x-esign::partials.header />
+        @endif
+
         {{ $slot }}
         <script src="{{ url('vendor/esign/js/jquery.min.js') }}"></script>
         <script src="{{ url('vendor/esign/js/popper.min.js') }}"></script>

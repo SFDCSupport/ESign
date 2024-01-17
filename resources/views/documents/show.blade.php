@@ -1,9 +1,15 @@
-<x-esign::layout :title="$document->title" :documentId="$document->id">
+@php($isSigningRoute = request()->routeIs('esign.signing.*'))
+
+<x-esign::layout
+    :title="$document->title"
+    :documentId="$document->id"
+    :isSigningRoute="$isSigningRoute"
+>
     @pushonce('footJs')
         <script src="{{ url('vendor/esign/js/script.js') }}"></script>
     @endpushonce
 
-    <section class="header-bottom-section">
+    <section class="header-bottom-section @if($isSigningRoute) d-none @endif">
         <div class="container-fluid">
             <div
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
@@ -34,8 +40,6 @@
             </div>
         </div>
     </section>
-
-    @php($isSigningRoute = request()->routeIs('esign.signing.*'))
 
     <div class="container-fluid">
         <div class="row">
