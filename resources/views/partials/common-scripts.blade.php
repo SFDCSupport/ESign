@@ -1,4 +1,12 @@
 <script>
+    const generateUniqueId = (() => {
+        let counter = 0;
+
+        return () => {
+            const timestamp = new Date().getTime();
+            return `${timestamp}-${counter++}`;
+        };
+    })();
     const getCSRFToken = () =>
         $('meta[name="csrf-token"]').attr('content') || null;
     const getDocumentId = () =>

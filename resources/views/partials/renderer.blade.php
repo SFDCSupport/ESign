@@ -1,5 +1,4 @@
 @pushonce('js')
-    <script src="{{ url('vendor/esign/js/uuid.min.js') }}"></script>
     <script src="{{ url('vendor/esign/js/pdf.js') }}?legacy"></script>
     <script src="{{ url('/vendor/esign/js/fabric.min.js') }}?5.3.0"></script>
     <script>
@@ -456,7 +455,7 @@
         function cloneObject(eventData, transform) {
             const target = transform.target;
             const canvas = target.canvas;
-            const _uuid = uuid.v4();
+            const _uuid = generateUniqueId();
 
             target.clone(function (cloned) {
                 cloned.left += 10;
@@ -515,6 +514,7 @@
         };
 
         const createFabricObject = (data) => {
+            const _uuid = generateUniqueId();
             let fabricObject;
 
             const commonStyles = {
@@ -582,10 +582,10 @@
             fabricObject = setFabricControl(fabricObject);
 
             fabricObject.eleType = data.eleType;
-            fabricObject.uuid = uuid.v4();
+            fabricObject.uuid = _uuid;
 
             triggerPartyElementAdd(
-                fabricObject.uuid,
+                _uuid,
                 data.eleType,
                 data.text || fabricObject.text || data.eleType,
             );
