@@ -487,6 +487,8 @@ body{
   .drop-content ul li{
     position: relative;
     border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
   }
 
    .drop-content ul li a{
@@ -540,22 +542,27 @@ body{
       background: #e7e7e7;
   }
   
-  .deleted-party{
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    padding: 4px !important;
-    background: transparent !important;
-    margin-top: -12px;
+  .deleted-party,
+  .updown-docs-btn{
+    padding: 4px 6px !important;
     font-size: .8rem;
-    color: #e30b0b !important;
-    display: none;
-    opacity: 0;
+    color: #666666 !important;
   }
 
-  .drop-content ul li:hover .deleted-party{
-     display: block;
-     opacity: 1;
+  .deleted-party:hover,
+  .updown-docs-btn:hover{
+    color: #333 !important;
+  }
+
+  .deleted-updown-ele{
+    opacity: 0;
+    display: flex;
+    padding-left: 10px;
+    padding-right: 12px;
+  }
+
+  .drop-content ul li:hover .deleted-updown-ele{
+    opacity: 1;
   }
 
   .add-party{
