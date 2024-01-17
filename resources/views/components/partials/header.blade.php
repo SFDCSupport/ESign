@@ -78,6 +78,11 @@
             </ul>
         </div>
     @else
-        <div class="container-fluid pt-2 mb-2 text-center" style="display: block;">COMPANY NAME</div>
+        <div
+            class="container-fluid pt-2 mb-2 text-center"
+            style="display: block"
+        >
+            COMPANY NAME
+        </div>
     @endif
 </header>

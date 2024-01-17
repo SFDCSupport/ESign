@@ -94,10 +94,6 @@
                     'id' => $dropZoneID,
                     'hidden' => $documentExists
                 ])
-
-              
-
-
             </main>
             <div
                 id="recipientsContainer"
@@ -161,42 +157,50 @@
                             </div>
                         </div>
 
-                    <div class="editable-section">
-                        <div class="pos_rel auto-resizing-content">
-                            <i class="fa fa-font type_icons"></i>
-                            <div
-                                class="group/contenteditable relative overflow-visible d-flex align-items-center"
-                            >
-                                <span
-                                    dir="auto"
-                                    contenteditable="false"
-                                    class="inline peer contenteditable-content outline-none focus:block"
-                                    style="min-width: 2px"
+                        <div class="editable-section addedElements">
+                            <template id="addedElementTemplate">
+                                <div
+                                    class="pos_rel auto-resizing-content addedElement"
+                                    data-element="__INDEX"
                                 >
-                                    asdddasdsad
-                                </span>
-                                <span class="edit-resizing-btn">
-                                    <i class="fa fa-pen"></i>
-                                </span>
-                            </div>
-                            <div
-                                class="flex items-center space-x-1 deleted-required-ele align-items-center"
-                            >
-                                <div class="form-check form-switch">
-                                    <input
-                                        class="form-check-input"
-                                        type="checkbox"
-                                        role="switch"
-                                        id="Requiredfield"
-                                    />
+                                    <i class="fa fa-font type_icons"></i>
+                                    <div
+                                        class="group/contenteditable relative overflow-visible d-flex align-items-center"
+                                    >
+                                        <span
+                                            dir="auto"
+                                            contenteditable="false"
+                                            class="inline peer contenteditable-content outline-none focus:block"
+                                            style="min-width: 2px"
+                                        >
+                                            __LABEL
+                                        </span>
+                                        <span class="edit-resizing-btn">
+                                            <i class="fa fa-pen"></i>
+                                        </span>
+                                    </div>
+                                    <div
+                                        class="flex items-center space-x-1 deleted-required-ele align-items-center"
+                                    >
+                                        <div class="form-check form-switch">
+                                            <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                role="switch"
+                                                name="required"
+                                                __REQUIRED
+                                            />
+                                        </div>
+                                        <a
+                                            href="javascript: void(0);"
+                                            class="removecontenteditable removeAddedElement"
+                                        >
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </div>
                                 </div>
-                                <a href="#" class="removecontenteditable">
-                                    <i class="fa fa-trash"></i>
-                                </a>
-                            </div>
+                            </template>
                         </div>
-
-                    </div>
 
                         <div class="icons-box">
                             @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
