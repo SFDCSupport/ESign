@@ -160,7 +160,7 @@
                         <div class="editable-section addedElements">
                             <template id="addedElementTemplate">
                                 <div
-                                    class="pos_rel auto-resizing-content addedElement"
+                                    class="pos_rel auto-resizing-content addedElement __REQUIRED"
                                     data-element="__INDEX"
                                 >
                                     <i class="fa fa-font type_icons"></i>
@@ -176,7 +176,7 @@
                                             __LABEL
                                         </span>
                                         <span class="edit-resizing-btn">
-                                            <i class="fa fa-pen"></i>
+                                            <i class="__ICON"></i>
                                         </span>
                                     </div>
                                     <div
@@ -184,14 +184,16 @@
                                     >
                                         <div class="form-check form-switch">
                                             <input
+                                                onclick="partyElementToggleRequired(this)"
                                                 class="form-check-input"
                                                 type="checkbox"
                                                 role="switch"
                                                 name="required"
-                                                __REQUIRED
+                                                __CHECKED
                                             />
                                         </div>
                                         <a
+                                            onclick="partyElementRemove(this)"
                                             href="javascript: void(0);"
                                             class="removecontenteditable removeAddedElement"
                                         >
@@ -208,7 +210,7 @@
 
                                 <a
                                     href="javascript: void(0);"
-                                    class="draggable icons-box-btn bg-white"
+                                    class="draggable icons-box-btn bg-white elementType"
                                     data-type="{{ $type }}"
                                 >
                                     <span class="draggable-left-icon">
@@ -218,7 +220,7 @@
                                     <div
                                         class="flex items-center flex-col px-2 py-2"
                                     >
-                                        <i class="{{ $icon }}"></i>
+                                        <i class="{{ $icon }} elementIcon"></i>
                                         <span class="text-xs mt-1">
                                             {{ $label }}
                                         </span>
@@ -238,7 +240,38 @@
         <script>
             const partyLi = () => $("#recipientsContainer li.partyLi");
             const totalParties = () => partyLi().length;
-            const highestParty = () => $("li.partyLi a[data-party]").highestData("party");
+            const highestParty = () => $("#recipientsContainer li.partyLi a[data-party]").highestData("party");
+            const partyAddedElements = () => $('#recipientsContainer .addedElements');
+            const highestPartyElement = () => $('#recipientsContainer div.addedElements div.addedElement').highestData('element');
+            const getPartyElementTemplate = (index, label, icon, isRequired = true) => $.trim($('#addedElementTemplate').html())
+                    .replace(/__INDEX/ig, index)
+                    .replace(/__LABEL/ig, label)
+                    .replace(/__ICON/ig, icon)
+                    .replace(/__CHECKED/ig, isRequired ? 'checked' : '')
+                    .replace(/__REQUIRED/ig, isRequired ? 'required' : '');
+            const partyElementAdd = (type, label) => {
+                const _highestElement = highestPartyElement() + 1;
+                const _icon = $(`#recipientsContainer a.elementType[data-type="${type}"] i.elementIcon`)
+                    .attr('class')
+                    .split(' ')
+                    .filter(className => className !== 'elementIcon');
+
+                partyAddedElements().append(
+                    getPartyElementTemplate(_highestElement, label, _icon)
+                );
+
+                partyElementUpdate();
+            };
+            const partyElementUpdate = () => {};
+            const partyElementRemove = (element) => {
+                $(element).closest('div.addedElement').remove();
+                partyElementUpdate();
+            };
+            const partyElementToggleRequired = (element) => {
+                const _t = $(element);
+
+                _t.closest('div.addedElement').toggleClass('required', _t.prop('checked'))
+            };
             const partyUpdate = () => {
                 partyLi().find(".partyDelete,.partyReorder").toggleClass("d-none", totalParties() <= 1);
                 $("#partyAdd").html("<i class=\"fa fa-user-plus\"></i> " + '{!! __('esign::label.add_nth_party') !!}'.replace(":nth", ordinal(highestParty() + 1)));
@@ -267,9 +300,12 @@
                 });
                 @endisset
 
-                $(document).on("party:added", partyUpdate)
-                    .on("party:removed", partyUpdate)
-                    .on("party:updated", partyUpdate)
+                $(document).on("party:add", (e, label) => partyUpdate(label))
+                    .on("party:update", partyUpdate)
+                    .on("party:remove", partyUpdate)
+                    .on('party-element:add', (e, data) => partyElementAdd(data.eleType, data.text))
+                    .on('party-element:update', partyElementAdd)
+                    .on('party-element:remove', partyElementAdd)
                     .on("click", "#recipientsContainer a.partyLabel", function() {
                         const _t = $(this);
                         const _li = _t.closest("li.partyLi");

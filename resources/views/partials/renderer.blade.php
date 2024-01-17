@@ -527,6 +527,11 @@
 
             fabricObject.eleType = data.eleType;
 
+            $(document).trigger('party-element:add', {
+                eleType: data.eleType,
+                text: data.text || fabricObject.text || data.eleType,
+            });
+
             return fabricObject;
         };
 
