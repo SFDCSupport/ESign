@@ -51,9 +51,7 @@
         </noscript>
         @stack('body')
 
-        @if (! $isSigningRoute)
-            <x-esign::partials.header />
-        @endif
+        <x-esign::partials.header :isSigningRoute="$isSigningRoute" />
 
         {{ $slot }}
         <script src="{{ url('vendor/esign/js/jquery.min.js') }}"></script>
