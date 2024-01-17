@@ -9,7 +9,13 @@ use NIIT\ESign\Http\Controllers\SubmissionController;
 use NIIT\ESign\Http\Controllers\TemplateController;
 use NIIT\ESign\Http\Middleware\SigningMiddleware;
 
-Route::any('/upload/{type}', [Controller::class, 'upload']);
+Route::prefix('attachment')
+    ->name('attachment.')
+    ->group(function () {
+        Route::any('upload/{type}', [Controller::class, 'upload'])->name('upload');
+        Route::any('remove/{attachment}', [Controller::class, 'remove'])
+            ->name('remove');
+    });
 
 // ADMIN ROUTES
 Route::middleware('auth')

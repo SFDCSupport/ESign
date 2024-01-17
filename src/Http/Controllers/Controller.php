@@ -9,34 +9,36 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as Base;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use NIIT\ESign\Concerns\Auditable;
 use NIIT\ESign\Models\Document;
+use NIIT\ESign\Models\DocumentAttachment;
 
 class Controller extends Base
 {
     use Auditable, AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function remove(Request $request, $type)
+    public function remove(Request $request, DocumentAttachment $attachment)
     {
         $data = $request->validate([
             'id' => 'required|exists:e_documents,id',
         ]);
 
-        abort_if(! method_exists(Document::class, ($method = Str::camel($type))), 400);
+        $type = $attachment->type->value;
 
-        tap(
-            optional(
-                optional(
-                    Document::with($method)->find($data['id'])
-                )->{$method}
-            )->update(['is_current' => false])
-        )->delete();
+        abort_if(
+            (! method_exists(Document::class, ($method = Str::camel($type))) ||
+                $attachment->model_id !== $data['id']), 400);
 
-        return response(null, Response::HTTP_NO_CONTENT);
+        $isDeleted = $attachment->update([
+            'is_current' => false,
+        ]) && $attachment->delete();
+
+        return $this->jsonResponse([
+            'status' => $isDeleted,
+        ]);
     }
 
     public function upload(Request $request, $type)

@@ -56,13 +56,17 @@
                         <div id="previewViewer"></div>
                         <a
                             href="javascript: void(0);"
-                            id="replaceBtn"
+                            id="documentReplaceBtn"
                             class="btn btn-sm btn-dark replace-doc-btn"
                         >
                             {{ __('esign::label.replace') }}
                         </a>
 
-                        <a href="javascript: void(0);" class="edit-docs-btn">
+                        <a
+                            href="javascript: void(0);"
+                            class="edit-docs-btn"
+                            id="documentRemoveBtn"
+                        >
                             <i class="fa fa-times"></i>
                         </a>
                     </div>
@@ -321,8 +325,22 @@
 
             $(() => {
                 @isset($dropZoneID)
-                $(document).on("click", "#replaceBtn", () => {
+                $(document).on("click", "#documentReplaceBtn", () => {
                     $('#{{ $dropZoneID }}').trigger("click");
+                }).on("click", "#documentRemoveBtn", () => {
+                    $.post('{{ route('esign.attachment.remove', ['attachment' => $document?->document?->id ?? '1']) }}', {
+                        id: getDocumentId()
+                    }).done((r) => {
+                        const isSuccess = r.status;
+
+                        if (isSuccess) {
+                            location.reload(true);
+                        }
+
+                        toast(isSuccess ? "success" : "error", r.message || (isSuccess ? "Done" : "Error"));
+                    }).fail((x) => {
+                        toast("error", x.responseText);
+                    });
                 });
                 @endisset
 

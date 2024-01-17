@@ -2,9 +2,13 @@
 
 namespace NIIT\ESign;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use NIIT\ESign\Models\Document;
+use NIIT\ESign\Models\DocumentAttachment;
+use NIIT\ESign\Models\DocumentSigner;
 
 class ESignServiceProvider extends ServiceProvider
 {
@@ -39,6 +43,7 @@ class ESignServiceProvider extends ServiceProvider
                 $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
             });
 
+        $this->bindRouting();
         $this->loadAssets();
 
         Gate::define('sign-document', function ($user, $document) {
@@ -89,5 +94,24 @@ class ESignServiceProvider extends ServiceProvider
         }
 
         $this->commands($this->commands);
+    }
+
+    private function bindRouting(): void
+    {
+        $uuidExpressions = config('esign.expressions.uuid');
+
+        foreach ([
+            'document' => Document::class,
+            'signer' => DocumentSigner::class,
+            'attachment' => DocumentAttachment::class,
+        ] as $binding => $class) {
+            Route::bind($binding, function (string $value) use ($class, $uuidExpressions) {
+                if (preg_match($uuidExpressions, $value) !== 1) {
+                    throw (new ModelNotFoundException)->setModel($class, $value);
+                }
+
+                return (new $class)->findOrFail($value);
+            });
+        }
     }
 }

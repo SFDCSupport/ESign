@@ -56,7 +56,7 @@
                 _dropzoneEle.data('page') === 'outer';
 
             _dropzoneEle.dropzone({
-                url: '/esign/upload/document',
+                url: '{{ route('esign.attachment.upload', ['type' => 'document']) }}',
                 uploadMultiple: {{ $multiple ? 'true' : 'false' }},
                 maxFilesize: {{ $maxFileSize / 1000 }},
                 acceptedFiles: '{!! $allowed !!}',
@@ -67,6 +67,10 @@
                             $(document).trigger('modal:add-document:show', {
                                 callback: (r) => {
                                     if (r && r.id) {
+                                        setTimeout(() => {
+                                            $(document).trigger('loader:show');
+                                        }, 0);
+
                                         file.id = r.id;
                                         _dropzoneEle.data(
                                             'redirect',
