@@ -7,6 +7,7 @@
         const pdfRenderTasks = [];
         const pdfPages = [];
         const canvasEditions = [];
+        const currentTextScale = 1;
 
         const loadPDF = (url, viewer) => {
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
@@ -150,14 +151,6 @@
                                 function (e) {
                                     e.preventDefault();
 
-                                    if (isSigning) {
-                                        toast(
-                                            'warning',
-                                            "Can't add elements in signing mode!",
-                                        );
-                                        return;
-                                    }
-
                                     const offsetX =
                                         e.layerX ||
                                         e.originalEvent.layerX ||
@@ -176,6 +169,7 @@
                                     const text = draggedData.text;
                                     const height = draggedData.height || 20;
                                     const width = draggedData.width || 60;
+                                    const fontSize = 20;
 
                                     const fabricObject = createFabricObject({
                                         eleType,
@@ -184,6 +178,7 @@
                                         width,
                                         offsetX,
                                         offsetY,
+                                        fontSize,
                                     });
 
                                     canvasEdition.add(fabricObject);
@@ -373,6 +368,53 @@
             });
         };
 
+        fabric.Canvas.prototype.getAbsoluteCoords = function (object) {
+            return {
+                left: object.left + this._offset.left,
+                top: object.top + this._offset.top,
+            };
+        };
+
+        function renderIcon(icon) {
+            return function renderIcon(
+                ctx,
+                left,
+                top,
+                styleOverride,
+                fabricObject,
+            ) {
+                const size = this.cornerSize;
+
+                ctx.save();
+                ctx.translate(left, top);
+                ctx.rotate(fabric.util.degreesToRadians(fabricObject.angle));
+                ctx.drawImage(icon, -size / 2, -size / 2, size, size);
+                ctx.restore();
+            };
+        }
+
+        function deleteObject(eventData, transform) {
+            const target = transform.target;
+            const canvas = target.canvas;
+
+            canvas.remove(target);
+            canvas.requestRenderAll();
+        }
+
+        function cloneObject(eventData, transform) {
+            const target = transform.target;
+            const canvas = target.canvas;
+
+            target.clone(function (cloned) {
+                cloned.left += 10;
+                cloned.top += 10;
+                canvas.add(setFabricControl(cloned));
+                canvas.setActiveObject(cloned);
+            });
+
+            canvas.requestRenderAll();
+        }
+
         const setFabricControl = (fabricObject) => {
             fabricObject
                 .setControlsVisibility({
@@ -391,10 +433,9 @@
                               selectable: false,
                               lockScaling: true,
                               lockMovement: true,
-                              hoverCusror: 'pointer',
+                              hoverCursor: 'pointer',
                           }
                         : {
-                              fontSize: 14,
                               selectable: true,
                               hasControls: true,
                               hasBorders: true,
@@ -420,18 +461,12 @@
         const createFabricObject = (data) => {
             let fabricObject;
 
-            fabric.Canvas.prototype.getAbsoluteCoords = function (object) {
-                return {
-                    left: object.left + this._offset.left,
-                    top: object.top + this._offset.top,
-                };
-            };
-
             const commonStyles = {
                 left: data.offsetX,
                 top: data.offsetY,
                 width: data.width,
                 height: data.height,
+                fontSize: data.fontSize || data.height,
                 padding: 5,
                 fill: '#333333',
                 color: '#333333',
@@ -440,6 +475,14 @@
             const text = $.trim(data.text || data.eleType);
 
             switch (data.eleType) {
+                case 'text':
+                case 'signature_pad':
+                    fabricObject = new fabric.IText(text, {
+                        ...commonStyles,
+                        scaleX: 1,
+                        scaleY: 1,
+                    });
+                    break;
                 default:
                     fabricObject = new fabric.Text(text, commonStyles);
                     break;
@@ -454,48 +497,6 @@
 
                 const cloneImg = document.createElement('img');
                 cloneImg.src = cloneIcon;
-
-                function renderIcon(icon) {
-                    return function renderIcon(
-                        ctx,
-                        left,
-                        top,
-                        styleOverride,
-                        fabricObject,
-                    ) {
-                        const size = this.cornerSize;
-
-                        ctx.save();
-                        ctx.translate(left, top);
-                        ctx.rotate(
-                            fabric.util.degreesToRadians(fabricObject.angle),
-                        );
-                        ctx.drawImage(icon, -size / 2, -size / 2, size, size);
-                        ctx.restore();
-                    };
-                }
-
-                function deleteObject(eventData, transform) {
-                    const target = transform.target;
-                    const canvas = target.canvas;
-
-                    canvas.remove(target);
-                    canvas.requestRenderAll();
-                }
-
-                function cloneObject(eventData, transform) {
-                    const target = transform.target;
-                    const canvas = target.canvas;
-
-                    target.clone(function (cloned) {
-                        cloned.left += 10;
-                        cloned.top += 10;
-                        canvas.add(setFabricControl(cloned));
-                        canvas.setActiveObject(cloned);
-                    });
-
-                    canvas.requestRenderAll();
-                }
 
                 fabric.Object.prototype.controls.deleteControl =
                     new fabric.Control({
@@ -593,20 +594,28 @@
                             eleType: 'signature_pad',
                             offsetX: 238.34674585238713,
                             offsetY: 112.34266801044906,
-                            width: 78.12,
-                            height: 15.819999999999997,
+                            width: 163.24307699999994,
+                            height: 32.969557999999985,
+                        },
+                        {
+                            page: 1,
+                            eleType: 'signature_pad',
+                            offsetX: 253.15437142614985,
+                            offsetY: 218.27301736782994,
+                            width: 111.6,
+                            height: 22.599999999999998,
                         },
                         {
                             page: 2,
                             eleType: 'text',
-                            offsetX: 89.17175300998079,
-                            offsetY: 368.79348783696616,
-                            width: 24.85,
-                            height: 15.819999999999997,
+                            offsetX: 185.7008572647063,
+                            offsetY: 50.38610868284016,
+                            width: 35.5,
+                            height: 22.599999999999998,
                         },
                     ];
 
-                    if (isSigning && !blank(loadedObjectData)) {
+                    if (!blank(loadedObjectData)) {
                         canvasEditions.forEach((canvasEdition) => {
                             canvasEdition.clear();
 
@@ -638,26 +647,24 @@
                 });
             }
 
-            if (!isSigning) {
-                $('.draggable').on('dragstart', function (e) {
-                    const eleType = $(this).data('type');
-                    const text = $(this).find('span').text();
-                    const height = $(this).data('height') || 50;
-                    const width = $(this).data('width') || 100;
+            $('.draggable').on('dragstart', function (e) {
+                const eleType = $(this).data('type');
+                const text = $(this).find('span').text();
+                const height = $(this).data('height') || 50;
+                const width = $(this).data('width') || 100;
 
-                    const data = {
-                        eleType,
-                        text,
-                        height,
-                        width,
-                    };
+                const data = {
+                    eleType,
+                    text,
+                    height,
+                    width,
+                };
 
-                    e.originalEvent.dataTransfer.setData(
-                        'text/plain',
-                        JSON.stringify(data),
-                    );
-                });
-            }
+                e.originalEvent.dataTransfer.setData(
+                    'text/plain',
+                    JSON.stringify(data),
+                );
+            });
         });
     </script>
 @endpushonce
