@@ -274,6 +274,19 @@
 
                 partyElementUpdate();
             };
+            const partyElementActive = (uuid) => {
+                const addedElements = partyAddedElements();
+                const uuidSelector = `div.addedElement[data-uuid="${uuid}"]`;
+
+                if((_ele = addedElements.find(`${uuidSelector}`)).hasClass('active')) {
+                    _ele.removeClass('active');
+
+                    return;
+                }
+
+                addedElements.find('div.addedElement.active').removeClass('active');
+                addedElements.find(`${uuidSelector}:not(.active)`).addClass('active');
+            };
             const partyElementToggleRequired = (element) => {
                 const _t = $(element);
 
@@ -310,6 +323,7 @@
                 $(document).on("party:add", (e, label) => partyUpdate(label))
                     .on("party:update", partyUpdate)
                     .on("party:remove", partyUpdate)
+                    .on('party-element:active', (e, uuid = null) => uuid && partyElementActive(uuid))
                     .on('party-element:add', (e, data) => partyElementAdd(data.uuid, data.eleType, data.text || data.eleType))
                     .on('party-element:remove', (e, uuid = null) => {
                         if(uuid && (_ele = partyAddedElements().find(`div.addedElement[data-uuid="${uuid}"]`)).length > 0) {

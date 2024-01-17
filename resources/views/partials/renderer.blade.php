@@ -9,6 +9,8 @@
         const pdfPages = [];
         const canvasEditions = [];
         const currentTextScale = 1;
+        let selectedObject = null;
+        let isUpdatingSelection = false;
 
         const loadPDF = (url, viewer) => {
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
@@ -299,7 +301,18 @@
                                     }
                                 })
                                 .on('object:scaled', function (e) {})
-                                .on('text:changed', function (e) {});
+                                .on('text:changed', function (e) {})
+                                .on('selection:created', function (e) {
+                                    selectionChanged(this);
+                                })
+                                .on('selection:updated', function (e) {
+                                    selectionChanged(this);
+                                })
+                                .on('selection:cleared', function () {
+                                    if (!isUpdatingSelection) {
+                                        selectionChanged(this, true);
+                                    }
+                                });
 
                             canvasEdition.pageIndex = pageIndex;
                             canvasEditions.push(canvasEdition);
@@ -323,6 +336,36 @@
                 });
 
             return true;
+        };
+
+        function updateSelection() {
+            isUpdatingSelection = true;
+
+            for (let i = 0; i < canvasEditions.length; i++) {
+                const canvas = canvasEditions[i];
+
+                if (canvas !== this) {
+                    canvas.discardActiveObject().renderAll();
+                }
+            }
+
+            isUpdatingSelection = false;
+        }
+
+        const selectionChanged = (canvas, isCleared = false) => {
+            selectedObject = isCleared
+                ? selectedObject
+                : canvas.getActiveObject();
+
+            if (!blank((uuid = selectedObject?.uuid || null))) {
+                $(document).trigger('party-element:active', uuid);
+            }
+
+            if (isCleared) {
+                selectedObject = null;
+            } else {
+                updateSelection.call(canvas);
+            }
         };
 
         const saveBtnAction = () => {
@@ -368,6 +411,13 @@
                 });
             });
         };
+
+        const triggerPartyElementAdd = (uuid, type, text = null) =>
+            $(document).trigger('party-element:add', {
+                uuid: uuid,
+                eleType: type,
+                text: text,
+            });
 
         fabric.Canvas.prototype.getAbsoluteCoords = function (object) {
             return {
@@ -418,11 +468,7 @@
 
             canvas.requestRenderAll();
 
-            $(document).trigger('party-element:add', {
-                uuid: _uuid,
-                eleType: target.eleType,
-                text: target.text,
-            });
+            triggerPartyElementAdd(_uuid, target.eleType, target.text);
         }
 
         const setFabricControl = (fabricObject) => {
@@ -538,11 +584,11 @@
             fabricObject.eleType = data.eleType;
             fabricObject.uuid = uuid.v4();
 
-            $(document).trigger('party-element:add', {
-                uuid: fabricObject.uuid,
-                eleType: data.eleType,
-                text: data.text || fabricObject.text || data.eleType,
-            });
+            triggerPartyElementAdd(
+                fabricObject.uuid,
+                data.eleType,
+                data.text || fabricObject.text || data.eleType,
+            );
 
             return fabricObject;
         };
