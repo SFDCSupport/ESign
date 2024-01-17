@@ -121,7 +121,10 @@
                         <div class="select-party">
                             <div class="dropdown_c dropdown_click">
                                 <div class="selecteddropdown">
-                                    <span>
+                                    <span
+                                        class="selectedParty"
+                                        data-active-party="1"
+                                    >
                                         {{ __('esign::label.nth_party', ['nth' => ordinal(1)]) }}
                                     </span>
                                     <a
@@ -222,16 +225,17 @@
 
     @pushonce('js')
         <script>
-            const partyLi = () => $("li.partyLi");
+            const partyLi = () => $("#recipientsContainer li.partyLi");
             const totalParties = () => partyLi().length;
-            const highestParty = () => $("li.partyLi a[data-party]").highestData('party');
+            const highestParty = () => $("li.partyLi a[data-party]").highestData("party");
             const partyUpdate = () => {
-                partyLi().find(".partyDelete").toggleClass("d-none", totalParties() <= 1);
-                $('#partyAdd').html('<i class="fa fa-user-plus"></i> ' + '{!! __('esign::label.add_nth_party') !!}'.replace(':nth', ordinal(highestParty() + 1)));
+                partyLi().find(".partyDelete,.partyReorder").toggleClass("d-none", totalParties() <= 1);
+                $("#partyAdd").html("<i class=\"fa fa-user-plus\"></i> " + '{!! __('esign::label.add_nth_party') !!}'.replace(":nth", ordinal(highestParty() + 1)));
             };
             const partyAdd = () => {
                 const _highestParty = highestParty() + 1;
                 const clonedLi = $("li.partyLi:last").clone();
+                clonedLi.removeClass("selectedParty");
                 clonedLi.find("a.partyLabel").html(
                     ordinal(_highestParty) + ' {{ __('esign::label.party') }}'
                 );
@@ -254,7 +258,21 @@
 
                 $(document).on("party:added", partyUpdate)
                     .on("party:removed", partyUpdate)
-                    .on("party:updated", partyUpdate);
+                    .on("party:updated", partyUpdate)
+                    .on("click", "#recipientsContainer a.partyLabel", function() {
+                        const _t = $(this);
+                        const _li = _t.closest("li.partyLi");
+
+                        if (_li.hasClass("selectedParty")) {
+                            return;
+                        }
+
+                        partyLi().removeClass("selectedParty");
+                        _li.addClass("selectedParty");
+
+                        $("#recipientsContainer span.selectedParty").text(_t.text())
+                            .data("active-party", _li.find("a[data-party]").attr("data-party"));
+                    });
 
                 partyUpdate();
             });
