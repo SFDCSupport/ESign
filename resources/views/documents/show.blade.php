@@ -1,4 +1,7 @@
-@php($isSigningRoute = request()->routeIs('esign.signing.*'))
+@php
+    $isSigningRoute = request()->routeIs('esign.signing.*');
+    $documentExists = $document->document?->exists();
+@endphp
 
 <x-esign::layout
     :title="$document->title"
@@ -15,7 +18,9 @@
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
             >
                 <h4 class="h4">{{ $document->title }}</h4>
-                <div class="btn-toolbar mb-2 mb-md-0">
+                <div
+                    class="btn-toolbar mb-2 mb-md-0 @if(!$documentExists) d-none @endif"
+                >
                     <div class="btn-group me-2">
                         <button
                             type="button"
@@ -43,7 +48,9 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-2 @if($isSigningRoute) d-none @endif">
+            <div
+                class="col-sm-2 @if($isSigningRoute || !$documentExists) d-none @endif"
+            >
                 <div class="add-doc-sec">
                     <div class="edit-docs-file">
                         <div id="previewViewer"></div>
@@ -74,10 +81,8 @@
             </div>
 
             <main
-                class="@if($isSigningRoute) col-12 @else col-md-7 ms-sm-auto col-lg-7 px-md-4 @endif"
+                class="@if($isSigningRoute || !$documentExists) col-12 @else col-md-7 ms-sm-auto col-lg-7 px-md-4 @endif"
             >
-                @php($documentExists = $document->document?->exists())
-
                 @if ($documentExists)
                     <div
                         id="pdfViewer"
@@ -97,7 +102,7 @@
             </main>
             <div
                 id="recipientsContainer"
-                class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary @if($isSigningRoute) d-none @endif"
+                class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary @if($isSigningRoute || !$documentExists) d-none @endif"
             >
                 <div
                     class="offcanvas-md offcanvas-end bg-body-tertiary"
@@ -242,21 +247,21 @@
             const partyLi = () => $("#recipientsContainer li.partyLi");
             const totalParties = () => partyLi().length;
             const highestParty = () => $("#recipientsContainer li.partyLi a[data-party]").highestData("party");
-            const partyAddedElements = () => $('#recipientsContainer .addedElements');
-            const highestPartyElement = () => $('#recipientsContainer div.addedElements div.addedElement').highestData('element');
-            const getPartyElementTemplate = (uuid,index, label, icon, isRequired = true) => $.trim($('#addedElementTemplate').html())
-                    .replace(/__UUID/ig, uuid)
-                    .replace(/__INDEX/ig, index)
-                    .replace(/__LABEL/ig, label)
-                    .replace(/__ICON/ig, icon)
-                    .replace(/__CHECKED/ig, isRequired ? 'checked' : '')
-                    .replace(/__REQUIRED/ig, isRequired ? 'required' : '');
+            const partyAddedElements = () => $("#recipientsContainer .addedElements");
+            const highestPartyElement = () => $("#recipientsContainer div.addedElements div.addedElement").highestData("element");
+            const getPartyElementTemplate = (uuid, index, label, icon, isRequired = true) => $.trim($("#addedElementTemplate").html())
+                .replace(/__UUID/ig, uuid)
+                .replace(/__INDEX/ig, index)
+                .replace(/__LABEL/ig, label)
+                .replace(/__ICON/ig, icon)
+                .replace(/__CHECKED/ig, isRequired ? "checked" : "")
+                .replace(/__REQUIRED/ig, isRequired ? "required" : "");
             const partyElementAdd = (uuid, type, label) => {
                 const _highestElement = highestPartyElement() + 1;
                 const _icon = $(`#recipientsContainer a.elementType[data-type="${type}"] i.elementIcon`)
-                    .attr('class')
-                    .split(' ')
-                    .filter(className => className !== 'elementIcon');
+                    .attr("class")
+                    .split(" ")
+                    .filter(className => className !== "elementIcon");
 
                 partyAddedElements().append(
                     getPartyElementTemplate(uuid, _highestElement, label, _icon)
@@ -264,13 +269,14 @@
 
                 partyElementUpdate();
             };
-            const partyElementUpdate = () => {};
+            const partyElementUpdate = () => {
+            };
             const partyElementRemove = (element) => {
                 const _e = $(element);
-                const _element = _e.hasClass('addedElements') ? element : _e.closest('div.addedElement');
+                const _element = _e.hasClass("addedElements") ? element : _e.closest("div.addedElement");
 
                 _element.remove();
-                $(document).trigger('party-element:remove', _element.attr('data-uuid'));
+                $(document).trigger("party-element:remove", _element.attr("data-uuid"));
 
                 partyElementUpdate();
             };
@@ -278,19 +284,19 @@
                 const addedElements = partyAddedElements();
                 const uuidSelector = `div.addedElement[data-uuid="${uuid}"]`;
 
-                if((_ele = addedElements.find(`${uuidSelector}`)).hasClass('active')) {
-                    _ele.removeClass('active');
+                if ((_ele = addedElements.find(`${uuidSelector}`)).hasClass("active")) {
+                    _ele.removeClass("active");
 
                     return;
                 }
 
-                addedElements.find('div.addedElement.active').removeClass('active');
-                addedElements.find(`${uuidSelector}:not(.active)`).addClass('active');
+                addedElements.find("div.addedElement.active").removeClass("active");
+                addedElements.find(`${uuidSelector}:not(.active)`).addClass("active");
             };
             const partyElementToggleRequired = (element) => {
                 const _t = $(element);
 
-                _t.closest('div.addedElement').toggleClass('required', _t.prop('checked'))
+                _t.closest("div.addedElement").toggleClass("required", _t.prop("checked"));
             };
             const partyUpdate = () => {
                 partyLi().find(".partyDelete,.partyReorder").toggleClass("d-none", totalParties() <= 1);
@@ -323,14 +329,14 @@
                 $(document).on("party:add", (e, label) => partyUpdate(label))
                     .on("party:update", partyUpdate)
                     .on("party:remove", partyUpdate)
-                    .on('party-element:active', (e, uuid = null) => uuid && partyElementActive(uuid))
-                    .on('party-element:add', (e, data) => partyElementAdd(data.uuid, data.eleType, data.text || data.eleType))
-                    .on('party-element:remove', (e, uuid = null) => {
-                        if(uuid && (_ele = partyAddedElements().find(`div.addedElement[data-uuid="${uuid}"]`)).length > 0) {
+                    .on("party-element:active", (e, uuid = null) => uuid && partyElementActive(uuid))
+                    .on("party-element:add", (e, data) => partyElementAdd(data.uuid, data.eleType, data.text || data.eleType))
+                    .on("party-element:remove", (e, uuid = null) => {
+                        if (uuid && (_ele = partyAddedElements().find(`div.addedElement[data-uuid="${uuid}"]`)).length > 0) {
                             partyElementRemove(_ele);
                         }
                     })
-                    .on('party-element:update', partyElementAdd)
+                    .on("party-element:update", partyElementAdd)
                     .on("click", "#recipientsContainer a.partyLabel", function() {
                         const _t = $(this);
                         const _li = _t.closest("li.partyLi");

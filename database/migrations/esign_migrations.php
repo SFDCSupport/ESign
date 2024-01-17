@@ -69,7 +69,7 @@ return new class extends Migration
             $table->enum('signing_status', SigningStatus::values())->default(SigningStatus::NOT_SIGNED);
             $table->enum('read_status', ReadStatus::values())->default(ReadStatus::NOT_OPENED);
             $table->enum('send_status', SendStatus::values())->default(SendStatus::NOT_SENT);
-            $table->integer('priority')->default(0);
+            $table->integer('position')->default(0);
             $table->timestamps();
             $table->softDeletes();
             $table->userStamps();
@@ -86,6 +86,7 @@ return new class extends Migration
             $table->integer('offset_y');
             $table->integer('width');
             $table->integer('height');
+            $table->integer('position')->default(0);
             $table->timestamps();
             $table->softDeletes();
             $table->userStamps();

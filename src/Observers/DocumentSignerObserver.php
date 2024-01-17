@@ -4,43 +4,43 @@ namespace NIIT\ESign\Observers;
 
 use NIIT\ESign\Models\DocumentSigner as Signer;
 
-class SignerObserver
+class DocumentSignerObserver
 {
-    /**
-     * Handle the Signer "created" event.
-     */
+    public function creating(Signer $signer): void
+    {
+        if (
+            ! blank($signer->position) ||
+            blank($documentId = $signer->document_id)
+        ) {
+            return;
+        }
+
+        $maxPriority = Signer::where('document_id', $documentId)
+            ->max('position') ?? 0;
+
+        $signer->position = $maxPriority + 1;
+    }
+
     public function created(Signer $signer): void
     {
         //
     }
 
-    /**
-     * Handle the Signer "updated" event.
-     */
     public function updated(Signer $signer): void
     {
         //
     }
 
-    /**
-     * Handle the Signer "deleted" event.
-     */
     public function deleted(Signer $signer): void
     {
         //
     }
 
-    /**
-     * Handle the Signer "restored" event.
-     */
     public function restored(Signer $signer): void
     {
         //
     }
 
-    /**
-     * Handle the Signer "force deleted" event.
-     */
     public function forceDeleted(Signer $signer): void
     {
         //
