@@ -49,7 +49,9 @@
                             viewer.insertAdjacentHTML(
                                 'beforeend',
                                 `
-                            <div class="position-relative mt-1 ms-1 me-1 d-inline-block canvasContainer" data-canvas-index="${pageIndex}" id="canvas-container-${pageIndex}">
+                            <div class="position-relative mt-1 ms-1 me-1 d-inline-block canvasContainer ${
+                                pageIndex === 0 ? 'active' : ''
+                            }" data-canvas-index="${pageIndex}" id="canvas-container-${pageIndex}">
                                 <canvas id="canvas-pdf-${pageIndex}" class="shadow-sm canvas-pdf"></canvas>
                                 <div class="position-absolute top-0 start-0">
                                     <canvas id="canvas-edition-${pageIndex}"></canvas>
@@ -315,7 +317,9 @@
             pdfPreviewer.insertAdjacentHTML(
                 'beforeend',
                 `
-                <div class="position-relative previewerContainer" data-canvas-index="${index}">
+                <div class="position-relative previewerContainer ${
+                    index === 0 ? 'active' : ''
+                }" data-canvas-index="${index}">
                   <canvas id="previewer-canvas-${index}"></canvas>
                 </div>`,
             );
@@ -608,8 +612,18 @@
 
             $(document)
                 .on('move-to-canvas', (e, index) => {
+                    const dataIndexSelector = $(
+                        `div[data-canvas-index="${index}"]`,
+                    );
+
                     $('div[data-canvas-index]').removeClass('active');
-                    $(`div[data-canvas-index="${index}"]`).addClass('active');
+                    dataIndexSelector.addClass('active');
+                    $('html, body').animate(
+                        {
+                            scrollTop: dataIndexSelector.offset().top,
+                        },
+                        400,
+                    );
                 })
                 .on('party-element:remove', (e, uuid) => {
                     canvasEditions.forEach((canvasEdition) => {
