@@ -70,17 +70,6 @@
                             <i class="fa fa-times"></i>
                         </a>
                     </div>
-                    <div class="flex pb-2 pt-1.5">
-                        <div class="edit-doc-name">
-                            {{ $document->title }}
-                            <a
-                                href="javascript: void(0);"
-                                class="edit-doc-text"
-                            >
-                                <i class="fa fa-pen"></i>
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
 
