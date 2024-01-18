@@ -9,11 +9,11 @@
                 </p>
                 <h5 class="card-title">{{ $document->title }}</h5>
 
-                <p class="text-secondary mb-1">
+                <p class="text-secondary document-user-date">
                     <i class="fa fa-user"></i>
                     <span>{{ $document->creator->name }}</span>
                 </p>
-                <p class="text-secondary mb-1">
+                <p class="text-secondary document-user-date mb-1">
                     <i class="fas fa-calendar-alt"></i>
                     <span>
                         {{ $document->created_at->format('d-M-Y H:i A') }}

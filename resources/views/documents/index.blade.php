@@ -3,24 +3,28 @@
         <style></style>
     @endpushonce
 
-    <section class="grey-bg-section border-top">
-        <section class="mb-2">
-            <div class="container">
-                <div
-                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-4 pb-1 mb-3 border-bottom"
-                >
-                    <h1 class="h2 mb-2">
-                        {{ __('esign::label.document_templates') }}
-                    </h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <div class="btn-group me-2">
+    <section class="grey-bg-section upload-bg-sec pb-1">
+        <img src="{{ url('vendor/esign/images/esign-banner.png') }}" class="banner-home">
+        <img src="{{ url('vendor/esign/images/digi-banner2.png') }}" class="banner-home banner-home2">
+        <div class="container">
+            <div class="row">
+               <div class="col-sm-12">
+                  <div class="text-center pt-2 pb-2 mb-2">
+                    <h1 class="h2">Sign your document  </h1>
+                    <p class="mb-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry. <br>
+                        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                    </p>
+                  </div>
+                </div> 
+
+                <div class="col-sm-12 text-center mb-md-0">
+                    <div class="mb-2 mb-md-0">
                             <x-esign::partials.button
                                 id="uploadDocument"
                                 :value="__('esign::label.upload')"
                                 icon="upload"
                                 class="btn-secondary"
                             />
-                        </div>
                         <x-esign::partials.button
                             :value="__('esign::label.create')"
                             icon="plus"
@@ -30,18 +34,41 @@
                     </div>
                 </div>
             </div>
-        </section>
-        <div class="container">
-            <div class="row">
-                @each('esign::documents.partials.document', $documents, 'document')
+
+            <div class="filepond-section-custom mb-0">
+                @php($dropZoneID = \Illuminate\Support\Str::random(12))
+        
+                @include('esign::partials.dropzone', [
+                    'id' => $dropZoneID,
+                ])
             </div>
+
         </div>
+    </section>
 
-        @php($dropZoneID = \Illuminate\Support\Str::random(12))
+    <section class="bg-white">
+        <section class="mb-2">
+            <div class="container">
+                <div
+                    class=" align-items-center pt-4 pb-1 mb-5 border-bottom text-center"
+                >
+                    <h1 class="h2 mb-2">
+                        {{ __('esign::label.document_templates') }}
+                    </h1>
 
-        @include('esign::partials.dropzone', [
-            'id' => $dropZoneID,
-        ])
+                    <p class="mb-2">Lorem Ipsum is simply dummy text of the printing and typesetting industry. <br>
+                        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                    </p>
+                    
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    @each('esign::documents.partials.document', $documents, 'document')
+                </div>
+            </div>
+        </section>
+        
     </section>
 
     @include('esign::documents.modals.add-document')

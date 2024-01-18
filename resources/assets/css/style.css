@@ -71,13 +71,14 @@ body{
     background: #fff;
     box-shadow: rgba(45, 62, 80, 0.08) 0px 3px 6px 0px;
     transition: all 0.2s ease-in-out 0s;
+    overflow: hidden;
 }
 
-.document-template-cards::before,
+/* .document-template-cards::before,
 .document-template-cards::after{
   content: "";
   position: absolute;
-  top: -13px;
+  top: -8px;
   background-color: rgb(225 230 234);
   left: 8px;
   right: 8px;
@@ -87,13 +88,13 @@ body{
 }
 
 .document-template-cards::after{
-  top: -20Px;
+  top: -15Px;
   background-color: rgb(240 241 245);
   right: 20px;
   height: 7px;
   left: 20px;
   z-index: 2;
-}
+} */
 
 .document-template-cards .card-body{
   padding: 5px 10px;
@@ -101,12 +102,19 @@ body{
 
 .template_type{
   display: block;
-  margin-bottom: 10px !important;
-  text-transform: uppercase;
-  letter-spacing: .02rem;
+    top: 12px;
+    width: 90px;
+    position: absolute;
+    text-align: center;
+    transform: rotate(45deg);
+    right: -22px;
+    color: #fff;
+    font-size: .8rem;
+    padding: 6px 0px;
+    line-height: 10px;
 }
 
-.document-template-cards.status-pending{
+/* .document-template-cards.status-pending{
   border-top: 0.425rem solid #cecd00;
 }
 
@@ -124,27 +132,27 @@ body{
 
 .document-template-cards.status-archived{
   border-top: 0.425rem solid #8e97a0;
-}
+} */
 
 .status-pending .template_type{
-  color: #cecd00;
+  background-color: #cecd00;
 }
 
 .status-draft .template_type{
-  color: #efa600;
+  background-color: #efa600;
 }
 
 .status-active .template_type{
-  color: #00b799;
+  background-color: #00b799;
 }
 
 .status-in_active .template_type{
-  color: #dc3847;
+  background-color: #dc3847;
 }
 
 .status-archived .template_type{
-  color: #8e97a0;
-}
+  background-color: #8e97a0;
+} 
 
 .document-template-cards:hover{
   transform: translateY(-3px);
@@ -152,13 +160,33 @@ body{
 }
 
 .document-template-cards h5{
-  margin-bottom: 12px;
-  color: #333;
+    margin-bottom: 16px;
+    color: #333;
+    max-width: 306px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.document-user-date{
+  margin-bottom: 7px;
+  font-size: 13px;
 }
 
 .document-template-cards a{
   color:#2e2e2e;
   text-decoration: none;
+}
+
+.filepond-section-custom .dropzone.dz-clickable{
+  padding: 40px 20px;
+  background-color: #fff;
+  max-width: 740px;
+  margin: 0px auto 10px;
+}
+
+.filepond-section-custom .dropzone.dz-clickable h3{
+  font-size: 1.5rem !important;
 }
 
 .grey-bg-section{
@@ -808,7 +836,6 @@ padding: 3px;
   right: 0;
   top: 30px;
   max-width: 340px;
-  opacity: .8;
 }
 
 .banner-home2 {

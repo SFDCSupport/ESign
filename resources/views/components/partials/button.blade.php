@@ -9,7 +9,7 @@
     {{
         $attributes->merge([
             'type' => $type,
-            'class' => 'btn d-flex align-items-center gap-1 me-2',
+            'class' => 'btn align-items-center gap-1 me-2',
         ])
     }}
     {{ $redirectUrl ? 'onclick=location.href="'.$redirectUrl.'"' : '' }}
