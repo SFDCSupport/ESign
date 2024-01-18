@@ -8,7 +8,7 @@
                     <span>{{ __('esign::label.'.$documentStatus) }}</span>
                 </p>
                 <h5 class="card-title">{{ $document->title }}</h5>
-                
+
                 <p class="text-secondary mb-1">
                     <i class="fa fa-user"></i>
                     <span>{{ $document->creator->name }}</span>

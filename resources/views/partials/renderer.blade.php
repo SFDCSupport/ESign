@@ -549,9 +549,11 @@
                 const cloneIcon = svgToDataUrl(`@include('esign::partials.icons.copy', ['stroke' => 'blue'])`);
 
                 const deleteImg = document.createElement('img');
+                deleteImg.classList.add('icon-delete');
                 deleteImg.src = deleteIcon;
 
                 const cloneImg = document.createElement('img');
+                deleteImg.classList.add('icon-clone');
                 cloneImg.src = cloneIcon;
 
                 fabric.Object.prototype.controls.deleteControl =
