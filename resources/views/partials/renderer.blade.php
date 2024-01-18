@@ -9,7 +9,11 @@
         const canvasEditions = [];
         const currentTextScale = 1;
         let selectedObject = null;
+        let resizeTimeout = null;
         let isUpdatingSelection = false;
+        let windowWidth = window.innerWidth;
+        const pdfViewer = $('#pdfViewer');
+        const url = pdfViewer.data('url');
 
         const loadPDF = (url, viewer) => {
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
@@ -298,6 +302,111 @@
                 });
 
             return true;
+        };
+
+        const autoZoom = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(resizePDF, 100);
+        };
+
+        const zoomChange = (inOrOut) => {
+            if (resizeTimeout) {
+                return;
+            }
+
+            let deltaScale = 0.2 * inOrOut;
+
+            if (currentScale + deltaScale < 0) {
+                return;
+            }
+            if (currentScale + deltaScale > 3) {
+                return;
+            }
+
+            clearTimeout(resizeTimeout);
+            currentScale += deltaScale;
+
+            resizeTimeout = setTimeout(resizePDF(currentScale), 50);
+        };
+
+        const resizePDF = (scale = 'auto') => {
+            let renderComplete = true;
+
+            pdfRenderTasks.forEach(function (renderTask) {
+                if (!renderTask) {
+                    renderComplete = false;
+                }
+            });
+
+            if (!renderComplete) {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(function () {
+                    resizePDF(scale);
+                }, 50);
+                return;
+            }
+
+            pdfPages.forEach(function (page, pageIndex) {
+                let renderTask = pdfRenderTasks[pageIndex];
+                const viewerWidth = pdfViewer[0].clientWidth;
+
+                if (
+                    scale === 'auto' &&
+                    page.getViewport({ scale: 1.5 }).width > viewerWidth - 40
+                ) {
+                    scale =
+                        (viewerWidth - 40) /
+                        page.getViewport({ scale: 1 }).width;
+                }
+
+                if (scale === 'auto') {
+                    scale = 1.5;
+                }
+
+                let viewport = page.getViewport({ scale: scale });
+                currentScale = scale;
+
+                let canvasPDF = document.getElementById(
+                    'canvas-pdf-' + pageIndex,
+                );
+                let context = canvasPDF.getContext('2d');
+                canvasPDF.height = viewport.height;
+                canvasPDF.width = viewport.width;
+                canvasEdition = canvasEditions[pageIndex];
+
+                let scaleMultiplier = canvasPDF.width / canvasEdition.width;
+                let objects = canvasEdition.getObjects();
+                for (let i in objects) {
+                    objects[i].scaleX = objects[i].scaleX * scaleMultiplier;
+                    objects[i].scaleY = objects[i].scaleY * scaleMultiplier;
+                    objects[i].left = objects[i].left * scaleMultiplier;
+                    objects[i].top = objects[i].top * scaleMultiplier;
+                    objects[i].setCoords();
+                }
+
+                canvasEdition.setWidth(
+                    canvasEdition.getWidth() * scaleMultiplier,
+                );
+                canvasEdition.setHeight(
+                    canvasEdition.getHeight() * scaleMultiplier,
+                );
+                canvasEdition.renderAll();
+                canvasEdition.calcOffset();
+
+                let renderContext = {
+                    canvasContext: context,
+                    viewport: viewport,
+                    enhanceTextSelection: true,
+                };
+                renderTask.cancel();
+                pdfRenderTasks[pageIndex] = null;
+                renderTask = page.render(renderContext);
+                renderTask.promise.then(function () {
+                    pdfRenderTasks[pageIndex] = renderTask;
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = null;
+                });
+            });
         };
 
         const pdfPreviewer = document.getElementById('previewViewer');
@@ -680,9 +789,6 @@
                     }
                 });
 
-            const pdfViewer = $('#pdfViewer');
-            const url = pdfViewer.data('url');
-
             if (!blank(url)) {
                 $(document).trigger('load-pdf', {
                     url: url,
@@ -767,6 +873,17 @@
                     JSON.stringify(data),
                 );
             });
+        });
+
+        $(window).on('resize', function (e) {
+            e.preventDefault() && e.stopPropagation();
+
+            if (windowWidth === window.innerWidth) {
+                return;
+            }
+
+            windowWidth = window.innerWidth;
+            autoZoom();
         });
     </script>
 @endpushonce
