@@ -572,6 +572,8 @@
                     });
                 });
             });
+
+            $(document).trigger('signers-save');
         };
 
         const triggerPartyElementAdd = (uuid, type, index, text = null) =>

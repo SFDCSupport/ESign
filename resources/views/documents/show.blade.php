@@ -106,6 +106,12 @@
                     method="post"
                 >
                     @csrf
+                    <input
+                        type="hidden"
+                        name="document_id"
+                        value="{{ $document->id }}"
+                    />
+
                     <div
                         class="offcanvas-md offcanvas-end bg-body-tertiary"
                         tabindex="-1"
@@ -177,47 +183,47 @@
                                     >
                                         <input
                                             type="hidden"
-                                            name="signer[__PARTY][element][signer_id]"
+                                            name="signer[__PARTY][element][__POSITION][signer_id]"
                                             value="__SIGNER_ID"
                                         />
                                         <input
                                             type="hidden"
-                                            name="signer[__PARTY][element][type]"
+                                            name="signer[__PARTY][element][__POSITION][type]"
                                             value="__TYPE"
                                         />
                                         <input
                                             type="hidden"
-                                            name="signer[__PARTY][element][position]"
+                                            name="signer[__PARTY][element][__POSITION][position]"
                                             value="__POSITION"
                                         />
                                         <input
                                             type="hidden"
-                                            name="signer[__PARTY][element][label]"
+                                            name="signer[__PARTY][element][__POSITION][label]"
                                             value="__LABEL"
                                         />
                                         <input
                                             type="hidden"
-                                            name="signer[__PARTY][element][offset_x]"
+                                            name="signer[__PARTY][element][__POSITION][offset_x]"
                                             value="__OFFSET_X"
                                         />
                                         <input
                                             type="hidden"
-                                            name="signer[__PARTY][element][offset_y]"
+                                            name="signer[__PARTY][element][__POSITION][offset_y]"
                                             value="__OFFSET_Y"
                                         />
                                         <input
                                             type="hidden"
-                                            name="signer[__PARTY][element][width]"
+                                            name="signer[__PARTY][element][__POSITION][width]"
                                             value="__WIDTH"
                                         />
                                         <input
                                             type="hidden"
-                                            name="signer[__PARTY][element][height]"
+                                            name="signer[__PARTY][element][__POSITION][height]"
                                             value="__HEIGHT"
                                         />
                                         <input
                                             type="hidden"
-                                            name="signer[__PARTY][element][on_page]"
+                                            name="signer[__PARTY][element][__POSITION][on_page]"
                                             value="__ON_PAGE"
                                         />
 
@@ -445,7 +451,10 @@
 
                         $("#recipientsContainer span.selectedParty").text(_t.text())
                             .attr("data-active-party-index", index);
-                    }).on("click", ".dropdown_click .selecteddropdown", () => {
+                    }).on('signers-save', (e) => {
+                        const form = $('#recipientsForm');
+                        console.log(form.serializeArray());
+                }).on("click", ".dropdown_click .selecteddropdown", () => {
                     $(".dropdown_click .drop-content ul").slideToggle();
                 });
 
