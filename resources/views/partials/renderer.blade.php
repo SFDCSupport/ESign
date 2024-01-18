@@ -12,6 +12,7 @@
         let resizeTimeout = null;
         let isUpdatingSelection = false;
         let windowWidth = window.innerWidth;
+        const pdfPreviewer = document.getElementById('previewViewer');
         const pdfViewer = $('#pdfViewer');
         const url = pdfViewer.data('url');
 
@@ -346,17 +347,22 @@
                 return;
             }
 
-            pdfPages.forEach(function (page, pageIndex) {
-                let renderTask = pdfRenderTasks[pageIndex];
-                const viewerWidth = pdfViewer[0].clientWidth;
-
+            const _resize = (
+                page,
+                index,
+                task,
+                scale,
+                width,
+                selector,
+                minus = 40,
+                isPreviewer = false,
+            ) => {
                 if (
                     scale === 'auto' &&
-                    page.getViewport({ scale: 1.5 }).width > viewerWidth - 40
+                    page.getViewport({ scale: 1.5 }).width > width - minus
                 ) {
                     scale =
-                        (viewerWidth - 40) /
-                        page.getViewport({ scale: 1 }).width;
+                        (width - minus) / page.getViewport({ scale: 1 }).width;
                 }
 
                 if (scale === 'auto') {
@@ -364,58 +370,95 @@
                 }
 
                 let viewport = page.getViewport({ scale: scale });
-                currentScale = scale;
 
-                let canvasPDF = document.getElementById(
-                    'canvas-pdf-' + pageIndex,
-                );
+                if (!isPreviewer) {
+                    currentScale = scale;
+                }
+
+                let canvasPDF = document.getElementById(selector);
                 let context = canvasPDF.getContext('2d');
                 canvasPDF.height = viewport.height;
                 canvasPDF.width = viewport.width;
-                canvasEdition = canvasEditions[pageIndex];
 
-                let scaleMultiplier = canvasPDF.width / canvasEdition.width;
-                let objects = canvasEdition.getObjects();
-                for (let i in objects) {
-                    objects[i].scaleX = objects[i].scaleX * scaleMultiplier;
-                    objects[i].scaleY = objects[i].scaleY * scaleMultiplier;
-                    objects[i].left = objects[i].left * scaleMultiplier;
-                    objects[i].top = objects[i].top * scaleMultiplier;
-                    objects[i].setCoords();
+                if (!isPreviewer) {
+                    canvasEdition = canvasEditions[index];
+
+                    let scaleMultiplier = canvasPDF.width / canvasEdition.width;
+                    let objects = canvasEdition.getObjects();
+                    for (let i in objects) {
+                        objects[i].scaleX = objects[i].scaleX * scaleMultiplier;
+                        objects[i].scaleY = objects[i].scaleY * scaleMultiplier;
+                        objects[i].left = objects[i].left * scaleMultiplier;
+                        objects[i].top = objects[i].top * scaleMultiplier;
+                        objects[i].setCoords();
+                    }
+
+                    canvasEdition.setWidth(
+                        canvasEdition.getWidth() * scaleMultiplier,
+                    );
+                    canvasEdition.setHeight(
+                        canvasEdition.getHeight() * scaleMultiplier,
+                    );
+                    canvasEdition.renderAll();
+                    canvasEdition.calcOffset();
                 }
-
-                canvasEdition.setWidth(
-                    canvasEdition.getWidth() * scaleMultiplier,
-                );
-                canvasEdition.setHeight(
-                    canvasEdition.getHeight() * scaleMultiplier,
-                );
-                canvasEdition.renderAll();
-                canvasEdition.calcOffset();
 
                 let renderContext = {
                     canvasContext: context,
                     viewport: viewport,
-                    enhanceTextSelection: true,
+                    enhanceTextSelection: !isPreviewer,
                 };
-                renderTask.cancel();
-                pdfRenderTasks[pageIndex] = null;
-                renderTask = page.render(renderContext);
-                renderTask.promise.then(function () {
-                    pdfRenderTasks[pageIndex] = renderTask;
-                    clearTimeout(resizeTimeout);
-                    resizeTimeout = null;
-                });
+
+                if (isPreviewer) {
+                    task = page.render(renderContext);
+                    task.promise.then(function () {
+                        clearTimeout(resizeTimeout);
+                        resizeTimeout = null;
+                    });
+                } else {
+                    task.cancel();
+                    pdfRenderTasks[index] = null;
+                    task = page.render(renderContext);
+                    task.promise.then(function () {
+                        pdfRenderTasks[index] = task;
+                        clearTimeout(resizeTimeout);
+                        resizeTimeout = null;
+                    });
+                }
+            };
+
+            pdfPages.forEach(function (page, i) {
+                let renderTask = pdfRenderTasks[i];
+                const viewerWidth = pdfViewer[0].clientWidth;
+                const previewerWidth = pdfPreviewer.clientWidth;
+
+                _resize(
+                    page,
+                    i,
+                    renderTask,
+                    scale,
+                    viewerWidth,
+                    'canvas-pdf-' + i,
+                );
+                _resize(
+                    page,
+                    i,
+                    renderTask,
+                    scale,
+                    previewerWidth,
+                    'canvas-previewer-' + i,
+                    10,
+                    true,
+                );
             });
         };
 
-        const pdfPreviewer = document.getElementById('previewViewer');
         const renderThumbnailPreview = (index, page) => {
             let scale = 1.5;
             let viewport = page.getViewport({
                 scale: scale,
             });
-            let viewerWidth = pdfPreviewer.clientWidth - 20;
+            let viewerWidth = pdfPreviewer.clientWidth - 10;
 
             if (viewport.width > viewerWidth) {
                 viewport = page.getViewport({ scale: 1 });
@@ -429,11 +472,11 @@
                 <div class="position-relative previewerContainer ${
                     index === 0 ? 'active' : ''
                 }" data-canvas-index="${index}">
-                  <canvas id="previewer-canvas-${index}"></canvas>
+                  <canvas id="canvas-previewer-${index}"></canvas>
                 </div>`,
             );
 
-            const canvas = document.getElementById(`previewer-canvas-${index}`);
+            const canvas = document.getElementById(`canvas-previewer-${index}`);
             const context = canvas.getContext('2d');
 
             canvas.pageId = index;
