@@ -166,7 +166,7 @@
                                     data-party-index="__PARTY"
                                     data-uuid="__UUID"
                                 >
-                                    <i class="__ICON"></i>
+                                    <i class="__ICON type_icons"></i>
                                     <div
                                         class="group/contenteditable relative overflow-visible d-flex align-items-center"
                                     >
