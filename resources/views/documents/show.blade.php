@@ -166,7 +166,7 @@
                                     data-party-index="__PARTY"
                                     data-uuid="__UUID"
                                 >
-                                    <i class="fa fa-font type_icons"></i>
+                                    <i class="__ICON"></i>
                                     <div
                                         class="group/contenteditable relative overflow-visible d-flex align-items-center"
                                     >
@@ -179,7 +179,7 @@
                                             __LABEL
                                         </span>
                                         <span class="edit-resizing-btn">
-                                            <i class="__ICON"></i>
+                                            <i class="fa fa-pen"></i>
                                         </span>
                                     </div>
                                     <div
@@ -259,7 +259,8 @@
                 const _icon = $(`#recipientsContainer a.elementType[data-type="${type}"] i.elementIcon`)
                     .attr("class")
                     .split(" ")
-                    .filter(className => className !== "elementIcon");
+                    .filter(className => className !== "elementIcon")
+                    .join(' ');
 
                 partyAddedElements().append(
                     getPartyElementTemplate(uuid, _highestElement, label, _icon, partyIndex)
