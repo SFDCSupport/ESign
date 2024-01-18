@@ -307,7 +307,7 @@
             const getPartyElementTemplate = (uuid, position, label, icon, partyIndex = null, isRequired = true) => $.trim($("#addedElementTemplate").html())
                 .replace(/__UUID/ig, uuid)
                 .replace(/__POSITION/ig, position)
-                .replace(/__LABEL/ig, label)
+                .replace(/__LABEL/ig, $.trim(label))
                 .replace(/__ICON/ig, icon)
                 .replace(/__CHECKED/ig, isRequired ? "checked" : "")
                 .replace(/__REQUIRED/ig, isRequired ? "required" : "")

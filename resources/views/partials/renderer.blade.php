@@ -929,6 +929,8 @@
                                         canvasEdition.add(newObj2);
                                     }
                                 });
+
+                                return true;
                             }),
                         ).then(function () {
                             $(document).trigger('elements-added-to-canvas');
