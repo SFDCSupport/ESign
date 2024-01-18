@@ -618,12 +618,14 @@
 
                     $('div[data-canvas-index]').removeClass('active');
                     dataIndexSelector.addClass('active');
-                    $('html, body').animate(
-                        {
-                            scrollTop: dataIndexSelector.offset().top,
-                        },
-                        400,
-                    );
+                    dataIndexSelector.each((i, ele) => {
+                        $('html, body').animate(
+                            {
+                                scrollTop: $(ele).offset().top,
+                            },
+                            400,
+                        );
+                    });
                 })
                 .on('party-element:remove', (e, uuid) => {
                     canvasEditions.forEach((canvasEdition) => {
