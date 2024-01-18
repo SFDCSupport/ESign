@@ -300,8 +300,8 @@
                 partyLi().find(".partyDelete,.partyReorder").toggleClass("d-none", totalParties() <= 1);
                 $("#partyAdd").html("<i class=\"fa fa-user-plus\"></i> " + '{!! __('esign::label.add_nth_party') !!}'.replace(":nth", ordinal(highestParty() + 1)));
             };
-            const partyAdd = () => {
-                const _highestParty = highestParty() + 1;
+            const partyAdd = (index = null) => {
+                const _highestParty = index || highestParty() + 1;
                 const clonedLi = $("li.partyLi:last").clone();
                 clonedLi.removeClass("selectedParty");
                 clonedLi.find("a.partyLabel").html(
@@ -342,7 +342,13 @@
                     .on("party:update", partyUpdate)
                     .on("party:remove", partyUpdate)
                     .on("party-element:active", (e, uuid = null) => uuid && partyElementActive(uuid))
-                    .on("party-element:add", (e, data) => partyElementAdd(data.uuid, data.eleType, data.partyIndex, data.text || data.eleType))
+                    .on("party-element:add", (e, data) => {
+                        partyElementAdd(data.uuid, data.eleType, data.partyIndex, data.text || data.eleType)
+
+                        if($(`li.partyLi[data-party-index="${data.partyIndex}"]`).length <= 0) {
+                            partyAdd(data.partyIndex);
+                        }
+                    })
                     .on("party-element:remove", (e, uuid = null) => {
                         if (uuid && (_ele = partyAddedElements().find(`div.addedElement[data-uuid="${uuid}"]`)).length > 0) {
                             partyElementRemove(_ele);
