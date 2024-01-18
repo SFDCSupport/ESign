@@ -64,21 +64,96 @@ body{
 }
 
 .document-template-cards{
-  border: 0px;
-  padding: 10px;
-  border-radius: 14px;
-  box-shadow: 0 1px 5px rgba(33,51,67,.12);
-  position: relative;
-  margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 2px;
+    position: relative;
+    margin-bottom: 35px;
+    background: #fff;
+    box-shadow: rgba(45, 62, 80, 0.08) 0px 3px 6px 0px;
+    transition: all 0.2s ease-in-out 0s;
+}
+
+.document-template-cards::before,
+.document-template-cards::after{
+  content: "";
+  position: absolute;
+  top: -13px;
+  background-color: rgb(225 230 234);
+  left: 8px;
+  right: 8px;
+  height: 7px;
+  border-radius: 2px;
+  z-index: 3;
+}
+
+.document-template-cards::after{
+  top: -20Px;
+  background-color: rgb(240 241 245);
+  right: 20px;
+  height: 7px;
+  left: 20px;
+  z-index: 2;
+}
+
+.document-template-cards .card-body{
+  padding: 5px 10px;
+}
+
+.template_type{
+  display: block;
+  margin-bottom: 10px !important;
+  text-transform: uppercase;
+  letter-spacing: .02rem;
+}
+
+.document-template-cards.status-pending{
+  border-top: 0.425rem solid #cecd00;
+}
+
+.document-template-cards.status-draft{
+  border-top: 0.425rem solid #efa600;
+}
+
+.document-template-cards.status-active{
+  border-top: 0.425rem solid #00b799;
+}
+
+.document-template-cards.status-in_active{
+  border-top: 0.425rem solid #dc3847;
+}
+
+.document-template-cards.status-archived{
+  border-top: 0.425rem solid #8e97a0;
+}
+
+.status-pending .template_type{
+  color: #cecd00;
+}
+
+.status-draft .template_type{
+  color: #efa600;
+}
+
+.status-active .template_type{
+  color: #00b799;
+}
+
+.status-in_active .template_type{
+  color: #dc3847;
+}
+
+.status-archived .template_type{
+  color: #8e97a0;
 }
 
 .document-template-cards:hover{
-  box-shadow: rgba(99, 99, 99, 0.3) 0px 2px 8px 0px;
+  transform: translateY(-3px);
+  cursor: pointer;
 }
 
 .document-template-cards h5{
   margin-bottom: 12px;
-  color: #05f;
+  color: #333;
 }
 
 .document-template-cards a{
@@ -711,3 +786,34 @@ padding: 3px;
   right: 5px;
   top: 5px;
 }
+
+.upload-bg-sec {
+  position: relative;
+  background-color: transparent;
+}
+
+.upload-bg-sec::before {
+  position: absolute;
+  background-color: rgb(242, 246, 255);
+  content: "";
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 320px;
+  z-index: -1;
+}
+
+.banner-home {
+  position: absolute;
+  right: 0;
+  top: 30px;
+  max-width: 340px;
+  opacity: .8;
+}
+
+.banner-home2 {
+  right: inherit;
+  left: 0;
+  max-width: 260px;
+}
+
