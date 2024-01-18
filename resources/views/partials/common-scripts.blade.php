@@ -1,4 +1,8 @@
 <script>
+    const getActivePartyIndex = () =>
+        $('.selectedParty[data-active-party-index]').attr(
+            'data-active-party-index',
+        );
     const generateUniqueId = (() => {
         let counter = 0;
 

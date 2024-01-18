@@ -52,7 +52,6 @@
                 class="col-sm-2 dark-grey-bg @if($isSigningRoute || !$documentExists) d-none @endif"
             >
                 <div class="add-doc-sec">
-
                     <div class="text-center mb-2">
                         <a
                             href="javascript: void(0);"
@@ -73,7 +72,6 @@
 
                     <div class="edit-docs-file">
                         <div id="previewViewer"></div>
-                        
                     </div>
                 </div>
             </div>
@@ -126,7 +124,7 @@
                                 <div class="selecteddropdown">
                                     <span
                                         class="selectedParty"
-                                        data-active-party="1"
+                                        data-active-party-index="1"
                                     >
                                         {{ __('esign::label.nth_party', ['nth' => ordinal(1)]) }}
                                     </span>
@@ -164,7 +162,8 @@
                             <template id="addedElementTemplate">
                                 <div
                                     class="pos_rel auto-resizing-content addedElement __REQUIRED"
-                                    data-element="__INDEX"
+                                    data-element-index="__INDEX"
+                                    data-party-index="__PARTY"
                                     data-uuid="__UUID"
                                 >
                                     <i class="fa fa-font type_icons"></i>
@@ -244,17 +243,18 @@
         <script>
             const partyLi = () => $("#recipientsContainer li.partyLi");
             const totalParties = () => partyLi().length;
-            const highestParty = () => $("#recipientsContainer li.partyLi a[data-party]").highestData("party");
+            const highestParty = () => $("#recipientsContainer li.partyLi[data-party-index]").highestData("party-index");
             const partyAddedElements = () => $("#recipientsContainer .addedElements");
-            const highestPartyElement = () => $("#recipientsContainer div.addedElements div.addedElement").highestData("element");
-            const getPartyElementTemplate = (uuid, index, label, icon, isRequired = true) => $.trim($("#addedElementTemplate").html())
+            const highestPartyElement = () => $("#recipientsContainer div.addedElements div.addedElement").highestData("element-index");
+            const getPartyElementTemplate = (uuid, index, label, icon, partyIndex = null, isRequired = true) => $.trim($("#addedElementTemplate").html())
                 .replace(/__UUID/ig, uuid)
                 .replace(/__INDEX/ig, index)
                 .replace(/__LABEL/ig, label)
                 .replace(/__ICON/ig, icon)
                 .replace(/__CHECKED/ig, isRequired ? "checked" : "")
-                .replace(/__REQUIRED/ig, isRequired ? "required" : "");
-            const partyElementAdd = (uuid, type, label) => {
+                .replace(/__REQUIRED/ig, isRequired ? "required" : "")
+                .replace(/__PARTY/ig, partyIndex || getActivePartyIndex());
+            const partyElementAdd = (uuid, type, partyIndex, label) => {
                 const _highestElement = highestPartyElement() + 1;
                 const _icon = $(`#recipientsContainer a.elementType[data-type="${type}"] i.elementIcon`)
                     .attr("class")
@@ -262,7 +262,7 @@
                     .filter(className => className !== "elementIcon");
 
                 partyAddedElements().append(
-                    getPartyElementTemplate(uuid, _highestElement, label, _icon)
+                    getPartyElementTemplate(uuid, _highestElement, label, _icon, partyIndex)
                 );
 
                 partyElementUpdate();
@@ -307,7 +307,7 @@
                 clonedLi.find("a.partyLabel").html(
                     ordinal(_highestParty) + ' {{ __('esign::label.party') }}'
                 );
-                clonedLi.find("a[data-party]").attr("data-party", _highestParty);
+                clonedLi.attr("data-party-index", _highestParty);
                 clonedLi.insertAfter($("ul#partyUl li.partyLi:last"));
 
                 partyUpdate();
@@ -342,16 +342,24 @@
                     .on("party:update", partyUpdate)
                     .on("party:remove", partyUpdate)
                     .on("party-element:active", (e, uuid = null) => uuid && partyElementActive(uuid))
-                    .on("party-element:add", (e, data) => partyElementAdd(data.uuid, data.eleType, data.text || data.eleType))
+                    .on("party-element:add", (e, data) => partyElementAdd(data.uuid, data.eleType, data.partyIndex, data.text || data.eleType))
                     .on("party-element:remove", (e, uuid = null) => {
                         if (uuid && (_ele = partyAddedElements().find(`div.addedElement[data-uuid="${uuid}"]`)).length > 0) {
                             partyElementRemove(_ele);
                         }
                     })
                     .on("party-element:update", partyElementAdd)
-                    .on("click", "#recipientsContainer a.partyLabel", function() {
+                    .on('elements-added-to-canvas', () => {
+                        $(`#recipientsContainer .addedElement[data-party-index!="1"]`).addClass('d-none');
+                    })
+                    .on("click", "#recipientsContainer li.partyLi a.partyLabel", function() {
                         const _t = $(this);
                         const _li = _t.closest("li.partyLi");
+                        const index = _li.attr("data-party-index");
+
+                        $(".dropdown_click .drop-content ul").slideUp(100);
+                        $(`#recipientsContainer .addedElement[data-party-index!="${index}"]`).addClass('d-none');
+                        $(`#recipientsContainer .addedElement[data-party-index="${index}"]`).removeClass('d-none');
 
                         if (_li.hasClass("selectedParty")) {
                             return;
@@ -361,8 +369,10 @@
                         _li.addClass("selectedParty");
 
                         $("#recipientsContainer span.selectedParty").text(_t.text())
-                            .data("active-party", _li.find("a[data-party]").attr("data-party"));
-                    });
+                            .attr("data-active-party-index", index);
+                    }).on("click", ".dropdown_click .selecteddropdown", () => {
+                    $(".dropdown_click .drop-content ul").slideToggle();
+                });
 
                 partyUpdate();
             });

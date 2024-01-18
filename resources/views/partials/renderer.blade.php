@@ -568,15 +568,17 @@
                         offsetY: obj.top,
                         width: obj.width,
                         height: obj.height,
+                        partyIndex: obj.partyIndex,
                     });
                 });
             });
         };
 
-        const triggerPartyElementAdd = (uuid, type, text = null) =>
+        const triggerPartyElementAdd = (uuid, type, index, text = null) =>
             $(document).trigger('party-element:add', {
                 uuid: uuid,
                 eleType: type,
+                partyIndex: index,
                 text: text,
             });
 
@@ -629,7 +631,12 @@
 
             canvas.requestRenderAll();
 
-            triggerPartyElementAdd(_uuid, target.eleType, target.text);
+            triggerPartyElementAdd(
+                _uuid,
+                target.eleType,
+                target.partyIndex,
+                target.text,
+            );
         }
 
         const setFabricControl = (fabricObject) => {
@@ -747,10 +754,12 @@
 
             fabricObject.eleType = data.eleType;
             fabricObject.uuid = _uuid;
+            fabricObject.partyIndex = data.partyIndex || getActivePartyIndex();
 
             triggerPartyElementAdd(
                 _uuid,
                 data.eleType,
+                fabricObject.partyIndex,
                 data.text || fabricObject.text || data.eleType,
             );
 
@@ -845,54 +854,84 @@
                             eleType: 'signature_pad',
                             offsetX: 238.34674585238713,
                             offsetY: 112.34266801044906,
-                            width: 163.24307699999994,
-                            height: 32.969557999999985,
+                            width: 184.46467700999992,
+                            height: 37.25560053999998,
+                            partyIndex: '1',
                         },
                         {
                             page: 1,
                             eleType: 'signature_pad',
                             offsetX: 253.15437142614985,
                             offsetY: 218.27301736782994,
-                            width: 111.6,
+                            width: 126.44699999999999,
+                            height: 25.537999999999993,
+                            partyIndex: '1',
+                        },
+                        {
+                            page: 1,
+                            eleType: 'email',
+                            offsetX: 72,
+                            offsetY: 28,
+                            width: 47.2,
                             height: 22.599999999999998,
+                            partyIndex: '3',
+                        },
+                        {
+                            page: 1,
+                            eleType: 'textarea',
+                            offsetX: 375,
+                            offsetY: 20,
+                            width: 68.3,
+                            height: 22.599999999999998,
+                            partyIndex: '3',
+                            text: 'hello anand',
                         },
                         {
                             page: 2,
                             eleType: 'text',
                             offsetX: 185.7008572647063,
                             offsetY: 50.38610868284016,
-                            width: 35.5,
-                            height: 22.599999999999998,
+                            width: 33.95649999999999,
+                            height: 25.537999999999993,
+                            partyIndex: '1',
                         },
                     ];
 
                     if (!blank(loadedObjectData)) {
-                        canvasEditions.forEach((canvasEdition) => {
-                            canvasEdition.clear();
+                        $.when(
+                            canvasEditions.forEach((canvasEdition) => {
+                                canvasEdition.clear();
 
-                            loadedObjectData.forEach((objInfo, i) => {
-                                const objPage = objInfo.page;
-                                const totalPages = canvasEditions.length;
+                                loadedObjectData.forEach((objInfo, i) => {
+                                    const objPage = objInfo.page;
+                                    const totalPages = canvasEditions.length;
 
-                                if (blank(objPage) || objPage > totalPages) {
-                                    toast(
-                                        'error',
-                                        `Invalid element ${
-                                            i + 1 + ' ' + objInfo.eleType
-                                        } position on page ${objPage} while total pages are ${totalPages}!`,
-                                    );
-                                    return;
-                                }
+                                    if (
+                                        blank(objPage) ||
+                                        objPage > totalPages
+                                    ) {
+                                        toast(
+                                            'error',
+                                            `Invalid element ${
+                                                i + 1 + ' ' + objInfo.eleType
+                                            } position on page ${objPage} while total pages are ${totalPages}!`,
+                                        );
+                                        return;
+                                    }
 
-                                if (
-                                    objInfo.page ===
-                                    canvasEdition.pageIndex + 1
-                                ) {
-                                    const newObj2 = createFabricObject(objInfo);
+                                    if (
+                                        objInfo.page ===
+                                        canvasEdition.pageIndex + 1
+                                    ) {
+                                        const newObj2 =
+                                            createFabricObject(objInfo);
 
-                                    canvasEdition.add(newObj2);
-                                }
-                            });
+                                        canvasEdition.add(newObj2);
+                                    }
+                                });
+                            }),
+                        ).then(function () {
+                            $(document).trigger('elements-added-to-canvas');
                         });
                     }
                 });
@@ -916,17 +955,17 @@
                     JSON.stringify(data),
                 );
             });
-        });
 
-        $(window).on('resize', function (e) {
-            e.preventDefault() && e.stopPropagation();
+            $(window).on('resize', function (e) {
+                e.preventDefault() && e.stopPropagation();
 
-            if (windowWidth === window.innerWidth) {
-                return;
-            }
+                if (windowWidth === window.innerWidth) {
+                    return;
+                }
 
-            windowWidth = window.innerWidth;
-            autoZoom();
+                windowWidth = window.innerWidth;
+                autoZoom();
+            });
         });
     </script>
 @endpushonce

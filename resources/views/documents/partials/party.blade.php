@@ -1,4 +1,7 @@
-<li class="partyLi @if(($loop->index ?? 0) === 0) selectedParty @endif">
+<li
+    class="partyLi @if(($loop->index ?? 0) === 0) selectedParty @endif"
+    data-party-index="{{ $loop->iteration ?? 1 }}"
+>
     <a href="javascript: void(0)" class="partyLabel">
         {{ $signer->label ?? __('esign::label.nth_party', ['nth' => ordinal($loop->iteration ?? 1)]) }}
     </a>
@@ -9,7 +12,6 @@
             <i class="fa-solid fa-arrows-up-down"></i>
         </a>
         <a
-            data-party="{{ $loop->iteration ?? 1 }}"
             href="javascript: void(0)"
             class="deleted-party partyDelete"
             onclick="partyRemove(this)"

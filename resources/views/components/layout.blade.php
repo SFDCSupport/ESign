@@ -40,13 +40,24 @@
             rel="stylesheet"
         />
 
+        <script src="{{ url('vendor/esign/js/jquery.min.js') }}"></script>
+        <script>
+            const handleContentReplacement = () => {
+                const isNot768 = $(window).width() <= 767;
+            };
+
+            $(() => {
+                handleContentReplacement();
+                $(window).resize(handleContentReplacement);
+            });
+        </script>
         @stack('headJs')
     </head>
     <body>
         <noscript>
             <div class="alert alert-danger text-center" role="alert">
                 <i class="bi bi-exclamation-triangle"></i>
-                Site not functional without JavaScript enabled
+                {{ __('esign::label.js_disabled_message') }}
             </div>
         </noscript>
         @stack('body')
@@ -54,7 +65,6 @@
         <x-esign::partials.header :isSigningRoute="$isSigningRoute" />
 
         {{ $slot }}
-        <script src="{{ url('vendor/esign/js/jquery.min.js') }}"></script>
         <script src="{{ url('vendor/esign/js/popper.min.js') }}"></script>
         <script src="{{ url('vendor/esign/js/bootstrap.min.js') }}"></script>
         <script src="{{ url('vendor/esign/js/bootstrap.bundle.min.js') }}"></script>

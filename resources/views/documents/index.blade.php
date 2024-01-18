@@ -82,7 +82,6 @@
                     <a href="#" class="filter-link" id="">In Active</a>
                     <a href="#" class="filter-link" id="">Archived</a>
                 </fieldset>
-
             </div>
             <div class="container">
                 <div class="row">
