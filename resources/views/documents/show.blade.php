@@ -74,7 +74,7 @@
             </div>
 
             <main
-                class="@if($isSigningRoute || !$documentExists) col-12 @else col-md-7 ms-sm-auto col-lg-7 px-md-4 @endif"
+                class="@if($isSigningRoute || !$documentExists) col-12 @else col-md-7 ms-sm-auto col-lg-7 px-md-0 @endif"
             >
                 @if ($documentExists)
                     <div
