@@ -100,139 +100,197 @@
                 id="recipientsContainer"
                 class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary @if($isSigningRoute || !$documentExists) d-none @endif"
             >
-                <div
-                    class="offcanvas-md offcanvas-end bg-body-tertiary"
-                    tabindex="-1"
-                    id="sidebarMenu"
-                    aria-labelledby="sidebarMenuLabel"
+                <form
+                    id="recipientsForm"
+                    action="{{ route('esign.documents.signers.store', $document) }}"
+                    method="post"
                 >
-                    <div class="offcanvas-header">
-                        <h5 class="offcanvas-title" id="sidebarMenuLabel"></h5>
-                        <button
-                            type="button"
-                            class="btn-close"
-                            data-bs-dismiss="offcanvas"
-                            data-bs-target="#sidebarMenu"
-                            aria-label="Close"
-                        ></button>
-                    </div>
+                    @csrf
                     <div
-                        class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto"
+                        class="offcanvas-md offcanvas-end bg-body-tertiary"
+                        tabindex="-1"
+                        id="sidebarMenu"
+                        aria-labelledby="sidebarMenuLabel"
                     >
-                        <div class="select-party">
-                            <div class="dropdown_c dropdown_click">
-                                <div class="selecteddropdown">
-                                    <span
-                                        class="selectedParty"
-                                        data-active-party-index="1"
-                                    >
-                                        {{ __('esign::label.nth_party', ['nth' => ordinal(1)]) }}
-                                    </span>
-                                    <a
-                                        href="javascript: void(0);"
-                                        class="add-party"
-                                    >
-                                        <i class="fa fa-plus"></i>
-                                    </a>
-                                </div>
-                                <div class="drop-content">
-                                    <ul id="partyUl">
-                                        @php($hasSigners = ($totalSigners = $document->signers->count()) > 0)
-
-                                        @if ($hasSigners)
-                                            @foreach ($document->signers as $signer)
-                                                @include('esign::documents.partials.party', compact('signer'))
-                                            @endforeach
-                                        @else
-                                            @include('esign::documents.partials.party')
-                                        @endif
-
-                                        <a
-                                            id="partyAdd"
-                                            href="javascript: void(0)"
-                                            class="add-party-btn"
-                                            onclick="partyAdd()"
-                                        ></a>
-                                    </ul>
-                                </div>
-                            </div>
+                        <div class="offcanvas-header">
+                            <h5
+                                class="offcanvas-title"
+                                id="sidebarMenuLabel"
+                            ></h5>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="offcanvas"
+                                data-bs-target="#sidebarMenu"
+                                aria-label="{{ __('esign::label.close') }}"
+                            ></button>
                         </div>
-
-                        <div class="editable-section addedElements">
-                            <template id="addedElementTemplate">
-                                <div
-                                    class="pos_rel auto-resizing-content addedElement __REQUIRED"
-                                    data-element-index="__INDEX"
-                                    data-party-index="__PARTY"
-                                    data-uuid="__UUID"
-                                >
-                                    <i class="__ICON type_icons"></i>
-                                    <div
-                                        class="group/contenteditable relative overflow-visible d-flex align-items-center"
-                                    >
+                        <div
+                            class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto"
+                        >
+                            <div class="select-party">
+                                <div class="dropdown_c dropdown_click">
+                                    <div class="selecteddropdown">
                                         <span
-                                            dir="auto"
-                                            contenteditable="false"
-                                            class="inline peer contenteditable-content outline-none focus:block"
-                                            style="min-width: 2px"
+                                            class="selectedParty"
+                                            data-active-party-index="1"
                                         >
-                                            __LABEL
+                                            {{ __('esign::label.nth_party', ['nth' => ordinal(1)]) }}
                                         </span>
-                                        <span class="edit-resizing-btn">
-                                            <i class="fa fa-pen"></i>
-                                        </span>
-                                    </div>
-                                    <div
-                                        class="flex items-center space-x-1 deleted-required-ele align-items-center"
-                                    >
-                                        <div class="form-check form-switch">
-                                            <input
-                                                onclick="partyElementToggleRequired(this)"
-                                                class="form-check-input"
-                                                type="checkbox"
-                                                role="switch"
-                                                name="required"
-                                                __CHECKED
-                                            />
-                                        </div>
                                         <a
-                                            onclick="partyElementRemove(this)"
                                             href="javascript: void(0);"
-                                            class="removecontenteditable removeAddedElement"
+                                            class="add-party"
                                         >
-                                            <i class="fa fa-trash"></i>
+                                            <i class="fa fa-plus"></i>
                                         </a>
                                     </div>
-                                </div>
-                            </template>
-                        </div>
+                                    <div class="drop-content">
+                                        <ul id="partyUl">
+                                            @php($hasSigners = ($totalSigners = $document->signers->count()) > 0)
 
-                        <div class="icons-box">
-                            @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
-                                @php([$label, $icon] = $data)
+                                            @if ($hasSigners)
+                                                @foreach ($document->signers as $signer)
+                                                    @include('esign::documents.partials.party', compact('signer'))
+                                                @endforeach
+                                            @else
+                                                @include('esign::documents.partials.party')
+                                            @endif
 
-                                <a
-                                    href="javascript: void(0);"
-                                    class="draggable icons-box-btn bg-white elementType"
-                                    data-type="{{ $type }}"
-                                >
-                                    <span class="draggable-left-icon">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </span>
-                                    <div
-                                        class="flex items-center flex-col px-2 py-2"
-                                    >
-                                        <i class="{{ $icon }} elementIcon"></i>
-                                        <span class="text-xs mt-1">
-                                            {{ $label }}
-                                        </span>
+                                            <a
+                                                id="partyAdd"
+                                                href="javascript: void(0)"
+                                                class="add-party-btn"
+                                                onclick="partyAdd()"
+                                            ></a>
+                                        </ul>
                                     </div>
-                                </a>
-                            @endforeach
+                                </div>
+                            </div>
+
+                            <div class="editable-section addedElements">
+                                <template id="addedElementTemplate">
+                                    <div
+                                        class="pos_rel auto-resizing-content addedElement __REQUIRED"
+                                        data-element-position="__POSITION"
+                                        data-party-index="__PARTY"
+                                        data-uuid="__UUID"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="signer[__PARTY][element][signer_id]"
+                                            value="__SIGNER_ID"
+                                        />
+                                        <input
+                                            type="hidden"
+                                            name="signer[__PARTY][element][type]"
+                                            value="__TYPE"
+                                        />
+                                        <input
+                                            type="hidden"
+                                            name="signer[__PARTY][element][position]"
+                                            value="__POSITION"
+                                        />
+                                        <input
+                                            type="hidden"
+                                            name="signer[__PARTY][element][label]"
+                                            value="__LABEL"
+                                        />
+                                        <input
+                                            type="hidden"
+                                            name="signer[__PARTY][element][offset_x]"
+                                            value="__OFFSET_X"
+                                        />
+                                        <input
+                                            type="hidden"
+                                            name="signer[__PARTY][element][offset_y]"
+                                            value="__OFFSET_Y"
+                                        />
+                                        <input
+                                            type="hidden"
+                                            name="signer[__PARTY][element][width]"
+                                            value="__WIDTH"
+                                        />
+                                        <input
+                                            type="hidden"
+                                            name="signer[__PARTY][element][height]"
+                                            value="__HEIGHT"
+                                        />
+                                        <input
+                                            type="hidden"
+                                            name="signer[__PARTY][element][on_page]"
+                                            value="__ON_PAGE"
+                                        />
+
+                                        <i class="__ICON type_icons"></i>
+                                        <div
+                                            class="group/contenteditable relative overflow-visible d-flex align-items-center"
+                                        >
+                                            <span
+                                                dir="auto"
+                                                contenteditable="false"
+                                                class="inline peer contenteditable-content outline-none focus:block"
+                                                style="min-width: 2px"
+                                            >
+                                                __LABEL
+                                            </span>
+                                            <span class="edit-resizing-btn">
+                                                <i class="fa fa-pen"></i>
+                                            </span>
+                                        </div>
+                                        <div
+                                            class="flex items-center space-x-1 deleted-required-ele align-items-center"
+                                        >
+                                            <div class="form-check form-switch">
+                                                <input
+                                                    onclick="partyElementToggleRequired(this)"
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    role="switch"
+                                                    name="signer[element][required]"
+                                                    __CHECKED
+                                                />
+                                            </div>
+                                            <a
+                                                onclick="partyElementRemove(this)"
+                                                href="javascript: void(0);"
+                                                class="removecontenteditable removeAddedElement"
+                                            >
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <div class="icons-box">
+                                @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
+                                    @php([$label, $icon] = $data)
+
+                                    <a
+                                        href="javascript: void(0);"
+                                        class="draggable icons-box-btn bg-white elementType"
+                                        data-type="{{ $type }}"
+                                    >
+                                        <span class="draggable-left-icon">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </span>
+                                        <div
+                                            class="flex items-center flex-col px-2 py-2"
+                                        >
+                                            <i
+                                                class="{{ $icon }} elementIcon"
+                                            ></i>
+                                            <span class="text-xs mt-1">
+                                                {{ $label }}
+                                            </span>
+                                        </div>
+                                    </a>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -245,10 +303,10 @@
             const totalParties = () => partyLi().length;
             const highestParty = () => $("#recipientsContainer li.partyLi[data-party-index]").highestData("party-index");
             const partyAddedElements = () => $("#recipientsContainer .addedElements");
-            const highestPartyElement = () => $("#recipientsContainer div.addedElements div.addedElement").highestData("element-index");
-            const getPartyElementTemplate = (uuid, index, label, icon, partyIndex = null, isRequired = true) => $.trim($("#addedElementTemplate").html())
+            const highestPartyElement = () => $("#recipientsContainer div.addedElements div.addedElement").highestData("element-position");
+            const getPartyElementTemplate = (uuid, position, label, icon, partyIndex = null, isRequired = true) => $.trim($("#addedElementTemplate").html())
                 .replace(/__UUID/ig, uuid)
-                .replace(/__INDEX/ig, index)
+                .replace(/__POSITION/ig, position)
                 .replace(/__LABEL/ig, label)
                 .replace(/__ICON/ig, icon)
                 .replace(/__CHECKED/ig, isRequired ? "checked" : "")
@@ -260,7 +318,7 @@
                     .attr("class")
                     .split(" ")
                     .filter(className => className !== "elementIcon")
-                    .join(' ');
+                    .join(" ");
 
                 partyAddedElements().append(
                     getPartyElementTemplate(uuid, _highestElement, label, _icon, partyIndex)
@@ -344,9 +402,9 @@
                     .on("party:remove", partyUpdate)
                     .on("party-element:active", (e, uuid = null) => uuid && partyElementActive(uuid))
                     .on("party-element:add", (e, data) => {
-                        partyElementAdd(data.uuid, data.eleType, data.partyIndex, data.text || data.eleType)
+                        partyElementAdd(data.uuid, data.eleType, data.partyIndex, data.text || data.eleType);
 
-                        if($(`li.partyLi[data-party-index="${data.partyIndex}"]`).length <= 0) {
+                        if ($(`li.partyLi[data-party-index="${data.partyIndex}"]`).length <= 0) {
                             partyAdd(data.partyIndex);
                         }
                     })
@@ -356,8 +414,8 @@
                         }
                     })
                     .on("party-element:update", partyElementAdd)
-                    .on('elements-added-to-canvas', () => {
-                        $(`#recipientsContainer .addedElement[data-party-index!="1"]`).addClass('d-none');
+                    .on("elements-added-to-canvas", () => {
+                        $(`#recipientsContainer .addedElement[data-party-index!="1"]`).addClass("d-none");
                     })
                     .on("click", "#recipientsContainer li.partyLi a.partyLabel", function() {
                         const _t = $(this);
@@ -365,8 +423,8 @@
                         const index = _li.attr("data-party-index");
 
                         $(".dropdown_click .drop-content ul").slideUp(100);
-                        $(`#recipientsContainer .addedElement[data-party-index!="${index}"]`).addClass('d-none');
-                        $(`#recipientsContainer .addedElement[data-party-index="${index}"]`).removeClass('d-none');
+                        $(`#recipientsContainer .addedElement[data-party-index!="${index}"]`).addClass("d-none");
+                        $(`#recipientsContainer .addedElement[data-party-index="${index}"]`).removeClass("d-none");
 
                         if (_li.hasClass("selectedParty")) {
                             return;
