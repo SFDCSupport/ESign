@@ -95,28 +95,6 @@ body{
     overflow: hidden;
 }
 
-/* .document-template-cards::before,
-.document-template-cards::after{
-  content: "";
-  position: absolute;
-  top: -8px;
-  background-color: rgb(225 230 234);
-  left: 8px;
-  right: 8px;
-  height: 7px;
-  border-radius: 2px;
-  z-index: 3;
-}
-
-.document-template-cards::after{
-  top: -15Px;
-  background-color: rgb(240 241 245);
-  right: 20px;
-  height: 7px;
-  left: 20px;
-  z-index: 2;
-} */
-
 .document-template-cards .card-body{
   padding: 5px 10px;
 }
@@ -440,8 +418,8 @@ body{
   max-height: 90vh;
   overflow-y: auto;
   position: -webkit-sticky;
-    position: sticky;
-    top: 30px;
+  position: sticky;
+  top: 45px;
 }
 
 .edit-doc-name{
@@ -935,5 +913,11 @@ padding: 3px;
 .filter-wrapper a:hover{
   background: #e3e8ec;
   color: #0d6efd;
+}
+
+.filter-wrapper:before {
+  content: "Filter by:";
+  margin-right: 10px;
+  font-weight: 700;
 }
 
