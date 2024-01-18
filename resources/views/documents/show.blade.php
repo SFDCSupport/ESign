@@ -49,11 +49,11 @@
     <div class="container-fluid">
         <div class="row">
             <div
-                class="col-sm-2 @if($isSigningRoute || !$documentExists) d-none @endif"
+                class="col-sm-2 dark-grey-bg @if($isSigningRoute || !$documentExists) d-none @endif"
             >
                 <div class="add-doc-sec">
-                    <div class="edit-docs-file">
-                        <div id="previewViewer"></div>
+
+                    <div class="text-center mb-2">
                         <a
                             href="javascript: void(0);"
                             id="documentReplaceBtn"
@@ -69,6 +69,11 @@
                         >
                             <i class="fa fa-times"></i>
                         </a>
+                    </div>
+
+                    <div class="edit-docs-file">
+                        <div id="previewViewer"></div>
+                        
                     </div>
                 </div>
             </div>

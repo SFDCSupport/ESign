@@ -59,7 +59,7 @@
         <section class="mb-2">
             <div class="container">
                 <div
-                    class="align-items-center pt-4 pb-1 mb-5 border-bottom text-center"
+                    class="align-items-center pt-4 pb-1 mb-4 border-bottom text-center"
                 >
                     <h1 class="h2 mb-2">
                         {{ __('esign::label.document_templates') }}
@@ -73,6 +73,16 @@
                         ever since the 1500s,
                     </p>
                 </div>
+
+                <fieldset class="filter-wrapper mb-4">
+                    <a href="#" class="filter-link active" id="">All</a>
+                    <a href="#" class="filter-link" id="">Active</a>
+                    <a href="#" class="filter-link" id="">Pending</a>
+                    <a href="#" class="filter-link" id="">Draft</a>
+                    <a href="#" class="filter-link" id="">In Active</a>
+                    <a href="#" class="filter-link" id="">Archived</a>
+                </fieldset>
+
             </div>
             <div class="container">
                 <div class="row">
