@@ -99,6 +99,8 @@
                             }
                         })
                         .on('sending', function (file, xhr, formData) {
+                            $(document).trigger('loader:show');
+
                             if (file.id) {
                                 formData.append('id', file.id);
                             }
