@@ -41,6 +41,7 @@ Route::middleware('auth')
         Route::resource('documents', DocumentController::class);
 
         Route::permanentRedirect('/', '/esign/documents');
+        Route::permanentRedirect('document', '/esign/documents');
     });
 
 // SIGNING ROUTES
