@@ -363,6 +363,16 @@
                 const _highestParty = index || highestParty() + 1;
                 const clonedLi = $("li.partyLi:last").clone();
                 clonedLi.removeClass("selectedParty");
+                clonedLi.find('input[type="hidden"][name^="signer["]').each(function() {
+                    const _t = $(this);
+                    const _name = _t.attr('name');
+
+                    _t.attr('name', _name.replace(/\[\d+\]/, '[' + _highestParty + ']'));
+
+                    if(_name.endsWith('[position]')) {
+                        _t.val(_highestParty);
+                    }
+                });
                 clonedLi.find("a.partyLabel").html(
                     ordinal(_highestParty) + ' {{ __('esign::label.party') }}'
                 );
