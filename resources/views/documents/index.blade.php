@@ -73,8 +73,7 @@
                         ever since the 1500s,
                     </p>
                 </div>
-
-                <fieldset class="filter-wrapper mb-4">
+                <fieldset class="filter-wrapper mb-2">
                     @foreach (__('esign::dropdown.document_filters') ?? [] as $key => $label)
                         <a
                             href="javascript: void(0);"
@@ -85,9 +84,18 @@
                         </a>
                     @endforeach
                 </fieldset>
+                <div class="form-outline mb-4">
+                    <input
+                        type="search"
+                        id="documentsSearch"
+                        class="form-control form-control-sm"
+                        placeholder="{{ __('esign::label.type_query') }}"
+                        aria-label="{{ __('esign::label.search') }}"
+                    />
+                </div>
             </div>
             <div class="container">
-                <div class="row documentsContainer">
+                <div class="row documentsContainer" id="documentsContainer">
                     @each('esign::documents.partials.document', $documents, 'document')
                 </div>
             </div>
@@ -111,32 +119,52 @@
                                 }
                             },
                         });
-                    })
-                    .on('click', '.filter-link[data-filter]', function () {
+                    });
+
+                const filterBtns = $('.filter-link[data-filter]').on(
+                    'click',
+                    function () {
                         const _t = $(this);
                         const status = _t.attr('data-filter');
-                        const documentsContainer = $('div.documentsContainer');
-
-                        if (_t.hasClass('active')) {
-                            return;
-                        }
-
-                        $('.filter-link[data-filter]').removeClass('active');
-                        _t.addClass('active');
+                        const selector = $('div.documentsContainer > div');
 
                         if (status === 'all') {
-                            documentsContainer
-                                .find(`div[data-document-status]`)
-                                .removeClass('d-none');
+                            selector.fadeIn(450);
                         } else {
-                            documentsContainer
-                                .find(`div[data-document-status!="${status}"]`)
-                                .addClass('d-none');
-                            documentsContainer
-                                .find(`div[data-document-status="${status}"]`)
-                                .removeClass('d-none');
+                            const _ele = $(
+                                `[data-document-status="${status}"]`,
+                            ).fadeIn(450);
+                            selector.not(_ele).hide();
                         }
-                    });
+
+                        filterBtns.removeClass('active');
+                        _t.addClass('active');
+                    },
+                );
+                const documentsSearch = $('#documentsSearch').on(
+                    'input',
+                    function () {
+                        const val = $.trim($(this).val());
+                        const matcher = new RegExp(val, 'gi');
+
+                        filterBtns.removeClass('active');
+
+                        $('div.documentsContainer > div')
+                            .show()
+                            .not(function () {
+                                return matcher.test(
+                                    $(this).find('.documentTitle').text(),
+                                );
+                            })
+                            .hide();
+
+                        if (blank(val)) {
+                            $('.filter-link[data-filter="all"]').trigger(
+                                'click',
+                            );
+                        }
+                    },
+                );
             });
         </script>
     @endpush

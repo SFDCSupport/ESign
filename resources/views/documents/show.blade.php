@@ -435,7 +435,6 @@
                         }
                     })
                     .on("party-element:remove", (e, uuid = null) => {
-                    .on("party-element:remove", (e, uuid = null) => {
                         if (uuid && (_ele = partyAddedElements().find(`div.addedElement[data-uuid="${uuid}"]`)).length > 0) {
                             partyElementRemove(_ele);
                         }

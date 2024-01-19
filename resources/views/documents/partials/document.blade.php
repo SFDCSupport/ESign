@@ -6,7 +6,9 @@
                 <p class="template_type">
                     <span>{{ __('esign::label.'.$documentStatus) }}</span>
                 </p>
-                <h5 class="card-title">{{ $document->title }}</h5>
+                <h5 class="card-title documentTitle">
+                    {{ $document->title }}
+                </h5>
 
                 <p class="text-secondary document-user-date">
                     <i class="fa fa-user"></i>

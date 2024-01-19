@@ -51,4 +51,5 @@ return [
     'rd' => 'rd',
     'th' => 'th',
     'js_disabled_message' => 'Site not functional without JavaScript enabled.',
+    'type_query' => 'Type query...',
 ];
