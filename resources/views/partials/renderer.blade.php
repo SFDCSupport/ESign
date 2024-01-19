@@ -851,98 +851,38 @@
                 });
 
                 $(document).on('canvas:ready', () => {
-                    const loadedObjectData = [
-                        {
-                            on_page: 1,
-                            signer_id: 1,
-                            type: 'signature_pad',
-                            offset_x: 238.34674585238713,
-                            offset_y: 112.34266801044906,
-                            width: 184.46467700999992,
-                            height: 37.25560053999998,
-                            signer_index: '1',
-                        },
-                        {
-                            on_page: 1,
-                            signer_id: 2,
-                            type: 'signature_pad',
-                            offset_x: 253.15437142614985,
-                            offset_y: 218.27301736782994,
-                            width: 126.44699999999999,
-                            height: 25.537999999999993,
-                            signer_index: '1',
-                        },
-                        {
-                            on_page: 1,
-                            signer_id: 3,
-                            type: 'email',
-                            offset_x: 72,
-                            offset_y: 28,
-                            width: 47.2,
-                            height: 22.599999999999998,
-                            signer_index: '3',
-                        },
-                        {
-                            on_page: 1,
-                            signer_id: 4,
-                            type: 'textarea',
-                            offset_x: 375,
-                            offset_y: 20,
-                            width: 68.3,
-                            height: 22.599999999999998,
-                            signer_index: '3',
-                            text: 'hello anand',
-                        },
-                        {
-                            on_page: 2,
-                            signer_id: 5,
-                            type: 'text',
-                            offset_x: 185.7008572647063,
-                            offset_y: 50.38610868284016,
-                            width: 33.95649999999999,
-                            height: 25.537999999999993,
-                            position: '1',
-                        },
-                    ];
+                    if (!blank(loadedData)) {
+                        canvasEditions.forEach((canvasEdition) => {
+                            canvasEdition.clear();
 
-                    if (!blank(loadedObjectData)) {
-                        $.when(
-                            canvasEditions.forEach((canvasEdition) => {
-                                canvasEdition.clear();
+                            loadedData.forEach((objInfo, i) => {
+                                const objPage = objInfo.on_page;
+                                const totalPages = canvasEditions.length;
 
-                                loadedObjectData.forEach((objInfo, i) => {
-                                    const objPage = objInfo.on_page;
-                                    const totalPages = canvasEditions.length;
+                                if (blank(objPage) || objPage > totalPages) {
+                                    toast(
+                                        'error',
+                                        `Invalid element ${
+                                            i + 1 + ' ' + objInfo.type
+                                        } position on page ${objPage} while total pages are ${totalPages}!`,
+                                    );
+                                    return;
+                                }
 
-                                    if (
-                                        blank(objPage) ||
-                                        objPage > totalPages
-                                    ) {
-                                        toast(
-                                            'error',
-                                            `Invalid element ${
-                                                i + 1 + ' ' + objInfo.type
-                                            } position on page ${objPage} while total pages are ${totalPages}!`,
-                                        );
-                                        return;
-                                    }
+                                if (
+                                    objInfo.on_page ===
+                                    canvasEdition.page_index + 1
+                                ) {
+                                    const newObj2 = createFabricObject(objInfo);
 
-                                    if (
-                                        objInfo.on_page ===
-                                        canvasEdition.page_index + 1
-                                    ) {
-                                        const newObj2 =
-                                            createFabricObject(objInfo);
+                                    canvasEdition.add(newObj2);
+                                }
+                            });
 
-                                        canvasEdition.add(newObj2);
-                                    }
-                                });
-
-                                return true;
-                            }),
-                        ).then(function () {
-                            $(document).trigger('elements-added-to-canvas');
+                            return true;
                         });
+
+                        $(document).trigger('elements-added-to-canvas');
                     }
                 });
             }

@@ -40,6 +40,7 @@
             rel="stylesheet"
         />
 
+        <script src="{{ url('vendor/esign/js/collect.min.js') }}"></script>
         <script src="{{ url('vendor/esign/js/jquery.min.js') }}"></script>
         <script>
             const handleContentReplacement = () => {
