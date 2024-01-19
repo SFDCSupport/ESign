@@ -648,9 +648,9 @@
                     mt: false,
                     mb: false,
                     ml: false,
-                    mr: false,
+                    mr: fabricObject.eleType !== 'signature_pad',
                     bl: false,
-                    br: true,
+                    br: fabricObject.eleType === 'signature_pad',
                     tl: false,
                     tr: false,
                 })
@@ -753,12 +753,11 @@
                     });
             }
 
-            fabricObject = setFabricControl(fabricObject);
-
             fabricObject.eleType = data.type;
             fabricObject.uuid = _uuid;
             fabricObject.signer_index =
                 data.signer_index || getActiveSignerIndex();
+            fabricObject = setFabricControl(fabricObject);
 
             triggerSignerElementAdd(
                 _uuid,
