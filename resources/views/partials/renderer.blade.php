@@ -520,7 +520,7 @@
                 : canvas.getActiveObject();
 
             if (!blank((uuid = selectedObject?.uuid || null))) {
-                $(document).trigger('party-element:active', uuid);
+                $(document).trigger('signer-element:active', uuid);
             }
 
             if (isCleared) {
@@ -569,7 +569,7 @@
                         offsetY: obj.top,
                         width: obj.width,
                         height: obj.height,
-                        partyIndex: obj.partyIndex,
+                        signerIndex: obj.signerIndex,
                     });
                 });
             });
@@ -577,11 +577,11 @@
             $(document).trigger('signers-save');
         };
 
-        const triggerPartyElementAdd = (uuid, type, index, text = null) =>
-            $(document).trigger('party-element:add', {
+        const triggerSignerElementAdd = (uuid, type, index, text = null) =>
+            $(document).trigger('signer-element:add', {
                 uuid: uuid,
                 type: type,
-                partyIndex: index,
+                signerIndex: index,
                 text: text,
             });
 
@@ -616,7 +616,7 @@
 
             canvas.remove(target);
             canvas.requestRenderAll();
-            $(document).trigger('party-element:remove', target.uuid);
+            $(document).trigger('signer-element:remove', target.uuid);
         }
 
         function cloneObject(eventData, transform) {
@@ -634,10 +634,10 @@
 
             canvas.requestRenderAll();
 
-            triggerPartyElementAdd(
+            triggerSignerElementAdd(
                 _uuid,
                 target.eleType,
-                target.partyIndex,
+                target.signerIndex,
                 target.text,
             );
         }
@@ -757,12 +757,13 @@
 
             fabricObject.eleType = data.type;
             fabricObject.uuid = _uuid;
-            fabricObject.partyIndex = data.partyIndex || getActivePartyIndex();
+            fabricObject.signerIndex =
+                data.signerIndex || getActiveSignerIndex();
 
-            triggerPartyElementAdd(
+            triggerSignerElementAdd(
                 _uuid,
                 data.type,
-                fabricObject.partyIndex,
+                fabricObject.signerIndex,
                 data.text || fabricObject.text || data.type,
             );
 
@@ -791,7 +792,7 @@
                         );
                     });
                 })
-                .on('party-element:remove', (e, uuid) => {
+                .on('signer-element:remove', (e, uuid) => {
                     canvasEditions.forEach((canvasEdition) => {
                         const obj = canvasEdition
                             .getObjects()
@@ -860,7 +861,7 @@
                             offset_y: 112.34266801044906,
                             width: 184.46467700999992,
                             height: 37.25560053999998,
-                            partyIndex: '1',
+                            signerIndex: '1',
                         },
                         {
                             on_page: 1,
@@ -870,7 +871,7 @@
                             offset_y: 218.27301736782994,
                             width: 126.44699999999999,
                             height: 25.537999999999993,
-                            partyIndex: '1',
+                            signerIndex: '1',
                         },
                         {
                             on_page: 1,
@@ -880,7 +881,7 @@
                             offset_y: 28,
                             width: 47.2,
                             height: 22.599999999999998,
-                            partyIndex: '3',
+                            signerIndex: '3',
                         },
                         {
                             on_page: 1,
@@ -890,7 +891,7 @@
                             offset_y: 20,
                             width: 68.3,
                             height: 22.599999999999998,
-                            partyIndex: '3',
+                            signerIndex: '3',
                             text: 'hello anand',
                         },
                         {

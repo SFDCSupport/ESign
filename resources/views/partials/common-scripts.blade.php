@@ -1,7 +1,7 @@
 <script>
-    const getActivePartyIndex = () =>
-        $('.selectedParty[data-active-party-index]').attr(
-            'data-active-party-index',
+    const getActiveSignerIndex = () =>
+        $('.selectedSigner[data-active-signer-index]').attr(
+            'data-active-signer-index',
         );
     const generateUniqueId = (() => {
         let counter = 0;
@@ -102,14 +102,14 @@
         },
     });
 
-    $.fn.highestData = function (data = 'party') {
+    $.fn.highestData = function (data = 'signer') {
         let highest = -Infinity;
 
         this.each(function () {
-            const partyValue = parseInt($(this).attr('data-' + data), 10);
+            const value = parseInt($(this).attr('data-' + data), 10);
 
-            if (!isNaN(partyValue)) {
-                highest = Math.max(highest, partyValue);
+            if (!isNaN(value)) {
+                highest = Math.max(highest, value);
             }
         });
 

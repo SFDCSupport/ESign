@@ -1,8 +1,8 @@
 @php($i = $loop->iteration ?? 1)
 
 <li
-    class="partyLi @if(($loop->index ?? 0) === 0) selectedParty @endif"
-    data-party-index="{{ $i }}"
+    class="signerLi @if(($loop->index ?? 0) === 0) selectedParty selectedSigner @endif"
+    data-signer-index="{{ $i }}"
 >
     <input
         type="hidden"
@@ -23,25 +23,25 @@
         value="{{ $signer->position ?? $i }}"
     />
 
-    <a href="javascript: void(0)" class="partyLabel">
-        {{ $signer->label ?? __('esign::label.nth_party', ['nth' => ordinal($i)]) }}
+    <a href="javascript: void(0)" class="signerLabel">
+        {{ $signer->label ?? __('esign::label.nth_signer', ['nth' => ordinal($i)]) }}
     </a>
     <div
         class="flex items-center space-x-1 deleted-updown-ele align-items-center"
     >
-    <p class="updown-docs-btn partyReorder">
-        <a href="javascript: void(0);" class="">
-            <i class="fas fa-caret-up"></i>
-        </a>
+        <p class="updown-docs-btn partyReorder">
+            <a href="javascript: void(0);" class="signerReorderUp">
+                <i class="fas fa-caret-up"></i>
+            </a>
 
-        <a href="javascript: void(0);" class="">
-            <i class="fas fa-caret-down"></i>
-        </a>
-    </p>
+            <a href="javascript: void(0);" class="signerReorderDown">
+                <i class="fas fa-caret-down"></i>
+            </a>
+        </p>
         <a
             href="javascript: void(0)"
-            class="deleted-party partyDelete"
-            onclick="partyRemove(this)"
+            class="deleted-party signerDelete"
+            onclick="signerRemove(this)"
         >
             <i class="fa fa-trash"></i>
         </a>
