@@ -135,14 +135,14 @@
                                             'text/plain',
                                         ),
                                     );
-                                    const eleType = draggedData.eleType;
+                                    const type = draggedData.type;
                                     const text = draggedData.text;
                                     const height = draggedData.height || 20;
                                     const width = draggedData.width || 60;
                                     const fontSize = 20;
 
                                     const fabricObject = createFabricObject({
-                                        eleType,
+                                        type,
                                         text,
                                         height,
                                         width,
@@ -188,17 +188,17 @@
                                 .on('mouse:down:before', function (e) {})
                                 .on('mouse:down', function (e) {
                                     if (isSigning && e.target) {
-                                        const eleType = e.target.eleType;
+                                        const type = e.target.eleType;
                                         const obj = e.target;
 
-                                        switch (eleType) {
+                                        switch (type) {
                                             case 'signature_pad':
                                                 const isSignatureObj = !blank(
                                                     obj.signature,
                                                 );
                                                 let data = {
-                                                    eleType: eleType,
-                                                    obj: obj,
+                                                    type,
+                                                    obj,
                                                 };
 
                                                 if (isSignatureObj) {
@@ -224,8 +224,8 @@
                                                 break;
                                             default:
                                                 console.warn(
-                                                    'Unknown eleType:',
-                                                    eleType,
+                                                    'Unknown type:',
+                                                    type,
                                                 );
 
                                                 break;
@@ -562,8 +562,8 @@
 
                     console.log('Object Info:', {
                         ...additionalInfo,
-                        page: canvasEdition.pageIndex + 1,
-                        eleType: obj.eleType,
+                        on_page: canvasEdition.pageIndex + 1,
+                        type: obj.eleType,
                         offsetX: obj.left,
                         offsetY: obj.top,
                         width: obj.width,
@@ -579,7 +579,7 @@
         const triggerPartyElementAdd = (uuid, type, index, text = null) =>
             $(document).trigger('party-element:add', {
                 uuid: uuid,
-                eleType: type,
+                type: type,
                 partyIndex: index,
                 text: text,
             });
@@ -689,8 +689,8 @@
             let fabricObject;
 
             const commonStyles = {
-                left: data.offsetX,
-                top: data.offsetY,
+                left: data.offset_x,
+                top: data.offset_y,
                 width: data.width,
                 height: data.height,
                 fontSize: data.fontSize || data.height,
@@ -699,9 +699,9 @@
                 color: '#333333',
             };
 
-            const text = $.trim(data.text || data.eleType);
+            const text = $.trim(data.text || data.type);
 
-            switch (data.eleType) {
+            switch (data.type) {
                 case 'text':
                 case 'signature_pad':
                     fabricObject = new fabric.IText(text, {
@@ -754,15 +754,15 @@
 
             fabricObject = setFabricControl(fabricObject);
 
-            fabricObject.eleType = data.eleType;
+            fabricObject.eleType = data.type;
             fabricObject.uuid = _uuid;
             fabricObject.partyIndex = data.partyIndex || getActivePartyIndex();
 
             triggerPartyElementAdd(
                 _uuid,
-                data.eleType,
+                data.type,
                 fabricObject.partyIndex,
-                data.text || fabricObject.text || data.eleType,
+                data.text || fabricObject.text || data.type,
             );
 
             return fabricObject;
@@ -811,7 +811,7 @@
                     const oldObj = data.obj;
                     const canvas = oldObj.canvas;
 
-                    if (data.eleType === 'signature_pad' && data.signature) {
+                    if (data.type === 'signature_pad' && data.signature) {
                         canvas.remove(oldObj);
 
                         fabric.Image.fromURL(data.signature, (newImg) => {
@@ -835,7 +835,7 @@
 
                             setFabricControl(newImg);
 
-                            newImg.eleType = data.eleType;
+                            newImg.eleType = data.type;
                             newImg.signature = data.signature;
 
                             canvas.add(newImg);
@@ -852,50 +852,55 @@
                 $(document).on('canvas:ready', () => {
                     const loadedObjectData = [
                         {
-                            page: 1,
-                            eleType: 'signature_pad',
-                            offsetX: 238.34674585238713,
-                            offsetY: 112.34266801044906,
+                            on_page: 1,
+                            signer_id: 1,
+                            type: 'signature_pad',
+                            offset_x: 238.34674585238713,
+                            offset_y: 112.34266801044906,
                             width: 184.46467700999992,
                             height: 37.25560053999998,
                             partyIndex: '1',
                         },
                         {
-                            page: 1,
-                            eleType: 'signature_pad',
-                            offsetX: 253.15437142614985,
-                            offsetY: 218.27301736782994,
+                            on_page: 1,
+                            signer_id: 2,
+                            type: 'signature_pad',
+                            offset_x: 253.15437142614985,
+                            offset_y: 218.27301736782994,
                             width: 126.44699999999999,
                             height: 25.537999999999993,
                             partyIndex: '1',
                         },
                         {
-                            page: 1,
-                            eleType: 'email',
-                            offsetX: 72,
-                            offsetY: 28,
+                            on_page: 1,
+                            signer_id: 3,
+                            type: 'email',
+                            offset_x: 72,
+                            offset_y: 28,
                             width: 47.2,
                             height: 22.599999999999998,
                             partyIndex: '3',
                         },
                         {
-                            page: 1,
-                            eleType: 'textarea',
-                            offsetX: 375,
-                            offsetY: 20,
+                            on_page: 1,
+                            signer_id: 4,
+                            type: 'textarea',
+                            offset_x: 375,
+                            offset_y: 20,
                             width: 68.3,
                             height: 22.599999999999998,
                             partyIndex: '3',
                             text: 'hello anand',
                         },
                         {
-                            page: 2,
-                            eleType: 'text',
-                            offsetX: 185.7008572647063,
-                            offsetY: 50.38610868284016,
+                            on_page: 2,
+                            signer_id: 5,
+                            type: 'text',
+                            offset_x: 185.7008572647063,
+                            offset_y: 50.38610868284016,
                             width: 33.95649999999999,
                             height: 25.537999999999993,
-                            partyIndex: '1',
+                            position: '1',
                         },
                     ];
 
@@ -905,7 +910,7 @@
                                 canvasEdition.clear();
 
                                 loadedObjectData.forEach((objInfo, i) => {
-                                    const objPage = objInfo.page;
+                                    const objPage = objInfo.on_page;
                                     const totalPages = canvasEditions.length;
 
                                     if (
@@ -915,14 +920,14 @@
                                         toast(
                                             'error',
                                             `Invalid element ${
-                                                i + 1 + ' ' + objInfo.eleType
+                                                i + 1 + ' ' + objInfo.type
                                             } position on page ${objPage} while total pages are ${totalPages}!`,
                                         );
                                         return;
                                     }
 
                                     if (
-                                        objInfo.page ===
+                                        objInfo.on_page ===
                                         canvasEdition.pageIndex + 1
                                     ) {
                                         const newObj2 =
@@ -942,13 +947,13 @@
             }
 
             $('.draggable').on('dragstart', function (e) {
-                const eleType = $(this).data('type');
+                const type = $(this).data('type');
                 const text = $(this).find('span').text();
                 const height = $(this).data('height') || 50;
                 const width = $(this).data('width') || 100;
 
                 const data = {
-                    eleType,
+                    type,
                     text,
                     height,
                     width,

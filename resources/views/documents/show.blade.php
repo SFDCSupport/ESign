@@ -66,7 +66,8 @@
                             class="edit-docs-btn"
                             id="documentRemoveBtn"
                         >
-                            <i class="fa fa-times"></i> Remove
+                            <i class="fa fa-times"></i>
+                            Remove
                         </a>
                     </div>
 
@@ -183,46 +184,55 @@
                                     >
                                         <input
                                             type="hidden"
+                                            class="elementSignerId"
                                             name="signer[__PARTY][element][__POSITION][signer_id]"
                                             value="__SIGNER_ID"
                                         />
                                         <input
                                             type="hidden"
+                                            class="elementType"
                                             name="signer[__PARTY][element][__POSITION][type]"
                                             value="__TYPE"
                                         />
                                         <input
                                             type="hidden"
+                                            class="elementPosition"
                                             name="signer[__PARTY][element][__POSITION][position]"
                                             value="__POSITION"
                                         />
                                         <input
                                             type="hidden"
+                                            class="elementLabel"
                                             name="signer[__PARTY][element][__POSITION][label]"
                                             value="__LABEL"
                                         />
                                         <input
                                             type="hidden"
+                                            class="elementOffsetX"
                                             name="signer[__PARTY][element][__POSITION][offset_x]"
                                             value="__OFFSET_X"
                                         />
                                         <input
                                             type="hidden"
+                                            class="elementOffsetY"
                                             name="signer[__PARTY][element][__POSITION][offset_y]"
                                             value="__OFFSET_Y"
                                         />
                                         <input
                                             type="hidden"
+                                            class="elementWidth"
                                             name="signer[__PARTY][element][__POSITION][width]"
                                             value="__WIDTH"
                                         />
                                         <input
                                             type="hidden"
+                                            class="elementHeight"
                                             name="signer[__PARTY][element][__POSITION][height]"
                                             value="__HEIGHT"
                                         />
                                         <input
                                             type="hidden"
+                                            class="elementOnPage"
                                             name="signer[__PARTY][element][__POSITION][on_page]"
                                             value="__ON_PAGE"
                                         />
@@ -249,7 +259,7 @@
                                             <div class="form-check form-switch">
                                                 <input
                                                     onclick="partyElementToggleRequired(this)"
-                                                    class="form-check-input"
+                                                    class="form-check-input elementRequired"
                                                     type="checkbox"
                                                     role="switch"
                                                     name="signer[element][required]"
@@ -418,12 +428,13 @@
                     .on("party:remove", partyUpdate)
                     .on("party-element:active", (e, uuid = null) => uuid && partyElementActive(uuid))
                     .on("party-element:add", (e, data) => {
-                        partyElementAdd(data.uuid, data.eleType, data.partyIndex, data.text || data.eleType);
+                        partyElementAdd(data.uuid, data.type, data.partyIndex, data.text || data.type);
 
                         if ($(`li.partyLi[data-party-index="${data.partyIndex}"]`).length <= 0) {
                             partyAdd(data.partyIndex);
                         }
                     })
+                    .on("party-element:remove", (e, uuid = null) => {
                     .on("party-element:remove", (e, uuid = null) => {
                         if (uuid && (_ele = partyAddedElements().find(`div.addedElement[data-uuid="${uuid}"]`)).length > 0) {
                             partyElementRemove(_ele);
