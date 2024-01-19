@@ -336,10 +336,10 @@
                     .on("signer:remove", signerUpdate)
                     .on("signer-element:active", (e, uuid = null) => uuid && signerElementActive(uuid))
                     .on("signer-element:add", (e, data) => {
-                        signerElementAdd(data.uuid, data.type, data.signerIndex, data.text || data.type);
+                        signerElementAdd(data.uuid, data.type, data.signer_index, data.text || data.type);
 
-                        if ($(`li.signerLi[data-signer-index="${data.signerIndex}"]`).length <= 0) {
-                            signerAdd(data.signerIndex);
+                        if ($(`li.signerLi[data-signer-index="${data.signer_index}"]`).length <= 0) {
+                            signerAdd(data.signer_index);
                         }
                     })
                     .on("signer-element:remove", (e, uuid = null) => {

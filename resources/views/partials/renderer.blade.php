@@ -73,7 +73,7 @@
                             );
                             const context = canvasPdf.getContext('2d');
 
-                            canvasPdf.pageId = pageIndex;
+                            canvasPdf.page_index = pageIndex;
                             canvasPdf.height = viewport.height;
                             canvasPdf.width = viewport.width;
                             canvasEditionHTML.height = canvasPdf.height;
@@ -121,11 +121,11 @@
                                 function (e) {
                                     e.preventDefault();
 
-                                    const offsetX =
+                                    const offset_x =
                                         e.layerX ||
                                         e.originalEvent.layerX ||
                                         e.originalEvent.offsetX;
-                                    const offsetY =
+                                    const offset_y =
                                         e.layerY ||
                                         e.originalEvent.layerY ||
                                         e.originalEvent.offsetY;
@@ -146,8 +146,8 @@
                                         text,
                                         height,
                                         width,
-                                        offsetX,
-                                        offsetY,
+                                        offset_x,
+                                        offset_y,
                                         fontSize,
                                     });
 
@@ -281,7 +281,7 @@
                                     }
                                 });
 
-                            canvasEdition.pageIndex = pageIndex;
+                            canvasEdition.page_index = pageIndex;
                             canvasEditions.push(canvasEdition);
                         });
 
@@ -480,13 +480,13 @@
             const canvas = document.getElementById(`canvas-previewer-${index}`);
             const context = canvas.getContext('2d');
 
-            canvas.pageId = index;
+            canvas.page_index = index;
             canvas.height = viewport.height;
             canvas.width = viewport.width;
 
             canvas.addEventListener('click', function () {
-                if (!blank(this.pageId)) {
-                    $(document).trigger('move-to-canvas', this.pageId);
+                if (!blank(this.page_index)) {
+                    $(document).trigger('move-to-canvas', this.page_index);
                 }
             });
 
@@ -563,13 +563,13 @@
 
                     console.log('Object Info:', {
                         ...additionalInfo,
-                        on_page: canvasEdition.pageIndex + 1,
+                        on_page: canvasEdition.page_index + 1,
                         type: obj.eleType,
-                        offsetX: obj.left,
-                        offsetY: obj.top,
+                        offset_x: obj.left,
+                        offset_y: obj.top,
                         width: obj.width,
                         height: obj.height,
-                        signerIndex: obj.signerIndex,
+                        signer_index: obj.signer_index,
                     });
                 });
             });
@@ -581,7 +581,7 @@
             $(document).trigger('signer-element:add', {
                 uuid: uuid,
                 type: type,
-                signerIndex: index,
+                signer_index: index,
                 text: text,
             });
 
@@ -637,7 +637,7 @@
             triggerSignerElementAdd(
                 _uuid,
                 target.eleType,
-                target.signerIndex,
+                target.signer_index,
                 target.text,
             );
         }
@@ -757,13 +757,13 @@
 
             fabricObject.eleType = data.type;
             fabricObject.uuid = _uuid;
-            fabricObject.signerIndex =
-                data.signerIndex || getActiveSignerIndex();
+            fabricObject.signer_index =
+                data.signer_index || getActiveSignerIndex();
 
             triggerSignerElementAdd(
                 _uuid,
                 data.type,
-                fabricObject.signerIndex,
+                fabricObject.signer_index,
                 data.text || fabricObject.text || data.type,
             );
 
@@ -861,7 +861,7 @@
                             offset_y: 112.34266801044906,
                             width: 184.46467700999992,
                             height: 37.25560053999998,
-                            signerIndex: '1',
+                            signer_index: '1',
                         },
                         {
                             on_page: 1,
@@ -871,7 +871,7 @@
                             offset_y: 218.27301736782994,
                             width: 126.44699999999999,
                             height: 25.537999999999993,
-                            signerIndex: '1',
+                            signer_index: '1',
                         },
                         {
                             on_page: 1,
@@ -881,7 +881,7 @@
                             offset_y: 28,
                             width: 47.2,
                             height: 22.599999999999998,
-                            signerIndex: '3',
+                            signer_index: '3',
                         },
                         {
                             on_page: 1,
@@ -891,7 +891,7 @@
                             offset_y: 20,
                             width: 68.3,
                             height: 22.599999999999998,
-                            signerIndex: '3',
+                            signer_index: '3',
                             text: 'hello anand',
                         },
                         {
@@ -930,7 +930,7 @@
 
                                     if (
                                         objInfo.on_page ===
-                                        canvasEdition.pageIndex + 1
+                                        canvasEdition.page_index + 1
                                     ) {
                                         const newObj2 =
                                             createFabricObject(objInfo);
