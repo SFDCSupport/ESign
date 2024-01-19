@@ -478,16 +478,16 @@ body{
 }
 
 .edit-docs-btn{
-  padding: 1px 4px;
+  padding: 2px 8px;
   margin: 2px;
   color: #dc3847;
   display: inline-block;
   background: #fff;
   position: relative;
   top: 1px;
-  width: 26px;
   border-radius: 4px;
   box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+  text-decoration: none;
 }
 
 .edit-docs-btn:hover{

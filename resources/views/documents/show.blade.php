@@ -66,7 +66,7 @@
                             class="edit-docs-btn"
                             id="documentRemoveBtn"
                         >
-                            <i class="fa fa-times"></i>
+                            <i class="fa fa-times"></i> Remove
                         </a>
                     </div>
 
