@@ -30,11 +30,11 @@
         class="flex items-center space-x-1 deleted-updown-ele align-items-center"
     >
         <p class="updown-docs-btn partyReorder">
-            <a href="javascript: void(0);" class="signerReorderUp">
+            <a href="javascript: void(0);" onclick="signerReorder('up')">
                 <i class="fas fa-caret-up"></i>
             </a>
 
-            <a href="javascript: void(0);" class="signerReorderDown">
+            <a href="javascript: void(0);" onclick="signerReorder('down')">
                 <i class="fas fa-caret-down"></i>
             </a>
         </p>

@@ -141,6 +141,8 @@
                         <div
                             class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto"
                         >
+                            @php($hasSigners = ($totalSigners = $document->signers->count()) > 0)
+
                             <div class="select-party">
                                 <div class="dropdown_c dropdown_click">
                                     <div class="selecteddropdown">
@@ -159,8 +161,6 @@
                                     </div>
                                     <div class="drop-content">
                                         <ul id="signerUl">
-                                            @php($hasSigners = ($totalSigners = $document->signers->count()) > 0)
-
                                             @if ($hasSigners)
                                                 @foreach ($document->signers as $signer)
                                                     @include('esign::documents.partials.signer', compact('signer'))
@@ -180,109 +180,7 @@
                                 </div>
                             </div>
 
-                            <div class="editable-section addedElements">
-                                <template id="addedElementTemplate">
-                                    <div
-                                        class="pos_rel auto-resizing-content addedElement __REQUIRED"
-                                        data-element-index="__POSITION"
-                                        data-signer-index="__SIGNER_INDEX"
-                                        data-uuid="__UUID"
-                                    >
-                                        <input
-                                            type="hidden"
-                                            class="elementSignerId"
-                                            name="signer[__SIGNER_INDEX][element][__POSITION][signer_id]"
-                                            value="__SIGNER_ID"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementType"
-                                            name="signer[__SIGNER_INDEX][element][__POSITION][type]"
-                                            value="__TYPE"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementPosition"
-                                            name="signer[__SIGNER_INDEX][element][__POSITION][position]"
-                                            value="__POSITION"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementLabel"
-                                            name="signer[__SIGNER_INDEX][element][__POSITION][label]"
-                                            value="__LABEL"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementOffsetX"
-                                            name="signer[__SIGNER_INDEX][element][__POSITION][offset_x]"
-                                            value="__OFFSET_X"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementOffsetY"
-                                            name="signer[__SIGNER_INDEX][element][__POSITION][offset_y]"
-                                            value="__OFFSET_Y"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementWidth"
-                                            name="signer[__SIGNER_INDEX][element][__POSITION][width]"
-                                            value="__WIDTH"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementHeight"
-                                            name="signer[__SIGNER_INDEX][element][__POSITION][height]"
-                                            value="__HEIGHT"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementOnPage"
-                                            name="signer[__SIGNER_INDEX][element][__POSITION][on_page]"
-                                            value="__ON_PAGE"
-                                        />
-
-                                        <i class="__ICON type_icons"></i>
-                                        <div
-                                            class="group/contenteditable relative overflow-visible d-flex align-items-center"
-                                        >
-                                            <span
-                                                dir="auto"
-                                                contenteditable="false"
-                                                class="inline peer contenteditable-content outline-none focus:block"
-                                                style="min-width: 2px"
-                                            >
-                                                __LABEL
-                                            </span>
-                                            <span class="edit-resizing-btn">
-                                                <i class="fa fa-pen"></i>
-                                            </span>
-                                        </div>
-                                        <div
-                                            class="flex items-center space-x-1 deleted-required-ele align-items-center"
-                                        >
-                                            <div class="form-check form-switch">
-                                                <input
-                                                    onclick="signerElementToggleRequired(this)"
-                                                    class="form-check-input elementRequired"
-                                                    type="checkbox"
-                                                    role="switch"
-                                                    name="signer[element][required]"
-                                                    __CHECKED
-                                                />
-                                            </div>
-                                            <a
-                                                onclick="signerElementRemove(this)"
-                                                href="javascript: void(0);"
-                                                class="removecontenteditable removeAddedElement"
-                                            >
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
+                            <div class="editable-section addedElements"></div>
 
                             <div class="icons-box">
                                 @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
@@ -318,6 +216,7 @@
     </div>
 
     @include('esign::partials.renderer')
+    @include('esign::documents.partials.element-template')
 
     @pushonce('js')
         <script>
@@ -381,17 +280,20 @@
                 signerLi().find(".signerDelete,.signerReorder").toggleClass("d-none", totalSigners() <= 1);
                 $("#signerAdd").html("<i class=\"fa fa-user-plus\"></i> " + '{!! __('esign::label.add_nth_signer') !!}'.replace(":nth", ordinal(highestSignerIndex() + 1)));
             };
+            const signerReorder = (dir) => {
+                console.log(dir);
+            };
             const signerAdd = (index = null) => {
                 const _highestSigner = index || highestSignerIndex() + 1;
                 const clonedLi = $("li.signerLi:last").clone();
                 clonedLi.removeClass("selectedSigner");
-                clonedLi.find('input[type="hidden"][name^="signer["]').each(function() {
+                clonedLi.find("input[type=\"hidden\"][name^=\"signer[\"]").each(function() {
                     const _t = $(this);
-                    const _name = _t.attr('name');
+                    const _name = _t.attr("name");
 
-                    _t.attr('name', _name.replace(/\[\d+\]/, '[' + _highestSigner + ']'));
+                    _t.attr("name", _name.replace(/\[\d+\]/, "[" + _highestSigner + "]"));
 
-                    if(_name.endsWith('[position]')) {
+                    if (_name.endsWith("[position]")) {
                         _t.val(_highestSigner);
                     }
                 });
@@ -447,7 +349,7 @@
                     })
                     .on("signer-element:update", signerElementAdd)
                     .on("elements-added-to-canvas", () => {
-                        $(`#recipientsContainer .addedElement[data-signer-index!="1"]`).addClass("d-none");
+                        $(`#recipientsContainer .addedElement[data-element-signer-index!="1"]`).addClass("d-none");
                     })
                     .on("click", "#recipientsContainer li.signerLi a.signerLabel", function() {
                         const _t = $(this);
@@ -455,8 +357,8 @@
                         const index = _li.attr("data-signer-index");
 
                         $(".dropdown_click .drop-content ul").slideUp(100);
-                        $(`#recipientsContainer .addedElement[data-signer-index!="${index}"]`).addClass("d-none");
-                        $(`#recipientsContainer .addedElement[data-signer-index="${index}"]`).removeClass("d-none");
+                        $(`#recipientsContainer .addedElement[data-element-signer-index!="${index}"]`).addClass("d-none");
+                        $(`#recipientsContainer .addedElement[data-element-signer-index="${index}"]`).removeClass("d-none");
 
                         if (_li.hasClass("selectedSigner")) {
                             return;
@@ -467,9 +369,9 @@
 
                         $("#recipientsContainer span.selectedSigner").text(_t.text())
                             .attr("data-active-signer-index", index);
-                    }).on('signers-save', (e) => {
-                        const form = $('#recipientsForm');
-                        console.log(form.serializeArray());
+                    }).on("signers-save", (e) => {
+                    const form = $("#recipientsForm");
+                    console.log(form.serializeArray());
                 }).on("click", ".dropdown_click .selecteddropdown", () => {
                     $(".dropdown_click .drop-content ul").slideToggle();
                 });
