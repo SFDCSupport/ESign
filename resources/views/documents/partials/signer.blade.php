@@ -1,7 +1,7 @@
 @php($i = $loop->iteration ?? 1)
 
 <li
-    class="signerLi @if(($loop->index ?? 0) === 0) selectedParty selectedSigner @endif"
+    class="signerLi @if(($loop->index ?? 0) === 0) selectedSigner @endif"
     data-signer-index="{{ $i }}"
 >
     <input

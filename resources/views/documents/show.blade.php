@@ -147,14 +147,14 @@
                                 <div class="dropdown_c dropdown_click">
                                     <div class="selecteddropdown">
                                         <span
-                                            class="selectedParty selectedSigner"
+                                            class="selectedSigner"
                                             data-active-signer-index="1"
                                         >
                                             {{ __('esign::label.nth_signer', ['nth' => ordinal(1)]) }}
                                         </span>
                                         <a
                                             href="javascript: void(0);"
-                                            class="add-signer"
+                                            class="add-party"
                                         >
                                             <i class="fa fa-plus"></i>
                                         </a>
@@ -172,7 +172,7 @@
                                             <a
                                                 id="signerAdd"
                                                 href="javascript: void(0)"
-                                                class="add-signer-btn"
+                                                class="add-party-btn"
                                                 onclick="signerAdd()"
                                             ></a>
                                         </ul>
