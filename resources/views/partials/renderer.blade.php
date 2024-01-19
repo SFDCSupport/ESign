@@ -886,10 +886,29 @@
                                         objInfo.on_page ===
                                         canvasEdition.page_index + 1
                                     ) {
-                                        const newObj2 =
+                                        const newObj =
                                             createFabricObject(objInfo);
 
-                                        canvasEdition.add(newObj2);
+                                        canvasEdition.add(newObj);
+                                        objInfo.uuid = newObj.uuid;
+
+                                        const signerIndex =
+                                            objInfo.signer_index - 1;
+                                        const signerElements =
+                                            loadedData[signerIndex].elements;
+                                        const elementIndex =
+                                            signerElements.findIndex(
+                                                (element) =>
+                                                    element.signer_id ===
+                                                    objInfo.signer_id,
+                                            );
+
+                                        if (elementIndex !== -1) {
+                                            signerElements[elementIndex] = {
+                                                ...signerElements[elementIndex],
+                                                ...objInfo,
+                                            };
+                                        }
                                     }
                                 });
 
