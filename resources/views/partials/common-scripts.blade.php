@@ -178,4 +178,48 @@
 
         return isFinite(highest) ? highest : null;
     };
+
+    $(document)
+        .on('signer:added', function (e, obj) {
+            if (obj.from === 'loadedObject') {
+                return;
+            }
+
+            console.log('signer:added');
+        })
+        .on('signer:updated', function (e, obj) {
+            if (obj.from === 'loadedObject') {
+                return;
+            }
+
+            console.log('signer:updated');
+        })
+        .on('signer:removed', function (e, obj) {
+            if (obj.from === 'loadedObject') {
+                return;
+            }
+
+            console.log('signer:removed');
+        })
+        .on('signer:element:added', function (e, obj) {
+            if (obj.from === 'loadedObject') {
+                return;
+            }
+
+            console.log('element:added');
+        })
+        .on('signer:element:updated', function (e, obj) {
+            if (obj.from === 'loadedObject') {
+                return;
+            }
+
+            console.log('element:updated', obj);
+        })
+        .on('signer:element:removed', function (e, obj) {
+            if (obj.from === 'loadedObject') {
+                return;
+            }
+
+            console.log('element:removed', obj);
+        });
 </script>

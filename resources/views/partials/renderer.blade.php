@@ -144,7 +144,7 @@
                                     const width = draggedData.width || 60;
                                     const fontSize = 20;
 
-                                    const fabricObject = createFabricObject({
+                                    const obj = createFabricObject({
                                         type,
                                         text,
                                         height,
@@ -154,7 +154,15 @@
                                         fontSize,
                                     });
 
-                                    canvasEdition.add(fabricObject);
+                                    canvasEdition.add(obj);
+
+                                    $(document).trigger(
+                                        'signer:element:added',
+                                        {
+                                            ...obj,
+                                            from: 'canvas',
+                                        },
+                                    );
                                 },
                             );
 
@@ -268,9 +276,19 @@
                                         }
 
                                         canvas.renderAll();
+
+                                        $(document).trigger(
+                                            'signer:element:modified',
+                                            {
+                                                ...obj,
+                                                from: 'canvas',
+                                            },
+                                        );
                                     }
                                 })
-                                .on('object:scaled', function (e) {})
+                                .on('object:scaled', function (e) {
+                                    console.log('scaled');
+                                })
                                 .on('text:changed', function (e) {})
                                 .on('selection:created', function (e) {
                                     selectionChanged(this);
@@ -523,7 +541,10 @@
                 : canvas.getActiveObject();
 
             if (!blank((uuid = selectedObject?.uuid || null))) {
-                $(document).trigger('signer-element:active', uuid);
+                $(document).trigger('signer:element:set-active', {
+                    ...selectedObject,
+                    from: 'canvas',
+                });
             }
 
             if (isCleared) {
@@ -580,14 +601,6 @@
             $(document).trigger('signers-save');
         };
 
-        const triggerSignerElementAdd = (uuid, type, index, text = null) =>
-            $(document).trigger('signer-element:add', {
-                uuid: uuid,
-                type: type,
-                signer_index: index,
-                text: text,
-            });
-
         fabric.Canvas.prototype.getAbsoluteCoords = function (object) {
             return {
                 left: object.left + this._offset.left,
@@ -619,15 +632,20 @@
 
             canvas.remove(target);
             canvas.requestRenderAll();
-            $(document).trigger('signer-element:remove', target.uuid);
+            $(document).trigger('signer:element:removed', {
+                ...target,
+                from: 'canvas',
+            });
         }
 
         function cloneObject(eventData, transform) {
             const target = transform.target;
             const canvas = target.canvas;
             const _uuid = generateUniqueId();
+            let obj;
 
             target.clone(function (cloned) {
+                obj = cloned;
                 cloned.left += 10;
                 cloned.top += 10;
                 cloned.uuid = _uuid;
@@ -637,12 +655,10 @@
 
             canvas.requestRenderAll();
 
-            triggerSignerElementAdd(
-                _uuid,
-                target.eleType,
-                target.signer_index,
-                target.text,
-            );
+            $(document).trigger('signer:element:added', {
+                ...obj,
+                from: 'canvas',
+            });
         }
 
         const setFabricControl = (fabricObject) => {
@@ -762,13 +778,6 @@
                 data.signer_index || getActiveSignerIndex();
             fabricObject = setFabricControl(fabricObject);
 
-            triggerSignerElementAdd(
-                _uuid,
-                data.type,
-                fabricObject.signer_index,
-                data.text || fabricObject.text || data.type,
-            );
-
             return fabricObject;
         };
 
@@ -794,31 +803,35 @@
                         );
                     });
                 })
-                .on('signer-element:remove', (e, uuid) => {
+                .on('signer:element:removed', function (e, obj) {
+                    if (obj.from === 'canvas') {
+                        return;
+                    }
+
                     canvasEditions.forEach((canvasEdition) => {
-                        const obj = canvasEdition
+                        const __obj = canvasEdition
                             .getObjects()
                             .find((_obj) => _obj.uuid === uuid);
 
-                        if (!blank(obj)) {
-                            canvasEdition.remove(obj);
+                        if (!blank(__obj)) {
+                            canvasEdition.remove(__obj);
                         }
                     });
                 })
-                .on('load-pdf', (e, data) => {
-                    if (blank(data.url) || !data.container) {
+                .on('load-pdf', function (e, obj) {
+                    if (blank(obj.url) || !obj.container) {
                         return;
                     }
-                    loadPDF(data.url, data.container);
+                    loadPDF(obj.url, obj.container);
                 })
-                .on('pad-to-fabric', (e, data) => {
-                    const oldObj = data.obj;
+                .on('pad-to-fabric', function (e, obj) {
+                    const oldObj = obj.obj;
                     const canvas = oldObj.canvas;
 
-                    if (data.type === 'signature_pad' && data.signature) {
+                    if (obj.type === 'signature_pad' && obj.signature) {
                         canvas.remove(oldObj);
 
-                        fabric.Image.fromURL(data.signature, (newImg) => {
+                        fabric.Image.fromURL(obj.signature, (newImg) => {
                             newImg.set({
                                 left: oldObj.left,
                                 top: oldObj.top,
@@ -839,8 +852,8 @@
 
                             setFabricControl(newImg);
 
-                            newImg.eleType = data.type;
-                            newImg.signature = data.signature;
+                            newImg.eleType = obj.type;
+                            newImg.signature = obj.signature;
 
                             canvas.add(newImg);
                         });
@@ -889,27 +902,33 @@
                                         objInfo.on_page ===
                                         canvasEdition.page_index + 1
                                     ) {
-                                        const newObj =
-                                            createFabricObject(objInfo);
+                                        const obj = createFabricObject(objInfo);
 
-                                        canvasEdition.add(newObj);
-                                        objInfo.uuid = newObj.uuid;
+                                        canvasEdition.add(obj);
+
+                                        $(document).trigger(
+                                            'signer:element:added',
+                                            {
+                                                ...obj,
+                                                from: 'loadedObject',
+                                            },
+                                        );
 
                                         const signerIndex =
-                                            objInfo.signer_index - 1;
+                                            obj.signer_index - 1;
                                         const signerElements =
                                             loadedData[signerIndex].elements;
                                         const elementIndex =
                                             signerElements.findIndex(
                                                 (element) =>
                                                     element.signer_id ===
-                                                    objInfo.signer_id,
+                                                    obj.signer_id,
                                             );
 
                                         if (elementIndex !== -1) {
                                             signerElements[elementIndex] = {
                                                 ...signerElements[elementIndex],
-                                                ...objInfo,
+                                                ...obj,
                                             };
                                         }
                                     }

@@ -254,7 +254,7 @@
                 const _element = _e.hasClass("addedElements") ? element : _e.closest("div.addedElement");
 
                 _element.remove();
-                $(document).trigger("signer-element:remove", _element.attr("data-uuid"));
+                $(document).trigger("signer:element:removed", _element.attr("data-uuid"));
 
                 signerElementUpdate();
             };
@@ -297,11 +297,17 @@
                         _t.val(_highestSigner);
                     }
                 });
-                clonedLi.find("a.signerLabel").html(
+                const label = clonedLi.find("a.signerLabel").html(
                     ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}'
-                );
+                ).text();
                 clonedLi.attr("data-signer-index", _highestSigner);
                 clonedLi.insertAfter($("ul#signerUl li.signerLi:last"));
+
+                $(document).trigger("signer:added", {
+                    ...label,
+                    from: "sidebar",
+                    "signer-index": _highestSigner
+                });
 
                 signerUpdate();
             };
@@ -331,27 +337,65 @@
                 });
                 @endisset
 
-                $(document).on("signer:add", (e, label) => signerUpdate(label))
-                    .on("signer:update", signerUpdate)
-                    .on("signer:remove", signerUpdate)
-                    .on("signer-element:active", (e, uuid = null) => uuid && signerElementActive(uuid))
-                    .on("signer-element:add", (e, data) => {
-                        signerElementAdd(data.uuid, data.type, data.signer_index, data.text || data.type);
+                $(document).on("signer:added", function(e, obj) {
+                    if (obj.from === "sidebar") {
+                        return;
+                    }
 
-                        if ($(`li.signerLi[data-signer-index="${data.signer_index}"]`).length <= 0) {
-                            signerAdd(data.signer_index);
+                    signerUpdate(obj);
+                })
+                    .on("signer:update", function(e, obj) {
+                        if (obj.from === "sidebar") {
+                            return;
+                        }
+
+                        signerUpdate(obj);
+                    })
+                    .on("signer:removed", function(e, obj) {
+                        if (obj.from === "sidebar") {
+                            return;
+                        }
+
+                        signerUpdate();
+                    })
+                    .on("signer:element:set-active", function(e, obj) {
+                        if(obj.from === 'sidebar') {
+                            return;
+                        }
+
+                        obj.uuid && signerElementActive(obj.uuid)
+                    })
+                    .on("signer:element:added", function(e, obj) {
+                        if (obj.from === "sidebar") {
+                            return;
+                        }
+
+                        signerElementAdd(obj.uuid, obj.eleType, obj.signer_index, obj.text || obj.eleType);
+
+                        if ($(`li.signerLi[data-signer-index="${obj.signer_index}"]`).length <= 0) {
+                            signerAdd(obj.signer_index);
                         }
                     })
-                    .on("signer-element:remove", (e, uuid = null) => {
-                        if (uuid && (_ele = signerAddedElements().find(`div.addedElement[data-uuid="${uuid}"]`)).length > 0) {
+                    .on("signer:element:removed", function(e, obj) {
+                        if(obj.from === 'sidebar') {
+                            return;
+                        }
+
+                        if (obj.uuid && (_ele = signerAddedElements().find(`div.addedElement[data-uuid="${obj.uuid}"]`)).length > 0) {
                             signerElementRemove(_ele);
                         }
                     })
-                    .on("signer-element:update", signerElementAdd)
-                    .on("elements-added-to-canvas", () => {
+                    .on("signer:element:updated", function(e, obj) {
+                        if(obj.from === 'sidebar') {
+                            return;
+                        }
+
+                        signerElementUpdate(obj);
+                    })
+                    .on("elements-added-to-canvas", function(e) {
                         $(`#recipientsContainer .addedElement[data-element-signer-index!="1"]`).addClass("d-none");
                     })
-                    .on("click", "#recipientsContainer li.signerLi a.signerLabel", function() {
+                    .on("click", "#recipientsContainer li.signerLi a.signerLabel", function(e) {
                         const _t = $(this);
                         const _li = _t.closest("li.signerLi");
                         const index = _li.attr("data-signer-index");
@@ -369,10 +413,10 @@
 
                         $("#recipientsContainer span.selectedSigner").text(_t.text())
                             .attr("data-active-signer-index", index);
-                    }).on("signers-save", (e) => {
+                    }).on("signers-save", function(e) {
                     const form = $("#recipientsForm");
                     console.log(form.serializeArray());
-                }).on("click", ".dropdown_click .selecteddropdown", () => {
+                }).on("click", ".dropdown_click .selecteddropdown", function(e) {
                     $(".dropdown_click .drop-content ul").slideToggle();
                 });
 

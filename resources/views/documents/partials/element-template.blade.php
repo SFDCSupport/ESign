@@ -5,61 +5,6 @@
         data-element-index="__POSITION"
         data-uuid="__UUID"
     >
-        <input
-            type="hidden"
-            class="elementSignerId"
-            name="signer[__SIGNER_INDEX][element][__POSITION][signer_id]"
-            value="__SIGNER_ID"
-        />
-        <input
-            type="hidden"
-            class="elementType"
-            name="signer[__SIGNER_INDEX][element][__POSITION][type]"
-            value="__TYPE"
-        />
-        <input
-            type="hidden"
-            class="elementPosition"
-            name="signer[__SIGNER_INDEX][element][__POSITION][position]"
-            value="__POSITION"
-        />
-        <input
-            type="hidden"
-            class="elementLabel"
-            name="signer[__SIGNER_INDEX][element][__POSITION][label]"
-            value="__LABEL"
-        />
-        <input
-            type="hidden"
-            class="elementOffsetX"
-            name="signer[__SIGNER_INDEX][element][__POSITION][offset_x]"
-            value="__OFFSET_X"
-        />
-        <input
-            type="hidden"
-            class="elementOffsetY"
-            name="signer[__SIGNER_INDEX][element][__POSITION][offset_y]"
-            value="__OFFSET_Y"
-        />
-        <input
-            type="hidden"
-            class="elementWidth"
-            name="signer[__SIGNER_INDEX][element][__POSITION][width]"
-            value="__WIDTH"
-        />
-        <input
-            type="hidden"
-            class="elementHeight"
-            name="signer[__SIGNER_INDEX][element][__POSITION][height]"
-            value="__HEIGHT"
-        />
-        <input
-            type="hidden"
-            class="elementOnPage"
-            name="signer[__SIGNER_INDEX][element][__POSITION][on_page]"
-            value="__ON_PAGE"
-        />
-
         <i class="__ICON type_icons"></i>
         <div
             class="group/contenteditable relative overflow-visible d-flex align-items-center"
