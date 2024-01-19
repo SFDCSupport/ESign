@@ -1,6 +1,5 @@
-<div class="col-md-4 col-sm-4">
-    @php($documentStatus = $document->status->value)
-
+@php($documentStatus = $document->status->value)
+<div class="col-md-4 col-sm-4" data-document-status="{{ $documentStatus }}">
     <div class="card document-template-cards status-{{ $document->status }}">
         <div class="card-body">
             <a href="{{ route('esign.documents.show', $document) }}">

@@ -75,16 +75,19 @@
                 </div>
 
                 <fieldset class="filter-wrapper mb-4">
-                    <a href="#" class="filter-link active" id="">All</a>
-                    <a href="#" class="filter-link" id="">Active</a>
-                    <a href="#" class="filter-link" id="">Pending</a>
-                    <a href="#" class="filter-link" id="">Draft</a>
-                    <a href="#" class="filter-link" id="">In Active</a>
-                    <a href="#" class="filter-link" id="">Archived</a>
+                    @foreach (__('esign::dropdown.document_filters') ?? [] as $key => $label)
+                        <a
+                            href="javascript: void(0);"
+                            class="filter-link @if($key === 'all') active @endif"
+                            data-filter="{{ $key }}"
+                        >
+                            {{ $label }}
+                        </a>
+                    @endforeach
                 </fieldset>
             </div>
             <div class="container">
-                <div class="row">
+                <div class="row documentsContainer">
                     @each('esign::documents.partials.document', $documents, 'document')
                 </div>
             </div>
@@ -108,6 +111,31 @@
                                 }
                             },
                         });
+                    })
+                    .on('click', '.filter-link[data-filter]', function () {
+                        const _t = $(this);
+                        const status = _t.attr('data-filter');
+                        const documentsContainer = $('div.documentsContainer');
+
+                        if (_t.hasClass('active')) {
+                            return;
+                        }
+
+                        $('.filter-link[data-filter]').removeClass('active');
+                        _t.addClass('active');
+
+                        if (status === 'all') {
+                            documentsContainer
+                                .find(`div[data-document-status]`)
+                                .removeClass('d-none');
+                        } else {
+                            documentsContainer
+                                .find(`div[data-document-status!="${status}"]`)
+                                .addClass('d-none');
+                            documentsContainer
+                                .find(`div[data-document-status="${status}"]`)
+                                .removeClass('d-none');
+                        }
                     });
             });
         </script>
