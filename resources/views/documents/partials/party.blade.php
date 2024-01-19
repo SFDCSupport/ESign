@@ -29,9 +29,15 @@
     <div
         class="flex items-center space-x-1 deleted-updown-ele align-items-center"
     >
-        <a href="javascript: void(0);" class="updown-docs-btn partyReorder">
-            <i class="fa-solid fa-arrows-up-down"></i>
+    <p class="updown-docs-btn partyReorder">
+        <a href="javascript: void(0);" class="">
+            <i class="fas fa-caret-up"></i>
         </a>
+
+        <a href="javascript: void(0);" class="">
+            <i class="fas fa-caret-down"></i>
+        </a>
+    </p>
         <a
             href="javascript: void(0)"
             class="deleted-party partyDelete"

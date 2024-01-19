@@ -52,6 +52,11 @@
                 class="col-sm-2 dark-grey-bg @if($isSigningRoute || !$documentExists) d-none @endif"
             >
                 <div class="add-doc-sec">
+
+                    <div class="text-center mb-2">
+                     <p class="mb-0" style="font-size:10px;">{{ $document->title }}</p>
+                    </div>
+
                     <div class="text-center mb-2">
                         <a
                             href="javascript: void(0);"

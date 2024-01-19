@@ -473,6 +473,7 @@
                     index === 0 ? 'active' : ''
                 }" data-canvas-index="${index}">
                   <canvas id="canvas-previewer-${index}"></canvas>
+                  <span class="pdfviewer-numbers">1</span>
                 </div>`,
             );
 
