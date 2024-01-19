@@ -855,29 +855,43 @@
                         canvasEditions.forEach((canvasEdition) => {
                             canvasEdition.clear();
 
-                            loadedData.forEach((objInfo, i) => {
-                                const objPage = objInfo.on_page;
-                                const totalPages = canvasEditions.length;
+                            collect(loadedData)
+                                .flatMap((d, i) => {
+                                    i++;
+                                    return collect(d.elements).map((e) => {
+                                        e.signer_index = i;
 
-                                if (blank(objPage) || objPage > totalPages) {
-                                    toast(
-                                        'error',
-                                        `Invalid element ${
-                                            i + 1 + ' ' + objInfo.type
-                                        } position on page ${objPage} while total pages are ${totalPages}!`,
-                                    );
-                                    return;
-                                }
+                                        return e;
+                                    });
+                                })
+                                .flatten(1)
+                                .each((objInfo, i) => {
+                                    const objPage = objInfo.on_page;
+                                    const totalPages = canvasEditions.length;
 
-                                if (
-                                    objInfo.on_page ===
-                                    canvasEdition.page_index + 1
-                                ) {
-                                    const newObj2 = createFabricObject(objInfo);
+                                    if (
+                                        blank(objPage) ||
+                                        objPage > totalPages
+                                    ) {
+                                        toast(
+                                            'error',
+                                            `Invalid element ${
+                                                i + 1 + ' ' + objInfo.type
+                                            } position on page ${objPage} while total pages are ${totalPages}!`,
+                                        );
+                                        return;
+                                    }
 
-                                    canvasEdition.add(newObj2);
-                                }
-                            });
+                                    if (
+                                        objInfo.on_page ===
+                                        canvasEdition.page_index + 1
+                                    ) {
+                                        const newObj2 =
+                                            createFabricObject(objInfo);
+
+                                        canvasEdition.add(newObj2);
+                                    }
+                                });
 
                             return true;
                         });
