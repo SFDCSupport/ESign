@@ -1,7 +1,7 @@
 <template id="addedElementTemplate">
     <div
         class="pos_rel auto-resizing-content addedElement __REQUIRED"
-        data-element-signer-index="__SIGNER_INDEX"
+        data-element-signer-uuid="__SIGNER_UUID"
         data-element-index="__POSITION"
         data-uuid="__UUID"
     >

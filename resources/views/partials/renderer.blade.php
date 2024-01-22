@@ -590,7 +590,6 @@
                         offset_y: obj.top,
                         width: obj.width,
                         height: obj.height,
-                        signer_index: obj.signer_index,
                     });
                 });
             });
@@ -771,9 +770,8 @@
 
             fabricObject.eleType = data.type;
             fabricObject.uuid = _uuid;
-            fabricObject.signer_index =
-                data.signer_index || getActiveSignerIndex();
-            fabricObject.signer_uuid = data.signer_uuid || null;
+            fabricObject.signer_uuid =
+                data.signer_uuid || getActiveSigner() || null;
             fabricObject.is_required = data.is_required ?? true;
             fabricObject = setFabricControl(fabricObject);
 
@@ -797,12 +795,10 @@
 
                         if (!blank(fromObj)) {
                             fromObj.position = obj.withIndex;
-                            fromObj.signer_index = obj.withIndex;
                         }
 
                         if (!blank(toObj)) {
                             toObj.position = obj.index;
-                            toObj.signer_index = obj.index;
                         }
                     });
                 })
@@ -945,7 +941,7 @@
                 const width = _t.data('width') || 100;
                 const uuid =
                     $(
-                        `li.signerLi[data-signer-index="${getActiveSignerIndex()}"]`,
+                        `li.signerLi[data-signer-uuid="${getActiveSigner()}"]`,
                     ).attr('data-signer-uuid') || null;
 
                 const data = {

@@ -148,7 +148,7 @@
                                     <div class="selecteddropdown">
                                         <span
                                             class="selectedSigner"
-                                            data-active-signer-index="1"
+                                            data-active-signer
                                         >
                                             {{ __('esign::label.nth_signer', ['nth' => ordinal(1)]) }}
                                         </span>
@@ -231,7 +231,7 @@
                 .replace(/__ICON/ig, icon)
                 .replace(/__CHECKED/ig, obj.is_required ? "checked" : "")
                 .replace(/__REQUIRED/ig, obj.is_required ? "required" : "")
-                .replace(/__SIGNER_INDEX/ig, obj.signer_index || getActiveSignerIndex());
+                .replace(/__SIGNER_UUID/ig, obj.signer_uuid || getActiveSigner());
             const signerElementAdd = (obj) => {
                 const _highestElement = highestSignerElementIndex() + 1;
                 const _icon = $(`#recipientsContainer a.elementType[data-type="${obj.eleType}"] i.elementIcon`)
@@ -333,16 +333,6 @@
 
                 const label = obj?.signer_label || obj?.label || ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}';
                 clonedLi.removeClass("selectedSigner");
-                clonedLi.find("input[type=\"hidden\"][name^=\"signer[\"]").each(function() {
-                    const _t = $(this);
-                    const _name = _t.attr("name");
-
-                    _t.attr("name", _name.replace(/\[\d+\]/, "[" + _highestSigner + "]"));
-
-                    if (_name.endsWith("[position]")) {
-                        _t.val(_highestSigner);
-                    }
-                });
                 clonedLi.find("a.signerLabel").html(label);
                 clonedLi.attr("data-signer-index", _highestSigner);
                 clonedLi.attr("data-signer-uuid", uuid);
@@ -420,15 +410,15 @@
 
                         obj.label = obj.text || obj.eleType;
 
-                        signerElementAdd(obj);
-
-                        const _ele = $(`li.signerLi[data-signer-index="${obj.signer_index}"]`);
-
-                        if (_ele.length <= 0) {
+                        if((_li = $('#signerUl li.signerLi')).length === 1 && _li.attr('data-signer-uuid') === undefined) {
+                            _li.attr('data-signer-uuid', obj.signer_uuid);
+                            $("#recipientsContainer span.selectedSigner").attr("data-active-signer", obj.signer_uuid);
+                        }else if ($(`#signerUl li.signerLi[data-signer-uuid="${obj.signer_uuid}"]`).length <= 0) {
+                            console.log(obj.signer_uuid);
                             signerAdd(obj);
-                        } else {
-                            _ele.attr("data-signer-uuid", obj.signer_uuid || generateUniqueId("s_"));
                         }
+
+                        signerElementAdd(obj);
                     })
                     .on("signer:element:removed", function(e, obj) {
                         if (obj.from === "sidebar") {
@@ -447,16 +437,16 @@
                         signerElementUpdate(obj);
                     })
                     .on("elements-added-to-canvas", function(e) {
-                        $(`#recipientsContainer .addedElement[data-element-signer-index!="1"]`).addClass("d-none");
+                        $(`#recipientsContainer .addedElement[data-element-signer-uuid!="${getActiveSigner()}"]`).addClass("d-none");
                     })
                     .on("click", "#recipientsContainer li.signerLi a.signerLabel", function(e) {
                         const _t = $(this);
                         const _li = _t.closest("li.signerLi");
-                        const index = _li.attr("data-signer-index");
+                        const uuid = _li.attr("data-signer-uuid");
 
                         $(".dropdown_click .drop-content ul").slideUp(100);
-                        $(`#recipientsContainer .addedElement[data-element-signer-index!="${index}"]`).addClass("d-none");
-                        $(`#recipientsContainer .addedElement[data-element-signer-index="${index}"]`).removeClass("d-none");
+                        $(`#recipientsContainer .addedElement[data-element-signer-uuid!="${uuid}"]`).addClass("d-none");
+                        $(`#recipientsContainer .addedElement[data-element-signer-uuid="${uuid}"]`).removeClass("d-none");
 
                         if (_li.hasClass("selectedSigner")) {
                             return;
@@ -466,7 +456,7 @@
                         _li.addClass("selectedSigner");
 
                         $("#recipientsContainer span.selectedSigner").text(_t.text())
-                            .attr("data-active-signer-index", index);
+                            .attr("data-active-signer", uuid);
                     }).on("signers-save", function(e) {
                     const form = $("#recipientsForm");
                     console.log(form.serializeArray());

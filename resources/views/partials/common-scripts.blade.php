@@ -1,8 +1,6 @@
 <script>
-    const getActiveSignerIndex = () =>
-        $('.selectedSigner[data-active-signer-index]').attr(
-            'data-active-signer-index',
-        );
+    const getActiveSigner = () =>
+        $('.selectedSigner[data-active-signer]').attr('data-active-signer');
     const generateUniqueId = (() => {
         let counter = 0;
 
@@ -323,13 +321,12 @@
                 },
             ],
         },
-    ]).map((item, sI) => ({
+    ]).map((item) => ({
         ...item,
         uuid: (signerUuid = generateUniqueId('s_')),
         elements: item.elements.map((element) => ({
             ...element,
             uuid: generateUniqueId('e_'),
-            signer_index: sI + 1,
             signer_label: item.label,
             signer_uuid: signerUuid,
         })),

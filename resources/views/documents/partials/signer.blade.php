@@ -4,25 +4,6 @@
     class="signerLi @if(($loop->index ?? 0) === 0) selectedSigner @endif"
     data-signer-index="{{ $i }}"
 >
-    <input
-        type="hidden"
-        class="signerId"
-        name="signer[{{ $i }}][id]"
-        value="{{ $signer->id ?? null }}"
-    />
-    <input
-        type="hidden"
-        class="signerLabel"
-        name="signer[{{ $i }}][label]"
-        value="{{ $signer->label ?? null }}"
-    />
-    <input
-        type="hidden"
-        class="signerPosition"
-        name="signer[{{ $i }}][position]"
-        value="{{ $signer->position ?? $i }}"
-    />
-
     <a href="javascript: void(0)" class="signerLabel">
         {{ $signer->label ?? __('esign::label.nth_signer', ['nth' => ordinal($i)]) }}
     </a>
