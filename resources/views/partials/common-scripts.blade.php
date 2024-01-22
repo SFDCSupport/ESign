@@ -69,9 +69,9 @@
     const generateUniqueId = (() => {
         let counter = 0;
 
-        return () => {
+        return (prefix = '') => {
             const timestamp = new Date().getTime();
-            return `${timestamp}-${counter++}`;
+            return `${prefix}${timestamp}-${counter++}`;
         };
     })();
     const getCSRFToken = () =>
@@ -185,28 +185,28 @@
                 return;
             }
 
-            console.log('signer:added');
+            console.log('signer:added', obj);
         })
         .on('signer:updated', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
 
-            console.log('signer:updated');
+            console.log('signer:updated', obj);
         })
         .on('signer:removed', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
 
-            console.log('signer:removed');
+            console.log('signer:removed', obj);
         })
         .on('signer:element:added', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
 
-            console.log('element:added');
+            console.log('element:added', obj);
         })
         .on('signer:element:updated', function (e, obj) {
             if (obj.from === 'loadedObject') {

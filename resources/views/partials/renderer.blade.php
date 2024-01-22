@@ -638,7 +638,7 @@
         function cloneObject(eventData, transform) {
             const target = transform.target;
             const canvas = target.canvas;
-            const _uuid = generateUniqueId();
+            const _uuid = generateUniqueId('e_');
             let obj;
 
             target.clone(function (cloned) {
@@ -702,7 +702,7 @@
         };
 
         const createFabricObject = (data) => {
-            const _uuid = generateUniqueId();
+            const _uuid = generateUniqueId('e_');
             let fabricObject;
 
             const commonStyles = {
@@ -873,6 +873,7 @@
                                     i++;
                                     return collect(d.elements).map((e) => {
                                         e.signer_index = i;
+                                        e.signer_label = d.label;
 
                                         return e;
                                     });
@@ -900,6 +901,8 @@
                                         canvasEdition.page_index + 1
                                     ) {
                                         const obj = createFabricObject(objInfo);
+                                        obj.signer_label =
+                                            objInfo.signer_label || null;
 
                                         canvasEdition.add(obj);
 

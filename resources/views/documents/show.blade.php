@@ -283,9 +283,13 @@
             const signerReorder = (dir) => {
                 console.log(dir);
             };
-            const signerAdd = (index = null) => {
+            const signerAdd = (index = null, label = null) => {
                 const _highestSigner = index || highestSignerIndex() + 1;
                 const clonedLi = $("li.signerLi:last").clone();
+                const lastSigner = $("ul#signerUl li.signerLi:last");
+                const uuid = generateUniqueId('s_');
+
+                label = label || ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}';
                 clonedLi.removeClass("selectedSigner");
                 clonedLi.find("input[type=\"hidden\"][name^=\"signer[\"]").each(function() {
                     const _t = $(this);
@@ -297,16 +301,17 @@
                         _t.val(_highestSigner);
                     }
                 });
-                const label = clonedLi.find("a.signerLabel").html(
-                    ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}'
-                ).text();
+                clonedLi.find("a.signerLabel").html(label);
                 clonedLi.attr("data-signer-index", _highestSigner);
-                clonedLi.insertAfter($("ul#signerUl li.signerLi:last"));
+                clonedLi.insertAfter(lastSigner);
+
+                lastSigner.attr('data-signer-uuid', uuid);
 
                 $(document).trigger("signer:added", {
-                    ...label,
+                    label,
+                    uuid,
                     from: "sidebar",
-                    "signer-index": _highestSigner
+                    "signer_index": _highestSigner
                 });
 
                 signerUpdate();
@@ -373,7 +378,7 @@
                         signerElementAdd(obj.uuid, obj.eleType, obj.signer_index, obj.text || obj.eleType);
 
                         if ($(`li.signerLi[data-signer-index="${obj.signer_index}"]`).length <= 0) {
-                            signerAdd(obj.signer_index);
+                            signerAdd(obj.signer_index, obj.signer_label);
                         }
                     })
                     .on("signer:element:removed", function(e, obj) {
@@ -420,7 +425,6 @@
                     $(".dropdown_click .drop-content ul").slideToggle();
                 });
 
-                partyUpdate();
                 signerUpdate();
             });
         </script>
