@@ -1,5 +1,5 @@
 <script>
-    const loadedData = [
+    let loadedData = [
         {
             id: 1,
             label: 'Signer 1',
@@ -7,7 +7,6 @@
             elements: [
                 {
                     on_page: 1,
-                    signer_id: 1,
                     type: 'signature_pad',
                     offset_x: 238.34674585238713,
                     offset_y: 112.34266801044906,
@@ -16,7 +15,6 @@
                 },
                 {
                     on_page: 1,
-                    signer_id: 2,
                     type: 'signature_pad',
                     offset_x: 253.15437142614985,
                     offset_y: 218.27301736782994,
@@ -25,7 +23,6 @@
                 },
                 {
                     on_page: 2,
-                    signer_id: 5,
                     type: 'text',
                     offset_x: 185.7008572647063,
                     offset_y: 50.38610868284016,
@@ -41,7 +38,6 @@
             elements: [
                 {
                     on_page: 1,
-                    signer_id: 3,
                     type: 'email',
                     offset_x: 72,
                     offset_y: 28,
@@ -50,7 +46,6 @@
                 },
                 {
                     on_page: 1,
-                    signer_id: 4,
                     type: 'textarea',
                     offset_x: 375,
                     offset_y: 20,
@@ -185,41 +180,118 @@
                 return;
             }
 
-            console.log('signer:added', obj);
+            loadedData.push({
+                uuid: obj.uuid,
+                label: obj.label,
+                position: obj.signer_index,
+            });
+            console.log('signer:added', loadedData);
         })
         .on('signer:updated', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
 
-            console.log('signer:updated', obj);
+            const index = loadedData.findIndex(
+                (i) => item.position === obj.signer_index,
+            );
+
+            if (index !== -1) {
+                loadedData[index] = {
+                    ...loadedData[index],
+                    label: obj.label,
+                    position: obj.signer_index,
+                };
+            }
+            console.log('signer:updated', loadedData);
         })
         .on('signer:removed', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
 
-            console.log('signer:removed', obj);
+            const index = loadedData.findIndex(
+                (i) => i.position === obj.signer_index,
+            );
+
+            if (index !== -1) {
+                loadedData.splice(index, 1);
+            }
+            console.log('signer:removed', loadedData);
+        })
+        .on('signer:reordered', function (e, from, to) {
+            if (
+                from >= 0 &&
+                from < array.length &&
+                to >= 0 &&
+                to < array.length
+            ) {
+                const temp = array[from].position;
+
+                array[from].position = array[to].position;
+                array[to].position = temp;
+            }
+            console.log('signer:reordered', loadedData);
         })
         .on('signer:element:added', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
 
-            console.log('element:added', obj);
+            const signerIndex = obj.signer_index;
+
+            if (signerIndex >= 0 && signerIndex < array.length) {
+                loadedData[signerIndex].elements.push({
+                    on_page: obj.on_page,
+                    signer_index: obj.signer_index,
+                    type: obj.eleType,
+                    offset_x: obj.offset_x,
+                    offset_y: obj.offset_y,
+                    width: obj.width,
+                    height: obj.height,
+                });
+            }
+            console.log('signer:element:added', loadedData);
         })
         .on('signer:element:updated', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
 
-            console.log('element:updated', obj);
+            const signerIndex = obj.signer_index;
+
+            if (signerIndex >= 0 && signerIndex < array.length) {
+                const elements = loadedData[signerIndex].elements;
+                const elementIndex = obj.element_index;
+
+                if (elementIndex >= 0 && elementIndex < elements.length) {
+                    elements[elementIndex] = {
+                        ...elements[elementIndex],
+                        ...obj,
+                    };
+
+                    loadedData[signerIndex].elements = elements;
+                }
+            }
+            console.log('signer:element:updated', loadedData);
         })
         .on('signer:element:removed', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
 
-            console.log('element:removed', obj);
+            const signerIndex = obj.signer_index;
+
+            if (signerIndex >= 0 && signerIndex < loadedData.length) {
+                const elements = loadedData[signerIndex].elements;
+                const elementIndex = obj.element_index;
+
+                if (elementIndex >= 0 && elementIndex < elements.length) {
+                    elements.splice(elementIndex, 1);
+
+                    loadedData[signerIndex].elements = elements;
+                }
+            }
+            console.log('signer:element:removed', loadedData);
         });
 </script>

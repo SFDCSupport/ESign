@@ -283,13 +283,13 @@
             const signerReorder = (dir) => {
                 console.log(dir);
             };
-            const signerAdd = (index = null, label = null) => {
-                const _highestSigner = index || highestSignerIndex() + 1;
+            const signerAdd = (obj = null) => {
+                const _highestSigner = obj?.signer_index || obj?.index || highestSignerIndex() + 1;
                 const clonedLi = $("li.signerLi:last").clone();
                 const lastSigner = $("ul#signerUl li.signerLi:last");
                 const uuid = generateUniqueId('s_');
 
-                label = label || ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}';
+                const label = obj?.signer_label || obj?.label || ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}';
                 clonedLi.removeClass("selectedSigner");
                 clonedLi.find("input[type=\"hidden\"][name^=\"signer[\"]").each(function() {
                     const _t = $(this);
@@ -307,12 +307,14 @@
 
                 lastSigner.attr('data-signer-uuid', uuid);
 
-                $(document).trigger("signer:added", {
-                    label,
-                    uuid,
-                    from: "sidebar",
-                    "signer_index": _highestSigner
-                });
+                if(obj?.from !== 'loadedObject') {
+                    $(document).trigger("signer:added", {
+                        label,
+                        uuid,
+                        from: "sidebar",
+                        "signer_index": _highestSigner
+                    });
+                }
 
                 signerUpdate();
             };
@@ -378,7 +380,7 @@
                         signerElementAdd(obj.uuid, obj.eleType, obj.signer_index, obj.text || obj.eleType);
 
                         if ($(`li.signerLi[data-signer-index="${obj.signer_index}"]`).length <= 0) {
-                            signerAdd(obj.signer_index, obj.signer_label);
+                            signerAdd(obj);
                         }
                     })
                     .on("signer:element:removed", function(e, obj) {

@@ -865,22 +865,25 @@
 
                 $(document).on('canvas:ready', () => {
                     if (!blank(loadedData)) {
+                        loadedData = collect(loadedData).map((item, sI) => ({
+                            ...item,
+                            uuid: generateUniqueId('s_'),
+                            elements: item.elements.map((element, eI) => ({
+                                ...element,
+                                signer_index: sI + 1,
+                                signer_label: item.label,
+                                signer_uuid: generateUniqueId('e_'),
+                            })),
+                        }));
+
                         canvasEditions.forEach((canvasEdition) => {
                             canvasEdition.clear();
 
                             collect(loadedData)
-                                .flatMap((d, i) => {
-                                    i++;
-                                    return collect(d.elements).map((e) => {
-                                        e.signer_index = i;
-                                        e.signer_label = d.label;
-
-                                        return e;
-                                    });
-                                })
+                                .pluck('elements')
                                 .flatten(1)
                                 .each((objInfo, i) => {
-                                    const objPage = objInfo.on_page;
+                                    const objPage = objInfo?.on_page;
                                     const totalPages = canvasEditions.length;
 
                                     if (
@@ -890,19 +893,18 @@
                                         toast(
                                             'error',
                                             `Invalid element ${
-                                                i + 1 + ' ' + objInfo.type
+                                                i + 1 + ' ' + objInfo?.type
                                             } position on page ${objPage} while total pages are ${totalPages}!`,
                                         );
                                         return;
                                     }
 
                                     if (
-                                        objInfo.on_page ===
+                                        objPage ===
                                         canvasEdition.page_index + 1
                                     ) {
                                         const obj = createFabricObject(objInfo);
-                                        obj.signer_label =
-                                            objInfo.signer_label || null;
+                                        obj.signer_label = objInfo.signer_label;
 
                                         canvasEdition.add(obj);
 
@@ -913,24 +915,6 @@
                                                 from: 'loadedObject',
                                             },
                                         );
-
-                                        const signerIndex =
-                                            obj.signer_index - 1;
-                                        const signerElements =
-                                            loadedData[signerIndex].elements;
-                                        const elementIndex =
-                                            signerElements.findIndex(
-                                                (element) =>
-                                                    element.signer_id ===
-                                                    obj.signer_id,
-                                            );
-
-                                        if (elementIndex !== -1) {
-                                            signerElements[elementIndex] = {
-                                                ...signerElements[elementIndex],
-                                                ...obj,
-                                            };
-                                        }
                                     }
                                 });
 
