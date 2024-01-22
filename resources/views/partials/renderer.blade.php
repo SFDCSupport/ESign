@@ -276,7 +276,7 @@
                                         canvas.renderAll();
 
                                         $(document).trigger(
-                                            'signer:element:modified',
+                                            'signer:element:updated',
                                             {
                                                 ...obj,
                                                 from: 'canvas',
@@ -702,7 +702,7 @@
         };
 
         const createFabricObject = (data) => {
-            const _uuid = generateUniqueId('e_');
+            const _uuid = data.uuid || generateUniqueId('e_');
             let fabricObject;
 
             const commonStyles = {
@@ -773,6 +773,7 @@
             fabricObject.uuid = _uuid;
             fabricObject.signer_index =
                 data.signer_index || getActiveSignerIndex();
+            fabricObject.signer_uuid = data.signer_uuid || null;
             fabricObject = setFabricControl(fabricObject);
 
             return fabricObject;
@@ -808,7 +809,7 @@
                     canvasEditions.forEach((canvasEdition) => {
                         const __obj = canvasEdition
                             .getObjects()
-                            .find((_obj) => _obj.uuid === uuid);
+                            .find((_obj) => _obj.uuid === obj.uuid);
 
                         if (!blank(__obj)) {
                             canvasEdition.remove(__obj);
@@ -865,17 +866,6 @@
 
                 $(document).on('canvas:ready', () => {
                     if (!blank(loadedData)) {
-                        loadedData = collect(loadedData).map((item, sI) => ({
-                            ...item,
-                            uuid: generateUniqueId('s_'),
-                            elements: item.elements.map((element, eI) => ({
-                                ...element,
-                                signer_index: sI + 1,
-                                signer_label: item.label,
-                                signer_uuid: generateUniqueId('e_'),
-                            })),
-                        }));
-
                         canvasEditions.forEach((canvasEdition) => {
                             canvasEdition.clear();
 
@@ -904,13 +894,13 @@
                                         canvasEdition.page_index + 1
                                     ) {
                                         const obj = createFabricObject(objInfo);
-                                        obj.signer_label = objInfo.signer_label;
 
                                         canvasEdition.add(obj);
 
                                         $(document).trigger(
                                             'signer:element:added',
                                             {
+                                                ...objInfo,
                                                 ...obj,
                                                 from: 'loadedObject',
                                             },
@@ -927,12 +917,18 @@
             }
 
             $('.draggable').on('dragstart', function (e) {
-                const type = $(this).data('type');
-                const text = $(this).find('span').text();
-                const height = $(this).data('height') || 50;
-                const width = $(this).data('width') || 100;
+                const _t = $(this);
+                const type = _t.data('type');
+                const text = _t.find('span').text();
+                const height = _t.data('height') || 50;
+                const width = _t.data('width') || 100;
+                const uuid =
+                    $(
+                        `li.signerLi[data-signer-index="${getActiveSignerIndex()}"]`,
+                    ).attr('data-signer-uuid') || null;
 
                 const data = {
+                    uuid,
                     type,
                     text,
                     height,

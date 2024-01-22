@@ -180,17 +180,20 @@
                 return;
             }
 
+            console.log('signer:added', obj);
+
             loadedData.push({
                 uuid: obj.uuid,
                 label: obj.label,
                 position: obj.signer_index,
             });
-            console.log('signer:added', loadedData);
         })
         .on('signer:updated', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
+
+            console.log('signer:updated', obj);
 
             const index = loadedData.findIndex(
                 (i) => item.position === obj.signer_index,
@@ -203,12 +206,13 @@
                     position: obj.signer_index,
                 };
             }
-            console.log('signer:updated', loadedData);
         })
         .on('signer:removed', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
+
+            console.log('signer:removed', obj);
 
             const index = loadedData.findIndex(
                 (i) => i.position === obj.signer_index,
@@ -217,30 +221,32 @@
             if (index !== -1) {
                 loadedData.splice(index, 1);
             }
-            console.log('signer:removed', loadedData);
         })
         .on('signer:reordered', function (e, from, to) {
+            console.log('signer:reordered', from, to);
+
             if (
                 from >= 0 &&
-                from < array.length &&
+                from < loadedData.length &&
                 to >= 0 &&
-                to < array.length
+                to < loadedData.length
             ) {
-                const temp = array[from].position;
+                const temp = loadedData[from].position;
 
-                array[from].position = array[to].position;
-                array[to].position = temp;
+                loadedData[from].position = loadedData[to].position;
+                loadedData[to].position = temp;
             }
-            console.log('signer:reordered', loadedData);
         })
         .on('signer:element:added', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
 
+            console.log('signer:element:added', obj);
+
             const signerIndex = obj.signer_index;
 
-            if (signerIndex >= 0 && signerIndex < array.length) {
+            if (signerIndex >= 0 && signerIndex < loadedData.length) {
                 loadedData[signerIndex].elements.push({
                     on_page: obj.on_page,
                     signer_index: obj.signer_index,
@@ -251,16 +257,17 @@
                     height: obj.height,
                 });
             }
-            console.log('signer:element:added', loadedData);
         })
         .on('signer:element:updated', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
 
+            console.log('signer:element:updated', obj);
+
             const signerIndex = obj.signer_index;
 
-            if (signerIndex >= 0 && signerIndex < array.length) {
+            if (signerIndex >= 0 && signerIndex < loadedData.length) {
                 const elements = loadedData[signerIndex].elements;
                 const elementIndex = obj.element_index;
 
@@ -273,12 +280,13 @@
                     loadedData[signerIndex].elements = elements;
                 }
             }
-            console.log('signer:element:updated', loadedData);
         })
         .on('signer:element:removed', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
+
+            console.log('signer:element:removed', obj);
 
             const signerIndex = obj.signer_index;
 
@@ -292,6 +300,19 @@
                     loadedData[signerIndex].elements = elements;
                 }
             }
-            console.log('signer:element:removed', loadedData);
         });
+
+    loadedData = collect(loadedData)
+        .map((item, sI) => ({
+            ...item,
+            uuid: (signerUuid = generateUniqueId('s_')),
+            elements: item.elements.map((element) => ({
+                ...element,
+                uuid: generateUniqueId('e_'),
+                signer_index: sI + 1,
+                signer_label: item.label,
+                signer_uuid: signerUuid,
+            })),
+        }))
+        .all();
 </script>

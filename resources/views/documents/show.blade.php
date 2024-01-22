@@ -233,16 +233,16 @@
                 .replace(/__CHECKED/ig, isRequired ? "checked" : "")
                 .replace(/__REQUIRED/ig, isRequired ? "required" : "")
                 .replace(/__SIGNER_INDEX/ig, signerIndex || getActiveSignerIndex());
-            const signerElementAdd = (uuid, type, signerIndex, label) => {
+            const signerElementAdd = (obj) => {
                 const _highestElement = highestSignerElementIndex() + 1;
-                const _icon = $(`#recipientsContainer a.elementType[data-type="${type}"] i.elementIcon`)
+                const _icon = $(`#recipientsContainer a.elementType[data-type="${obj.eleType}"] i.elementIcon`)
                     .attr("class")
                     .split(" ")
                     .filter(className => className !== "elementIcon")
                     .join(" ");
 
                 signerAddedElements().append(
-                    getSignerElementTemplate(uuid, _highestElement, label, _icon, signerIndex)
+                    getSignerElementTemplate(obj.uuid, _highestElement, obj.label, _icon, obj.signer_index)
                 );
 
                 signerElementUpdate();
@@ -254,7 +254,10 @@
                 const _element = _e.hasClass("addedElements") ? element : _e.closest("div.addedElement");
 
                 _element.remove();
-                $(document).trigger("signer:element:removed", _element.attr("data-uuid"));
+                $(document).trigger("signer:element:removed", {
+                    from: 'sidebar',
+                    uuid: _element.attr("data-uuid"),
+                });
 
                 signerElementUpdate();
             };
@@ -287,7 +290,7 @@
                 const _highestSigner = obj?.signer_index || obj?.index || highestSignerIndex() + 1;
                 const clonedLi = $("li.signerLi:last").clone();
                 const lastSigner = $("ul#signerUl li.signerLi:last");
-                const uuid = generateUniqueId('s_');
+                const uuid = obj?.signer_uuid || obj?.uuid || generateUniqueId('s_');
 
                 const label = obj?.signer_label || obj?.label || ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}';
                 clonedLi.removeClass("selectedSigner");
@@ -303,9 +306,8 @@
                 });
                 clonedLi.find("a.signerLabel").html(label);
                 clonedLi.attr("data-signer-index", _highestSigner);
+                clonedLi.attr('data-signer-uuid', uuid);
                 clonedLi.insertAfter(lastSigner);
-
-                lastSigner.attr('data-signer-uuid', uuid);
 
                 if(obj?.from !== 'loadedObject') {
                     $(document).trigger("signer:added", {
@@ -377,10 +379,16 @@
                             return;
                         }
 
-                        signerElementAdd(obj.uuid, obj.eleType, obj.signer_index, obj.text || obj.eleType);
+                        obj.label = obj.text || obj.eleType;
 
-                        if ($(`li.signerLi[data-signer-index="${obj.signer_index}"]`).length <= 0) {
+                        signerElementAdd(obj);
+
+                        const _ele = $(`li.signerLi[data-signer-index="${obj.signer_index}"]`);
+
+                        if (_ele.length <= 0) {
                             signerAdd(obj);
+                        }else{
+                            _ele.attr('data-signer-uuid', obj.signer_uuid || generateUniqueId('s_'));
                         }
                     })
                     .on("signer:element:removed", function(e, obj) {
