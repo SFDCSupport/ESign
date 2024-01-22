@@ -57,6 +57,9 @@
                             <div class="position-relative mt-1 ms-1 me-1 d-inline-block canvasContainer ${
                                 pageIndex === 0 ? 'active' : ''
                             }" data-canvas-index="${pageIndex}" id="canvas-container-${pageIndex}">
+                                <span class="pdfviewer-numbers canvasPdfNumber">${
+                                    pageIndex + 1
+                                }</span>
                                 <canvas id="canvas-pdf-${pageIndex}" class="shadow-sm canvas-pdf"></canvas>
                                 <div class="position-absolute top-0 start-0">
                                     <canvas id="canvas-edition-${pageIndex}"></canvas>
@@ -73,7 +76,7 @@
                             );
                             const context = canvasPdf.getContext('2d');
 
-                            canvasPdf.pageId = pageIndex;
+                            canvasPdf.page_index = pageIndex;
                             canvasPdf.height = viewport.height;
                             canvasPdf.width = viewport.width;
                             canvasEditionHTML.height = canvasPdf.height;
@@ -121,11 +124,11 @@
                                 function (e) {
                                     e.preventDefault();
 
-                                    const offsetX =
+                                    const offset_x =
                                         e.layerX ||
                                         e.originalEvent.layerX ||
                                         e.originalEvent.offsetX;
-                                    const offsetY =
+                                    const offset_y =
                                         e.layerY ||
                                         e.originalEvent.layerY ||
                                         e.originalEvent.offsetY;
@@ -141,17 +144,25 @@
                                     const width = draggedData.width || 60;
                                     const fontSize = 20;
 
-                                    const fabricObject = createFabricObject({
+                                    const obj = createFabricObject({
                                         type,
                                         text,
                                         height,
                                         width,
-                                        offsetX,
-                                        offsetY,
+                                        offset_x,
+                                        offset_y,
                                         fontSize,
                                     });
 
-                                    canvasEdition.add(fabricObject);
+                                    canvasEdition.add(obj);
+
+                                    $(document).trigger(
+                                        'signer:element:added',
+                                        {
+                                            ...obj,
+                                            from: 'canvas',
+                                        },
+                                    );
                                 },
                             );
 
@@ -265,9 +276,19 @@
                                         }
 
                                         canvas.renderAll();
+
+                                        $(document).trigger(
+                                            'signer:element:modified',
+                                            {
+                                                ...obj,
+                                                from: 'canvas',
+                                            },
+                                        );
                                     }
                                 })
-                                .on('object:scaled', function (e) {})
+                                .on('object:scaled', function (e) {
+                                    console.log('scaled');
+                                })
                                 .on('text:changed', function (e) {})
                                 .on('selection:created', function (e) {
                                     selectionChanged(this);
@@ -281,7 +302,7 @@
                                     }
                                 });
 
-                            canvasEdition.pageIndex = pageIndex;
+                            canvasEdition.page_index = pageIndex;
                             canvasEditions.push(canvasEdition);
                         });
 
@@ -473,20 +494,20 @@
                     index === 0 ? 'active' : ''
                 }" data-canvas-index="${index}">
                   <canvas id="canvas-previewer-${index}"></canvas>
-                  <span class="pdfviewer-numbers">1</span>
+                  <span class="pdfviewer-numbers">${index + 1}</span>
                 </div>`,
             );
 
             const canvas = document.getElementById(`canvas-previewer-${index}`);
             const context = canvas.getContext('2d');
 
-            canvas.pageId = index;
+            canvas.page_index = index;
             canvas.height = viewport.height;
             canvas.width = viewport.width;
 
             canvas.addEventListener('click', function () {
-                if (!blank(this.pageId)) {
-                    $(document).trigger('move-to-canvas', this.pageId);
+                if (!blank(this.page_index)) {
+                    $(document).trigger('move-to-canvas', this.page_index);
                 }
             });
 
@@ -520,7 +541,10 @@
                 : canvas.getActiveObject();
 
             if (!blank((uuid = selectedObject?.uuid || null))) {
-                $(document).trigger('party-element:active', uuid);
+                $(document).trigger('signer:element:set-active', {
+                    ...selectedObject,
+                    from: 'canvas',
+                });
             }
 
             if (isCleared) {
@@ -563,27 +587,19 @@
 
                     console.log('Object Info:', {
                         ...additionalInfo,
-                        on_page: canvasEdition.pageIndex + 1,
+                        on_page: canvasEdition.page_index + 1,
                         type: obj.eleType,
-                        offsetX: obj.left,
-                        offsetY: obj.top,
+                        offset_x: obj.left,
+                        offset_y: obj.top,
                         width: obj.width,
                         height: obj.height,
-                        partyIndex: obj.partyIndex,
+                        signer_index: obj.signer_index,
                     });
                 });
             });
 
             $(document).trigger('signers-save');
         };
-
-        const triggerPartyElementAdd = (uuid, type, index, text = null) =>
-            $(document).trigger('party-element:add', {
-                uuid: uuid,
-                type: type,
-                partyIndex: index,
-                text: text,
-            });
 
         fabric.Canvas.prototype.getAbsoluteCoords = function (object) {
             return {
@@ -616,15 +632,20 @@
 
             canvas.remove(target);
             canvas.requestRenderAll();
-            $(document).trigger('party-element:remove', target.uuid);
+            $(document).trigger('signer:element:removed', {
+                ...target,
+                from: 'canvas',
+            });
         }
 
         function cloneObject(eventData, transform) {
             const target = transform.target;
             const canvas = target.canvas;
             const _uuid = generateUniqueId();
+            let obj;
 
             target.clone(function (cloned) {
+                obj = cloned;
                 cloned.left += 10;
                 cloned.top += 10;
                 cloned.uuid = _uuid;
@@ -634,12 +655,10 @@
 
             canvas.requestRenderAll();
 
-            triggerPartyElementAdd(
-                _uuid,
-                target.eleType,
-                target.partyIndex,
-                target.text,
-            );
+            $(document).trigger('signer:element:added', {
+                ...obj,
+                from: 'canvas',
+            });
         }
 
         const setFabricControl = (fabricObject) => {
@@ -648,9 +667,9 @@
                     mt: false,
                     mb: false,
                     ml: false,
-                    mr: false,
+                    mr: fabricObject.eleType !== 'signature_pad',
                     bl: false,
-                    br: true,
+                    br: fabricObject.eleType === 'signature_pad',
                     tl: false,
                     tr: false,
                 })
@@ -753,18 +772,11 @@
                     });
             }
 
-            fabricObject = setFabricControl(fabricObject);
-
             fabricObject.eleType = data.type;
             fabricObject.uuid = _uuid;
-            fabricObject.partyIndex = data.partyIndex || getActivePartyIndex();
-
-            triggerPartyElementAdd(
-                _uuid,
-                data.type,
-                fabricObject.partyIndex,
-                data.text || fabricObject.text || data.type,
-            );
+            fabricObject.signer_index =
+                data.signer_index || getActiveSignerIndex();
+            fabricObject = setFabricControl(fabricObject);
 
             return fabricObject;
         };
@@ -791,31 +803,35 @@
                         );
                     });
                 })
-                .on('party-element:remove', (e, uuid) => {
+                .on('signer:element:removed', function (e, obj) {
+                    if (obj.from === 'canvas') {
+                        return;
+                    }
+
                     canvasEditions.forEach((canvasEdition) => {
-                        const obj = canvasEdition
+                        const __obj = canvasEdition
                             .getObjects()
                             .find((_obj) => _obj.uuid === uuid);
 
-                        if (!blank(obj)) {
-                            canvasEdition.remove(obj);
+                        if (!blank(__obj)) {
+                            canvasEdition.remove(__obj);
                         }
                     });
                 })
-                .on('load-pdf', (e, data) => {
-                    if (blank(data.url) || !data.container) {
+                .on('load-pdf', function (e, obj) {
+                    if (blank(obj.url) || !obj.container) {
                         return;
                     }
-                    loadPDF(data.url, data.container);
+                    loadPDF(obj.url, obj.container);
                 })
-                .on('pad-to-fabric', (e, data) => {
-                    const oldObj = data.obj;
+                .on('pad-to-fabric', function (e, obj) {
+                    const oldObj = obj.obj;
                     const canvas = oldObj.canvas;
 
-                    if (data.type === 'signature_pad' && data.signature) {
+                    if (obj.type === 'signature_pad' && obj.signature) {
                         canvas.remove(oldObj);
 
-                        fabric.Image.fromURL(data.signature, (newImg) => {
+                        fabric.Image.fromURL(obj.signature, (newImg) => {
                             newImg.set({
                                 left: oldObj.left,
                                 top: oldObj.top,
@@ -836,8 +852,8 @@
 
                             setFabricControl(newImg);
 
-                            newImg.eleType = data.type;
-                            newImg.signature = data.signature;
+                            newImg.eleType = obj.type;
+                            newImg.signature = obj.signature;
 
                             canvas.add(newImg);
                         });
@@ -851,66 +867,21 @@
                 });
 
                 $(document).on('canvas:ready', () => {
-                    const loadedObjectData = [
-                        {
-                            on_page: 1,
-                            signer_id: 1,
-                            type: 'signature_pad',
-                            offset_x: 238.34674585238713,
-                            offset_y: 112.34266801044906,
-                            width: 184.46467700999992,
-                            height: 37.25560053999998,
-                            partyIndex: '1',
-                        },
-                        {
-                            on_page: 1,
-                            signer_id: 2,
-                            type: 'signature_pad',
-                            offset_x: 253.15437142614985,
-                            offset_y: 218.27301736782994,
-                            width: 126.44699999999999,
-                            height: 25.537999999999993,
-                            partyIndex: '1',
-                        },
-                        {
-                            on_page: 1,
-                            signer_id: 3,
-                            type: 'email',
-                            offset_x: 72,
-                            offset_y: 28,
-                            width: 47.2,
-                            height: 22.599999999999998,
-                            partyIndex: '3',
-                        },
-                        {
-                            on_page: 1,
-                            signer_id: 4,
-                            type: 'textarea',
-                            offset_x: 375,
-                            offset_y: 20,
-                            width: 68.3,
-                            height: 22.599999999999998,
-                            partyIndex: '3',
-                            text: 'hello anand',
-                        },
-                        {
-                            on_page: 2,
-                            signer_id: 5,
-                            type: 'text',
-                            offset_x: 185.7008572647063,
-                            offset_y: 50.38610868284016,
-                            width: 33.95649999999999,
-                            height: 25.537999999999993,
-                            position: '1',
-                        },
-                    ];
+                    if (!blank(loadedData)) {
+                        canvasEditions.forEach((canvasEdition) => {
+                            canvasEdition.clear();
 
-                    if (!blank(loadedObjectData)) {
-                        $.when(
-                            canvasEditions.forEach((canvasEdition) => {
-                                canvasEdition.clear();
+                            collect(loadedData)
+                                .flatMap((d, i) => {
+                                    i++;
+                                    return collect(d.elements).map((e) => {
+                                        e.signer_index = i;
 
-                                loadedObjectData.forEach((objInfo, i) => {
+                                        return e;
+                                    });
+                                })
+                                .flatten(1)
+                                .each((objInfo, i) => {
                                     const objPage = objInfo.on_page;
                                     const totalPages = canvasEditions.length;
 
@@ -929,20 +900,44 @@
 
                                     if (
                                         objInfo.on_page ===
-                                        canvasEdition.pageIndex + 1
+                                        canvasEdition.page_index + 1
                                     ) {
-                                        const newObj2 =
-                                            createFabricObject(objInfo);
+                                        const obj = createFabricObject(objInfo);
 
-                                        canvasEdition.add(newObj2);
+                                        canvasEdition.add(obj);
+
+                                        $(document).trigger(
+                                            'signer:element:added',
+                                            {
+                                                ...obj,
+                                                from: 'loadedObject',
+                                            },
+                                        );
+
+                                        const signerIndex =
+                                            obj.signer_index - 1;
+                                        const signerElements =
+                                            loadedData[signerIndex].elements;
+                                        const elementIndex =
+                                            signerElements.findIndex(
+                                                (element) =>
+                                                    element.signer_id ===
+                                                    obj.signer_id,
+                                            );
+
+                                        if (elementIndex !== -1) {
+                                            signerElements[elementIndex] = {
+                                                ...signerElements[elementIndex],
+                                                ...obj,
+                                            };
+                                        }
                                     }
                                 });
 
-                                return true;
-                            }),
-                        ).then(function () {
-                            $(document).trigger('elements-added-to-canvas');
+                            return true;
                         });
+
+                        $(document).trigger('elements-added-to-canvas');
                     }
                 });
             }

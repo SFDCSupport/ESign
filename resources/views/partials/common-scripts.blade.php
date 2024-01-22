@@ -1,7 +1,70 @@
 <script>
-    const getActivePartyIndex = () =>
-        $('.selectedParty[data-active-party-index]').attr(
-            'data-active-party-index',
+    const loadedData = [
+        {
+            id: 1,
+            label: 'Signer 1',
+            position: 1,
+            elements: [
+                {
+                    on_page: 1,
+                    signer_id: 1,
+                    type: 'signature_pad',
+                    offset_x: 238.34674585238713,
+                    offset_y: 112.34266801044906,
+                    width: 184.46467700999992,
+                    height: 37.25560053999998,
+                },
+                {
+                    on_page: 1,
+                    signer_id: 2,
+                    type: 'signature_pad',
+                    offset_x: 253.15437142614985,
+                    offset_y: 218.27301736782994,
+                    width: 126.44699999999999,
+                    height: 25.537999999999993,
+                },
+                {
+                    on_page: 2,
+                    signer_id: 5,
+                    type: 'text',
+                    offset_x: 185.7008572647063,
+                    offset_y: 50.38610868284016,
+                    width: 33.95649999999999,
+                    height: 25.537999999999993,
+                },
+            ],
+        },
+        {
+            id: 2,
+            label: 'Signer 2',
+            position: 2,
+            elements: [
+                {
+                    on_page: 1,
+                    signer_id: 3,
+                    type: 'email',
+                    offset_x: 72,
+                    offset_y: 28,
+                    width: 47.2,
+                    height: 22.599999999999998,
+                },
+                {
+                    on_page: 1,
+                    signer_id: 4,
+                    type: 'textarea',
+                    offset_x: 375,
+                    offset_y: 20,
+                    width: 68.3,
+                    height: 22.599999999999998,
+                    text: 'hello anand',
+                },
+            ],
+        },
+    ];
+
+    const getActiveSignerIndex = () =>
+        $('.selectedSigner[data-active-signer-index]').attr(
+            'data-active-signer-index',
         );
     const generateUniqueId = (() => {
         let counter = 0;
@@ -102,17 +165,61 @@
         },
     });
 
-    $.fn.highestData = function (data = 'party') {
+    $.fn.highestData = function (data = 'signer') {
         let highest = -Infinity;
 
         this.each(function () {
-            const partyValue = parseInt($(this).attr('data-' + data), 10);
+            const value = parseInt($(this).attr('data-' + data), 10);
 
-            if (!isNaN(partyValue)) {
-                highest = Math.max(highest, partyValue);
+            if (!isNaN(value)) {
+                highest = Math.max(highest, value);
             }
         });
 
         return isFinite(highest) ? highest : null;
     };
+
+    $(document)
+        .on('signer:added', function (e, obj) {
+            if (obj.from === 'loadedObject') {
+                return;
+            }
+
+            console.log('signer:added');
+        })
+        .on('signer:updated', function (e, obj) {
+            if (obj.from === 'loadedObject') {
+                return;
+            }
+
+            console.log('signer:updated');
+        })
+        .on('signer:removed', function (e, obj) {
+            if (obj.from === 'loadedObject') {
+                return;
+            }
+
+            console.log('signer:removed');
+        })
+        .on('signer:element:added', function (e, obj) {
+            if (obj.from === 'loadedObject') {
+                return;
+            }
+
+            console.log('element:added');
+        })
+        .on('signer:element:updated', function (e, obj) {
+            if (obj.from === 'loadedObject') {
+                return;
+            }
+
+            console.log('element:updated', obj);
+        })
+        .on('signer:element:removed', function (e, obj) {
+            if (obj.from === 'loadedObject') {
+                return;
+            }
+
+            console.log('element:removed', obj);
+        });
 </script>

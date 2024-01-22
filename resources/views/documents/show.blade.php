@@ -54,9 +54,10 @@
                 class="col-sm-2 dark-grey-bg @if($isSigningRoute || !$documentExists) d-none @endif"
             >
                 <div class="add-doc-sec">
-
                     <div class="text-center mb-2">
-                     <p class="mb-0" style="font-size:10px;">{{ $document->title }}</p>
+                        <p class="mb-0" style="font-size: 10px">
+                            {{ $document->title }}
+                        </p>
                     </div>
 
                     <div class="text-center mb-2">
@@ -142,14 +143,16 @@
                         <div
                             class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto"
                         >
+                            @php($hasSigners = ($totalSigners = $document->signers->count()) > 0)
+
                             <div class="select-party">
                                 <div class="dropdown_c dropdown_click">
                                     <div class="selecteddropdown">
                                         <span
-                                            class="selectedParty"
-                                            data-active-party-index="1"
+                                            class="selectedSigner"
+                                            data-active-signer-index="1"
                                         >
-                                            {{ __('esign::label.nth_party', ['nth' => ordinal(1)]) }}
+                                            {{ __('esign::label.nth_signer', ['nth' => ordinal(1)]) }}
                                         </span>
                                         <a
                                             href="javascript: void(0);"
@@ -159,131 +162,27 @@
                                         </a>
                                     </div>
                                     <div class="drop-content">
-                                        <ul id="partyUl">
-                                            @php($hasSigners = ($totalSigners = $document->signers->count()) > 0)
-
+                                        <ul id="signerUl">
                                             @if ($hasSigners)
                                                 @foreach ($document->signers as $signer)
-                                                    @include('esign::documents.partials.party', compact('signer'))
+                                                    @include('esign::documents.partials.signer', compact('signer'))
                                                 @endforeach
                                             @else
-                                                @include('esign::documents.partials.party')
+                                                @include('esign::documents.partials.signer')
                                             @endif
 
                                             <a
-                                                id="partyAdd"
+                                                id="signerAdd"
                                                 href="javascript: void(0)"
                                                 class="add-party-btn"
-                                                onclick="partyAdd()"
+                                                onclick="signerAdd()"
                                             ></a>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="editable-section addedElements">
-                                <template id="addedElementTemplate">
-                                    <div
-                                        class="pos_rel auto-resizing-content addedElement __REQUIRED"
-                                        data-element-position="__POSITION"
-                                        data-party-index="__PARTY"
-                                        data-uuid="__UUID"
-                                    >
-                                        <input
-                                            type="hidden"
-                                            class="elementSignerId"
-                                            name="signer[__PARTY][element][__POSITION][signer_id]"
-                                            value="__SIGNER_ID"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementType"
-                                            name="signer[__PARTY][element][__POSITION][type]"
-                                            value="__TYPE"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementPosition"
-                                            name="signer[__PARTY][element][__POSITION][position]"
-                                            value="__POSITION"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementLabel"
-                                            name="signer[__PARTY][element][__POSITION][label]"
-                                            value="__LABEL"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementOffsetX"
-                                            name="signer[__PARTY][element][__POSITION][offset_x]"
-                                            value="__OFFSET_X"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementOffsetY"
-                                            name="signer[__PARTY][element][__POSITION][offset_y]"
-                                            value="__OFFSET_Y"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementWidth"
-                                            name="signer[__PARTY][element][__POSITION][width]"
-                                            value="__WIDTH"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementHeight"
-                                            name="signer[__PARTY][element][__POSITION][height]"
-                                            value="__HEIGHT"
-                                        />
-                                        <input
-                                            type="hidden"
-                                            class="elementOnPage"
-                                            name="signer[__PARTY][element][__POSITION][on_page]"
-                                            value="__ON_PAGE"
-                                        />
-
-                                        <i class="__ICON type_icons"></i>
-                                        <div
-                                            class="group/contenteditable relative overflow-visible d-flex align-items-center"
-                                        >
-                                            <span
-                                                dir="auto"
-                                                contenteditable="false"
-                                                class="inline peer contenteditable-content outline-none focus:block"
-                                                style="min-width: 2px"
-                                            >
-                                                __LABEL
-                                            </span>
-                                            <span class="edit-resizing-btn">
-                                                <i class="fa fa-pen"></i>
-                                            </span>
-                                        </div>
-                                        <div
-                                            class="flex items-center space-x-1 deleted-required-ele align-items-center"
-                                        >
-                                            <div class="form-check form-switch">
-                                                <input
-                                                    onclick="partyElementToggleRequired(this)"
-                                                    class="form-check-input elementRequired"
-                                                    type="checkbox"
-                                                    role="switch"
-                                                    name="signer[element][required]"
-                                                    __CHECKED
-                                                />
-                                            </div>
-                                            <a
-                                                onclick="partyElementRemove(this)"
-                                                href="javascript: void(0);"
-                                                class="removecontenteditable removeAddedElement"
-                                            >
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
+                            <div class="editable-section addedElements"></div>
 
                             <div class="icons-box">
                                 @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
@@ -319,49 +218,50 @@
     </div>
 
     @include('esign::partials.renderer')
+    @include('esign::documents.partials.element-template')
 
     @pushonce('js')
         <script>
-            const partyLi = () => $("#recipientsContainer li.partyLi");
-            const totalParties = () => partyLi().length;
-            const highestParty = () => $("#recipientsContainer li.partyLi[data-party-index]").highestData("party-index");
-            const partyAddedElements = () => $("#recipientsContainer .addedElements");
-            const highestPartyElement = () => $("#recipientsContainer div.addedElements div.addedElement").highestData("element-position");
-            const getPartyElementTemplate = (uuid, position, label, icon, partyIndex = null, isRequired = true) => $.trim($("#addedElementTemplate").html())
+            const signerLi = () => $("#recipientsContainer li.signerLi");
+            const totalSigners = () => signerLi().length;
+            const highestSignerIndex = () => $("#recipientsContainer li.signerLi[data-signer-index]").highestData("signer-index");
+            const signerAddedElements = () => $("#recipientsContainer .addedElements");
+            const highestSignerElementIndex = () => $("#recipientsContainer div.addedElements div.addedElement").highestData("element-index");
+            const getSignerElementTemplate = (uuid, position, label, icon, signerIndex = null, isRequired = true) => $.trim($("#addedElementTemplate").html())
                 .replace(/__UUID/ig, uuid)
                 .replace(/__POSITION/ig, position)
                 .replace(/__LABEL/ig, $.trim(label))
                 .replace(/__ICON/ig, icon)
                 .replace(/__CHECKED/ig, isRequired ? "checked" : "")
                 .replace(/__REQUIRED/ig, isRequired ? "required" : "")
-                .replace(/__PARTY/ig, partyIndex || getActivePartyIndex());
-            const partyElementAdd = (uuid, type, partyIndex, label) => {
-                const _highestElement = highestPartyElement() + 1;
+                .replace(/__SIGNER_INDEX/ig, signerIndex || getActiveSignerIndex());
+            const signerElementAdd = (uuid, type, signerIndex, label) => {
+                const _highestElement = highestSignerElementIndex() + 1;
                 const _icon = $(`#recipientsContainer a.elementType[data-type="${type}"] i.elementIcon`)
                     .attr("class")
                     .split(" ")
                     .filter(className => className !== "elementIcon")
                     .join(" ");
 
-                partyAddedElements().append(
-                    getPartyElementTemplate(uuid, _highestElement, label, _icon, partyIndex)
+                signerAddedElements().append(
+                    getSignerElementTemplate(uuid, _highestElement, label, _icon, signerIndex)
                 );
 
-                partyElementUpdate();
+                signerElementUpdate();
             };
-            const partyElementUpdate = () => {
+            const signerElementUpdate = () => {
             };
-            const partyElementRemove = (element) => {
+            const signerElementRemove = (element) => {
                 const _e = $(element);
                 const _element = _e.hasClass("addedElements") ? element : _e.closest("div.addedElement");
 
                 _element.remove();
-                $(document).trigger("party-element:remove", _element.attr("data-uuid"));
+                $(document).trigger("signer:element:removed", _element.attr("data-uuid"));
 
-                partyElementUpdate();
+                signerElementUpdate();
             };
-            const partyElementActive = (uuid) => {
-                const addedElements = partyAddedElements();
+            const signerElementActive = (uuid) => {
+                const addedElements = signerAddedElements();
                 const uuidSelector = `div.addedElement[data-uuid="${uuid}"]`;
 
                 if ((_ele = addedElements.find(`${uuidSelector}`)).hasClass("active")) {
@@ -373,40 +273,49 @@
                 addedElements.find("div.addedElement.active").removeClass("active");
                 addedElements.find(`${uuidSelector}:not(.active)`).addClass("active");
             };
-            const partyElementToggleRequired = (element) => {
+            const signerElementToggleRequired = (element) => {
                 const _t = $(element);
 
                 _t.closest("div.addedElement").toggleClass("required", _t.prop("checked"));
             };
-            const partyUpdate = () => {
-                partyLi().find(".partyDelete,.partyReorder").toggleClass("d-none", totalParties() <= 1);
-                $("#partyAdd").html("<i class=\"fa fa-user-plus\"></i> " + '{!! __('esign::label.add_nth_party') !!}'.replace(":nth", ordinal(highestParty() + 1)));
+            const signerUpdate = () => {
+                signerLi().find(".signerDelete,.signerReorder").toggleClass("d-none", totalSigners() <= 1);
+                $("#signerAdd").html("<i class=\"fa fa-user-plus\"></i> " + '{!! __('esign::label.add_nth_signer') !!}'.replace(":nth", ordinal(highestSignerIndex() + 1)));
             };
-            const partyAdd = (index = null) => {
-                const _highestParty = index || highestParty() + 1;
-                const clonedLi = $("li.partyLi:last").clone();
-                clonedLi.removeClass("selectedParty");
-                clonedLi.find('input[type="hidden"][name^="signer["]').each(function() {
+            const signerReorder = (dir) => {
+                console.log(dir);
+            };
+            const signerAdd = (index = null) => {
+                const _highestSigner = index || highestSignerIndex() + 1;
+                const clonedLi = $("li.signerLi:last").clone();
+                clonedLi.removeClass("selectedSigner");
+                clonedLi.find("input[type=\"hidden\"][name^=\"signer[\"]").each(function() {
                     const _t = $(this);
-                    const _name = _t.attr('name');
+                    const _name = _t.attr("name");
 
-                    _t.attr('name', _name.replace(/\[\d+\]/, '[' + _highestParty + ']'));
+                    _t.attr("name", _name.replace(/\[\d+\]/, "[" + _highestSigner + "]"));
 
-                    if(_name.endsWith('[position]')) {
-                        _t.val(_highestParty);
+                    if (_name.endsWith("[position]")) {
+                        _t.val(_highestSigner);
                     }
                 });
-                clonedLi.find("a.partyLabel").html(
-                    ordinal(_highestParty) + ' {{ __('esign::label.party') }}'
-                );
-                clonedLi.attr("data-party-index", _highestParty);
-                clonedLi.insertAfter($("ul#partyUl li.partyLi:last"));
+                const label = clonedLi.find("a.signerLabel").html(
+                    ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}'
+                ).text();
+                clonedLi.attr("data-signer-index", _highestSigner);
+                clonedLi.insertAfter($("ul#signerUl li.signerLi:last"));
 
-                partyUpdate();
+                $(document).trigger("signer:added", {
+                    ...label,
+                    from: "sidebar",
+                    "signer-index": _highestSigner
+                });
+
+                signerUpdate();
             };
-            const partyRemove = (party) => {
-                $(party).closest("li.partyLi").remove();
-                partyUpdate();
+            const signerRemove = (signer) => {
+                $(signer).closest("li.signerLi").remove();
+                signerUpdate();
             };
 
             $(() => {
@@ -430,48 +339,86 @@
                 });
                 @endisset
 
-                $(document).on("party:add", (e, label) => partyUpdate(label))
-                    .on("party:update", partyUpdate)
-                    .on("party:remove", partyUpdate)
-                    .on("party-element:active", (e, uuid = null) => uuid && partyElementActive(uuid))
-                    .on("party-element:add", (e, data) => {
-                        partyElementAdd(data.uuid, data.type, data.partyIndex, data.text || data.type);
+                $(document).on("signer:added", function(e, obj) {
+                    if (obj.from === "sidebar") {
+                        return;
+                    }
 
-                        if ($(`li.partyLi[data-party-index="${data.partyIndex}"]`).length <= 0) {
-                            partyAdd(data.partyIndex);
-                        }
-                    })
-                    .on("party-element:remove", (e, uuid = null) => {
-                        if (uuid && (_ele = partyAddedElements().find(`div.addedElement[data-uuid="${uuid}"]`)).length > 0) {
-                            partyElementRemove(_ele);
-                        }
-                    })
-                    .on("party-element:update", partyElementAdd)
-                    .on("elements-added-to-canvas", () => {
-                        $(`#recipientsContainer .addedElement[data-party-index!="1"]`).addClass("d-none");
-                    })
-                    .on("click", "#recipientsContainer li.partyLi a.partyLabel", function() {
-                        const _t = $(this);
-                        const _li = _t.closest("li.partyLi");
-                        const index = _li.attr("data-party-index");
-
-                        $(".dropdown_click .drop-content ul").slideUp(100);
-                        $(`#recipientsContainer .addedElement[data-party-index!="${index}"]`).addClass("d-none");
-                        $(`#recipientsContainer .addedElement[data-party-index="${index}"]`).removeClass("d-none");
-
-                        if (_li.hasClass("selectedParty")) {
+                    signerUpdate(obj);
+                })
+                    .on("signer:update", function(e, obj) {
+                        if (obj.from === "sidebar") {
                             return;
                         }
 
-                        partyLi().removeClass("selectedParty");
-                        _li.addClass("selectedParty");
+                        signerUpdate(obj);
+                    })
+                    .on("signer:removed", function(e, obj) {
+                        if (obj.from === "sidebar") {
+                            return;
+                        }
 
-                        $("#recipientsContainer span.selectedParty").text(_t.text())
-                            .attr("data-active-party-index", index);
-                    }).on('signers-save', (e) => {
-                        const form = $('#recipientsForm');
-                        console.log(form.serializeArray());
-                }).on("click", ".dropdown_click .selecteddropdown", () => {
+                        signerUpdate();
+                    })
+                    .on("signer:element:set-active", function(e, obj) {
+                        if(obj.from === 'sidebar') {
+                            return;
+                        }
+
+                        obj.uuid && signerElementActive(obj.uuid)
+                    })
+                    .on("signer:element:added", function(e, obj) {
+                        if (obj.from === "sidebar") {
+                            return;
+                        }
+
+                        signerElementAdd(obj.uuid, obj.eleType, obj.signer_index, obj.text || obj.eleType);
+
+                        if ($(`li.signerLi[data-signer-index="${obj.signer_index}"]`).length <= 0) {
+                            signerAdd(obj.signer_index);
+                        }
+                    })
+                    .on("signer:element:removed", function(e, obj) {
+                        if(obj.from === 'sidebar') {
+                            return;
+                        }
+
+                        if (obj.uuid && (_ele = signerAddedElements().find(`div.addedElement[data-uuid="${obj.uuid}"]`)).length > 0) {
+                            signerElementRemove(_ele);
+                        }
+                    })
+                    .on("signer:element:updated", function(e, obj) {
+                        if(obj.from === 'sidebar') {
+                            return;
+                        }
+
+                        signerElementUpdate(obj);
+                    })
+                    .on("elements-added-to-canvas", function(e) {
+                        $(`#recipientsContainer .addedElement[data-element-signer-index!="1"]`).addClass("d-none");
+                    })
+                    .on("click", "#recipientsContainer li.signerLi a.signerLabel", function(e) {
+                        const _t = $(this);
+                        const _li = _t.closest("li.signerLi");
+                        const index = _li.attr("data-signer-index");
+
+                        $(".dropdown_click .drop-content ul").slideUp(100);
+                        $(`#recipientsContainer .addedElement[data-element-signer-index!="${index}"]`).addClass("d-none");
+                        $(`#recipientsContainer .addedElement[data-element-signer-index="${index}"]`).removeClass("d-none");
+
+                        if (_li.hasClass("selectedSigner")) {
+                            return;
+                        }
+
+                        signerLi().removeClass("selectedSigner");
+                        _li.addClass("selectedSigner");
+
+                        $("#recipientsContainer span.selectedSigner").text(_t.text())
+                            .attr("data-active-signer-index", index);
+                    }).on("signers-save", function(e) {
+                    const form = $("#recipientsForm");
+                    console.log(form.serializeArray());
+                }).on("click", ".dropdown_click .selecteddropdown", function(e) {
                     $(".dropdown_click .drop-content ul").slideToggle();
                 });
 
@@ -486,6 +433,7 @@
                 });
 
                 partyUpdate();
+                signerUpdate();
             });
         </script>
     @endpushonce

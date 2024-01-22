@@ -21,7 +21,7 @@ body{
 ::-webkit-scrollbar-thumb {
   background-color: #AAA;
   border-radius: 10px;
-  background-image: -webkit-linear-gradient(90deg, rgba(0, 0, 0, .2) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, .2) 50%, rgba(0, 0, 0, .2) 75%, transparent 75%, transparent) 
+  background-image: -webkit-linear-gradient(90deg, rgba(0, 0, 0, .2) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, .2) 50%, rgba(0, 0, 0, .2) 75%, transparent 75%, transparent)
 }
 
 #sidebarMenu{
@@ -33,7 +33,7 @@ body{
 }
 
 .sidebar{
-  background: #f0f2f5 !important; 
+  background: #f0f2f5 !important;
   max-height: 90vh;
   position: -webkit-sticky;
   position: sticky;
@@ -155,7 +155,7 @@ body{
 
 .status-archived .template_type{
   background-color: #8e97a0;
-} 
+}
 
 .document-template-cards:hover{
   transform: translateY(-3px);
@@ -533,7 +533,6 @@ body{
 
 .pdfviewer-numbers{
     position: absolute;
-    bottom: 10px;
     right: 10px;
     display: inline-block;
     width: 26px;
@@ -545,6 +544,12 @@ body{
     font-size: .8rem;
     border-radius: 100px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+}
+.pdfviewer-numbers:not(.canvasPdfNumber){
+    bottom: 10px;
+}
+.pdfviewer-numbers.canvasPdfNumber{
+    top: 10px;
 }
 
 .header-bottom-section{
@@ -594,9 +599,9 @@ body{
   margin:10px 0px;
   z-index: 2;
   }
-  
+
    .selecteddropdown span{
-    display:flex; 
+    display:flex;
     background: #fff;
     width:100%;
     border-radius:5px;
@@ -604,18 +609,18 @@ body{
     border: 1px solid #ddd;
 
   }
-  
+
    .selecteddropdown  span{
-    cursor:pointer; 
-    display:flex; 
+    cursor:pointer;
+    display:flex;
     padding:10px 15px;
     margin:0;
   }
-  
+
    .drop-content{
-    position:relative; 
+    position:relative;
   }
-  
+
    .drop-content ul{
     position: absolute;
     left: 0px;
@@ -630,7 +635,7 @@ body{
     padding: 5px !important;
     box-shadow: 0 1px 5px rgba(33,51,67,.12);
   }
-  
+
   .drop-content ul li{
     position: relative;
     border-radius: 20px;
@@ -688,7 +693,7 @@ body{
    .drop-content ul li:hover{
       background: #e7e7e7;
   }
-  
+
   .deleted-party,
   .updown-docs-btn{
     padding: 4px 6px !important;
@@ -738,7 +743,7 @@ body{
     border-radius: 2px;
     text-align: center;
     border: 1px dashed #fff;
-   
+
   }
 
   .add-party:hover{
