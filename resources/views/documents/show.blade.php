@@ -46,8 +46,6 @@
         </div>
     </section>
 
-     
-
     <div class="container-fluid">
         <div class="row">
             <div
@@ -420,16 +418,6 @@
                     console.log(form.serializeArray());
                 }).on("click", ".dropdown_click .selecteddropdown", function(e) {
                     $(".dropdown_click .drop-content ul").slideToggle();
-                });
-
-                $(document).on("click", "#expand-form-button", () => {
-                    $('#form-container').removeClass('d-none');
-                    $(this).addClass('d-none');
-                });
-
-                $(document).on("click", "#minimize-form-button", () => {
-                    $('#form-container').addClass('d-none');
-                    $('#expand-form-button').removeClass('d-none');
                 });
 
                 partyUpdate();

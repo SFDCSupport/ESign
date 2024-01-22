@@ -53,19 +53,17 @@
 
                             viewer.insertAdjacentHTML(
                                 'beforeend',
-                                `
-                            <div class="position-relative mt-1 ms-1 me-1 d-inline-block canvasContainer ${
-                                pageIndex === 0 ? 'active' : ''
-                            }" data-canvas-index="${pageIndex}" id="canvas-container-${pageIndex}">
-                                <span class="pdfviewer-numbers canvasPdfNumber">${
-                                    pageIndex + 1
-                                }</span>
-                                <canvas id="canvas-pdf-${pageIndex}" class="shadow-sm canvas-pdf"></canvas>
-                                <div class="position-absolute top-0 start-0">
-                                    <canvas id="canvas-edition-${pageIndex}"></canvas>
-                                </div>
-                            </div>
-                        `,
+                                `<div class="position-relative mt-1 ms-1 me-1 d-inline-block canvasContainer ${
+                                    pageIndex === 0 ? 'active' : ''
+                                }" data-canvas-index="${pageIndex}" id="canvas-container-${pageIndex}">
+                                    <span class="pdfviewer-numbers canvasPdfNumber">${
+                                        pageIndex + 1
+                                    }</span>
+                                    <canvas id="canvas-pdf-${pageIndex}" class="shadow-sm canvas-pdf"></canvas>
+                                    <div class="position-absolute top-0 start-0">
+                                        <canvas id="canvas-edition-${pageIndex}"></canvas>
+                                    </div>
+                                </div>`,
                             );
 
                             const canvasPdf = document.getElementById(
@@ -489,8 +487,7 @@
 
             pdfPreviewer.insertAdjacentHTML(
                 'beforeend',
-                `
-                <div class="position-relative previewerContainer ${
+                `<div class="position-relative previewerContainer ${
                     index === 0 ? 'active' : ''
                 }" data-canvas-index="${index}">
                   <canvas id="canvas-previewer-${index}"></canvas>
