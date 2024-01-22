@@ -30,7 +30,6 @@
                     class="form-check-input elementRequired"
                     type="checkbox"
                     role="switch"
-                    name="signer[element][required]"
                     __CHECKED
                 />
             </div>

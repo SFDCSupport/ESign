@@ -107,109 +107,91 @@
                 id="recipientsContainer"
                 class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary @if($isSigningRoute || !$documentExists) d-none @endif"
             >
-                <form
-                    id="recipientsForm"
-                    action="{{ route('esign.documents.signers.store', $document) }}"
-                    method="post"
+                <div
+                    class="offcanvas-md offcanvas-end bg-body-tertiary"
+                    tabindex="-1"
+                    id="sidebarMenu"
+                    aria-labelledby="sidebarMenuLabel"
                 >
-                    @csrf
-                    <input
-                        type="hidden"
-                        name="document_id"
-                        value="{{ $document->id }}"
-                    />
-
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="sidebarMenuLabel"></h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="offcanvas"
+                            data-bs-target="#sidebarMenu"
+                            aria-label="{{ __('esign::label.close') }}"
+                        ></button>
+                    </div>
                     <div
-                        class="offcanvas-md offcanvas-end bg-body-tertiary"
-                        tabindex="-1"
-                        id="sidebarMenu"
-                        aria-labelledby="sidebarMenuLabel"
+                        class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto"
                     >
-                        <div class="offcanvas-header">
-                            <h5
-                                class="offcanvas-title"
-                                id="sidebarMenuLabel"
-                            ></h5>
-                            <button
-                                type="button"
-                                class="btn-close"
-                                data-bs-dismiss="offcanvas"
-                                data-bs-target="#sidebarMenu"
-                                aria-label="{{ __('esign::label.close') }}"
-                            ></button>
-                        </div>
-                        <div
-                            class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto"
-                        >
-                            @php($hasSigners = ($totalSigners = $document->signers->count()) > 0)
+                        @php($hasSigners = ($totalSigners = $document->signers->count()) > 0)
 
-                            <div class="select-party">
-                                <div class="dropdown_c dropdown_click">
-                                    <div class="selecteddropdown">
-                                        <span
-                                            class="selectedSigner"
-                                            data-active-signer
-                                        >
-                                            {{ __('esign::label.nth_signer', ['nth' => ordinal(1)]) }}
-                                        </span>
-                                        <a
-                                            href="javascript: void(0);"
-                                            class="add-party"
-                                        >
-                                            <i class="fa fa-plus"></i>
-                                        </a>
-                                    </div>
-                                    <div class="drop-content">
-                                        <ul id="signerUl">
-                                            @if ($hasSigners)
-                                                @foreach ($document->signers as $signer)
-                                                    @include('esign::documents.partials.signer', compact('signer'))
-                                                @endforeach
-                                            @else
-                                                @include('esign::documents.partials.signer')
-                                            @endif
-                                        </ul>
-                                        <a
-                                            id="signerAdd"
-                                            href="javascript: void(0)"
-                                            class="add-party-btn"
-                                            onclick="signerAdd()"
-                                        ></a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="editable-section addedElements"></div>
-
-                            <div class="icons-box">
-                                @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
-                                    @php([$label, $icon] = $data)
-
+                        <div class="select-party">
+                            <div class="dropdown_c dropdown_click">
+                                <div class="selecteddropdown">
+                                    <span
+                                        class="selectedSigner"
+                                        data-active-signer
+                                    >
+                                        {{ __('esign::label.nth_signer', ['nth' => ordinal(1)]) }}
+                                    </span>
                                     <a
                                         href="javascript: void(0);"
-                                        class="draggable icons-box-btn bg-white elementType"
-                                        data-type="{{ $type }}"
+                                        class="add-party"
                                     >
-                                        <span class="draggable-left-icon">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </span>
-                                        <div
-                                            class="flex items-center flex-col px-2 py-2"
-                                        >
-                                            <i
-                                                class="{{ $icon }} elementIcon"
-                                            ></i>
-                                            <span class="text-xs mt-1">
-                                                {{ $label }}
-                                            </span>
-                                        </div>
+                                        <i class="fa fa-plus"></i>
                                     </a>
-                                @endforeach
+                                </div>
+                                <div class="drop-content">
+                                    <ul id="signerUl">
+                                        @if ($hasSigners)
+                                            @foreach ($document->signers as $signer)
+                                                @include('esign::documents.partials.signer', compact('signer'))
+                                            @endforeach
+                                        @else
+                                            @include('esign::documents.partials.signer')
+                                        @endif
+                                    </ul>
+                                    <a
+                                        id="signerAdd"
+                                        href="javascript: void(0)"
+                                        class="add-party-btn"
+                                        onclick="signerAdd()"
+                                    ></a>
+                                </div>
                             </div>
                         </div>
+
+                        <div class="editable-section addedElements"></div>
+
+                        <div class="icons-box">
+                            @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
+                                @php([$label, $icon] = $data)
+
+                                <a
+                                    href="javascript: void(0);"
+                                    class="draggable icons-box-btn bg-white elementType"
+                                    data-type="{{ $type }}"
+                                >
+                                    <span class="draggable-left-icon">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </span>
+                                    <div
+                                        class="flex items-center flex-col px-2 py-2"
+                                    >
+                                        <i class="{{ $icon }} elementIcon"></i>
+                                        <span class="text-xs mt-1">
+                                            {{ $label }}
+                                        </span>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -292,9 +274,9 @@
 
                 const signerUl = $("ul#signerUl");
 
-                signerUl.find("li.signerLi .partyReorder a").removeClass('d-none');
-                signerUl.find("li.signerLi:first .partyReorder a:first").addClass('d-none');
-                signerUl.find("li.signerLi:last .partyReorder a:last").addClass('d-none');
+                signerUl.find("li.signerLi .partyReorder a").removeClass("d-none");
+                signerUl.find("li.signerLi:first .partyReorder a:first").addClass("d-none");
+                signerUl.find("li.signerLi:last .partyReorder a:last").addClass("d-none");
             };
             const signerReorder = (ele, dir) => {
                 const signerLi = $(ele).closest("li.signerLi");
@@ -307,22 +289,22 @@
                     return;
                 }
 
-                const ownIndex = signerLi.attr('data-signer-index');
+                const ownIndex = signerLi.attr("data-signer-index");
                 const swapWith = signerLi[isUp ? "prev" : "next"]();
-                const swapWithIndex = swapWith.attr('data-signer-index');
+                const swapWithIndex = swapWith.attr("data-signer-index");
                 const detachedLi = signerLi.detach();
 
                 detachedLi[isUp ? "insertBefore" : "insertAfter"](swapWith);
-                detachedLi.attr('data-signer-index', swapWithIndex);
-                swapWith.attr('data-signer-index', ownIndex);
+                detachedLi.attr("data-signer-index", swapWithIndex);
+                swapWith.attr("data-signer-index", ownIndex);
 
                 signerUpdate();
 
-                $(document).trigger('signer:reordered', {
-                    uuid: signerLi.data('signer-uuid'),
+                $(document).trigger("signer:reordered", {
+                    uuid: signerLi.data("signer-uuid"),
                     index: ownIndex,
-                    withUuid: swapWith.data('signer-uuid'),
-                    withIndex: swapWithIndex,
+                    withUuid: swapWith.data("signer-uuid"),
+                    withIndex: swapWithIndex
                 });
             };
             const signerAdd = (obj = null) => {
@@ -410,10 +392,10 @@
 
                         obj.label = obj.text || obj.eleType;
 
-                        if((_li = $('#signerUl li.signerLi')).length === 1 && _li.attr('data-signer-uuid') === undefined) {
-                            _li.attr('data-signer-uuid', obj.signer_uuid);
+                        if ((_li = $("#signerUl li.signerLi")).length === 1 && _li.attr("data-signer-uuid") === undefined) {
+                            _li.attr("data-signer-uuid", obj.signer_uuid);
                             $("#recipientsContainer span.selectedSigner").attr("data-active-signer", obj.signer_uuid);
-                        }else if ($(`#signerUl li.signerLi[data-signer-uuid="${obj.signer_uuid}"]`).length <= 0) {
+                        } else if ($(`#signerUl li.signerLi[data-signer-uuid="${obj.signer_uuid}"]`).length <= 0) {
                             console.log(obj.signer_uuid);
                             signerAdd(obj);
                         }
@@ -458,8 +440,21 @@
                         $("#recipientsContainer span.selectedSigner").text(_t.text())
                             .attr("data-active-signer", uuid);
                     }).on("signers-save", function(e) {
-                    const form = $("#recipientsForm");
-                    console.log(form.serializeArray());
+                    e.preventDefault();
+
+                    setTimeout(() => $(document).trigger("loader:show"), 0);
+
+                    $.post('{{ route('esign.documents.signers.store', $document) }}', $.extend({}, { signers: loadedData }, {
+                        _token: '{{ csrf_token() }}',
+                        document_id: '{{ $document->id }}',
+                        mode: 'create',
+                    })).done((r) => {
+                        console.log(r);
+                        $(document).trigger("loader:hide");
+                    }).fail((x) => {
+                        toast("error", x.responseText);
+                        $(document).trigger("loader:hide");
+                    });
                 }).on("click", ".dropdown_click .selecteddropdown", function(e) {
                     $(".dropdown_click .drop-content ul").slideToggle();
                 });

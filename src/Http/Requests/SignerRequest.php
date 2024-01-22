@@ -3,14 +3,13 @@
 namespace NIIT\ESign\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class SignerRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return Gate::allows('update_signer');
+        return true;
     }
 
     /**
@@ -19,7 +18,7 @@ class SignerRequest extends FormRequest
     public function rules(): array
     {
         $defaultRules = [
-            'documentId' => [
+            'document_id' => [
                 'required',
                 Rule::exists('e_documents', 'id'),
             ],
@@ -34,7 +33,18 @@ class SignerRequest extends FormRequest
         $mode = $this->request->get('mode');
 
         if ($mode === 'create') {
-            return [];
+            return [
+                'signers.*.id' => 'sometimes|uuid',
+                'signers.*.label' => 'required',
+                'signers.*.position' => 'required|integer',
+                'signers.*.elements.*.id' => 'sometimes|uuid',
+                'signers.*.elements.*.on_page' => 'required|integer',
+                'signers.*.elements.*.offset_x' => 'required',
+                'signers.*.elements.*.offset_y' => 'required',
+                'signers.*.elements.*.width' => 'required',
+                'signers.*.elements.*.height' => 'required',
+                'signers.*.elements.*.is_required' => 'sometimes',
+            ];
         }
 
         if ($mode === 'update') {
