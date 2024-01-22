@@ -102,7 +102,7 @@ body{
 }
 
 .template_type{
-  display: block;
+    display: block;
     top: 12px;
     width: 90px;
     position: absolute;
@@ -111,8 +111,10 @@ body{
     right: -22px;
     color: #fff;
     font-size: .8rem;
-    padding: 6px 0px;
+    padding: 4px 0px;
     line-height: 10px;
+    margin-bottom: 0px;
+    box-shadow: 2px 4px 12px rgba(0,0,0,.08);
 }
 
 /* .document-template-cards.status-pending{
@@ -848,33 +850,35 @@ padding: 3px;
   transform: translate(-50%, -10%);
 }
 
-#expand_form_button{
+.expand_form_button{
   position: fixed;
   bottom: 1px;
+  padding: 10px;
   width: 100%;
   text-transform: uppercase;
   border-radius: 30px !important;
 }
 
-#expand_form_button i{
+.expand_form_button i{
   position: absolute;
   right: 20px;
   top:50%;
   margin-top: -8px;
 }
 
-#form_container{
+.form_container{
   position: fixed;
+  padding: 20px;
   bottom: 0px;
   border-radius: 7px;
   width: 100%;
-  background: #faf7f5;
+  background: #fff;
   min-height: 100px;
   z-index: 1;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
-#minimize_form_button{
+.minimize_form_button{
   position: absolute;
   right: 5px;
   top: 5px;
