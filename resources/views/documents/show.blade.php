@@ -225,14 +225,14 @@
             const highestSignerIndex = () => $("#recipientsContainer li.signerLi[data-signer-index]").highestData("signer-index");
             const signerAddedElements = () => $("#recipientsContainer .addedElements");
             const highestSignerElementIndex = () => $("#recipientsContainer div.addedElements div.addedElement").highestData("element-index");
-            const getSignerElementTemplate = (uuid, position, label, icon, signerIndex = null, isRequired = true) => $.trim($("#addedElementTemplate").html())
-                .replace(/__UUID/ig, uuid)
+            const getSignerElementTemplate = (obj, position, icon) => $.trim($("#addedElementTemplate").html())
+                .replace(/__UUID/ig, obj.uuid)
                 .replace(/__POSITION/ig, position)
-                .replace(/__LABEL/ig, $.trim(label))
+                .replace(/__LABEL/ig, $.trim(obj.label))
                 .replace(/__ICON/ig, icon)
-                .replace(/__CHECKED/ig, isRequired ? "checked" : "")
-                .replace(/__REQUIRED/ig, isRequired ? "required" : "")
-                .replace(/__SIGNER_INDEX/ig, signerIndex || getActiveSignerIndex());
+                .replace(/__CHECKED/ig, obj.is_required ? "checked" : "")
+                .replace(/__REQUIRED/ig, obj.is_required ? "required" : "")
+                .replace(/__SIGNER_INDEX/ig, obj.signer_index || getActiveSignerIndex());
             const signerElementAdd = (obj) => {
                 const _highestElement = highestSignerElementIndex() + 1;
                 const _icon = $(`#recipientsContainer a.elementType[data-type="${obj.eleType}"] i.elementIcon`)
@@ -242,7 +242,7 @@
                     .join(" ");
 
                 signerAddedElements().append(
-                    getSignerElementTemplate(obj.uuid, _highestElement, obj.label, _icon, obj.signer_index)
+                    getSignerElementTemplate(obj, _highestElement, _icon)
                 );
 
                 signerElementUpdate();
@@ -256,7 +256,7 @@
                 _element.remove();
                 $(document).trigger("signer:element:removed", {
                     from: 'sidebar',
-                    uuid: _element.attr("data-uuid"),
+                    uuid: _element.data("uuid"),
                 });
 
                 signerElementUpdate();
@@ -276,8 +276,16 @@
             };
             const signerElementToggleRequired = (element) => {
                 const _t = $(element);
+                const isRequired = _t.prop("checked");
+                const _element = _t.closest("div.addedElement");
 
-                _t.closest("div.addedElement").toggleClass("required", _t.prop("checked"));
+                _element.toggleClass("required", isRequired);
+
+                $(document).trigger('signer:element:updated', {
+                    from: 'sidebar',
+                    uuid: _element.data('uuid'),
+                    is_required: isRequired,
+                });
             };
             const signerUpdate = () => {
                 signerLi().find(".signerDelete,.signerReorder").toggleClass("d-none", totalSigners() <= 1);

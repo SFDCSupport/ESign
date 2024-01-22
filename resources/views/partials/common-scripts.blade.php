@@ -1,62 +1,4 @@
 <script>
-    let loadedData = [
-        {
-            id: 1,
-            label: 'Signer 1',
-            position: 1,
-            elements: [
-                {
-                    on_page: 1,
-                    type: 'signature_pad',
-                    offset_x: 238.34674585238713,
-                    offset_y: 112.34266801044906,
-                    width: 184.46467700999992,
-                    height: 37.25560053999998,
-                },
-                {
-                    on_page: 1,
-                    type: 'signature_pad',
-                    offset_x: 253.15437142614985,
-                    offset_y: 218.27301736782994,
-                    width: 126.44699999999999,
-                    height: 25.537999999999993,
-                },
-                {
-                    on_page: 2,
-                    type: 'text',
-                    offset_x: 185.7008572647063,
-                    offset_y: 50.38610868284016,
-                    width: 33.95649999999999,
-                    height: 25.537999999999993,
-                },
-            ],
-        },
-        {
-            id: 2,
-            label: 'Signer 2',
-            position: 2,
-            elements: [
-                {
-                    on_page: 1,
-                    type: 'email',
-                    offset_x: 72,
-                    offset_y: 28,
-                    width: 47.2,
-                    height: 22.599999999999998,
-                },
-                {
-                    on_page: 1,
-                    type: 'textarea',
-                    offset_x: 375,
-                    offset_y: 20,
-                    width: 68.3,
-                    height: 22.599999999999998,
-                    text: 'hello anand',
-                },
-            ],
-        },
-    ];
-
     const getActiveSignerIndex = () =>
         $('.selectedSigner[data-active-signer-index]').attr(
             'data-active-signer-index',
@@ -176,13 +118,16 @@
 
     $(document)
         .on('signer:added', function (e, obj) {
-            if (obj.from === 'loadedObject') {
+            if (
+                obj.from === 'loadedObject' ||
+                loadedData.where('uuid', obj.uuid)
+            ) {
                 return;
             }
 
             console.log('signer:added', obj);
 
-            loadedData.push({
+            collect(loadedData).push({
                 uuid: obj.uuid,
                 label: obj.label,
                 position: obj.signer_index,
@@ -195,16 +140,17 @@
 
             console.log('signer:updated', obj);
 
-            const index = loadedData.findIndex(
-                (i) => item.position === obj.signer_index,
+            const index = collect(loadedData).search(
+                (i) => i.uuid === obj.uuid,
             );
 
-            if (index !== -1) {
-                loadedData[index] = {
-                    ...loadedData[index],
-                    label: obj.label,
-                    position: obj.signer_index,
-                };
+            if (index !== false) {
+                loadedData[index] = collect(loadedData[index])
+                    .merge({
+                        label: obj.label,
+                        position: obj.signer_index,
+                    })
+                    .all();
             }
         })
         .on('signer:removed', function (e, obj) {
@@ -214,27 +160,24 @@
 
             console.log('signer:removed', obj);
 
-            const index = loadedData.findIndex(
-                (i) => i.position === obj.signer_index,
-            );
-
-            if (index !== -1) {
-                loadedData.splice(index, 1);
-            }
+            loadedData = collect(loadedData)
+                .reject((i) => i.uuid === obj.uuid)
+                .all();
         })
-        .on('signer:reordered', function (e, from, to) {
-            console.log('signer:reordered', from, to);
+        .on('signer:reordered', function (e, obj) {
+            console.log('signer:reordered', obj);
 
-            if (
-                from >= 0 &&
-                from < loadedData.length &&
-                to >= 0 &&
-                to < loadedData.length
-            ) {
-                const temp = loadedData[from].position;
+            const signerA = collect(loadedData).firstWhere(
+                'uuid',
+                obj.from_uuid,
+            );
+            const signerB = collect(loadedData).firstWhere('uuid', obj.to_uuid);
 
-                loadedData[from].position = loadedData[to].position;
-                loadedData[to].position = temp;
+            if (signerA && signerB) {
+                const tempPosition = signerA.position;
+
+                signerA.position = signerB.position;
+                signerB.position = tempPosition;
             }
         })
         .on('signer:element:added', function (e, obj) {
@@ -244,9 +187,11 @@
 
             console.log('signer:element:added', obj);
 
-            const signerIndex = obj.signer_index;
+            const signerIndex = collect(loadedData).search(
+                (i) => i.uuid === obj.signer_uuid,
+            );
 
-            if (signerIndex >= 0 && signerIndex < loadedData.length) {
+            if (signerIndex !== false) {
                 loadedData[signerIndex].elements.push({
                     on_page: obj.on_page,
                     signer_index: obj.signer_index,
@@ -255,6 +200,8 @@
                     offset_y: obj.offset_y,
                     width: obj.width,
                     height: obj.height,
+                    is_required: obj.is_required,
+                    signer_uuid: obj.signer_uuid,
                 });
             }
         })
@@ -265,19 +212,27 @@
 
             console.log('signer:element:updated', obj);
 
-            const signerIndex = obj.signer_index;
+            const signerIndex = collect(loadedData).search(
+                (i) => i.uuid === obj.signer_uuid,
+            );
 
-            if (signerIndex >= 0 && signerIndex < loadedData.length) {
-                const elements = loadedData[signerIndex].elements;
-                const elementIndex = obj.element_index;
+            if (signerIndex !== false) {
+                const elementIndex = collect(
+                    loadedData[signerIndex].elements,
+                ).search((e) => e.uuid === obj.uuid);
 
-                if (elementIndex >= 0 && elementIndex < elements.length) {
-                    elements[elementIndex] = {
-                        ...elements[elementIndex],
-                        ...obj,
-                    };
-
-                    loadedData[signerIndex].elements = elements;
+                if (elementIndex !== false) {
+                    loadedData[signerIndex].elements[elementIndex] = collect(
+                        loadedData[signerIndex].elements[elementIndex],
+                    )
+                        .merge({
+                            offset_x: obj.offset_x,
+                            offset_y: obj.offset_y,
+                            width: obj.width,
+                            height: obj.height,
+                            is_required: obj.is_required,
+                        })
+                        .all();
                 }
             }
         })
@@ -288,31 +243,95 @@
 
             console.log('signer:element:removed', obj);
 
-            const signerIndex = obj.signer_index;
+            const signerIndex = loadedData.search(
+                (i) => i.uuid === obj.signer_uuid,
+            );
 
-            if (signerIndex >= 0 && signerIndex < loadedData.length) {
-                const elements = loadedData[signerIndex].elements;
-                const elementIndex = obj.element_index;
+            if (signerIndex !== false) {
+                const elementIndex = collect(
+                    loadedData[signerIndex].elements,
+                ).search((e) => e.uuid === obj.uuid);
 
-                if (elementIndex >= 0 && elementIndex < elements.length) {
-                    elements.splice(elementIndex, 1);
-
-                    loadedData[signerIndex].elements = elements;
+                if (elementIndex !== false) {
+                    loadedData[signerIndex].elements = collect(
+                        loadedData[signerIndex].elements,
+                    )
+                        .reject((e) => e.uuid === obj.uuid)
+                        .all();
                 }
             }
         });
 
-    loadedData = collect(loadedData)
-        .map((item, sI) => ({
-            ...item,
-            uuid: (signerUuid = generateUniqueId('s_')),
-            elements: item.elements.map((element) => ({
-                ...element,
-                uuid: generateUniqueId('e_'),
-                signer_index: sI + 1,
-                signer_label: item.label,
-                signer_uuid: signerUuid,
-            })),
-        }))
-        .all();
+    let loadedData = collect([
+        {
+            id: 1,
+            label: 'Signer 1',
+            position: 1,
+            elements: [
+                {
+                    on_page: 1,
+                    type: 'signature_pad',
+                    offset_x: 238.34674585238713,
+                    offset_y: 112.34266801044906,
+                    width: 184.46467700999992,
+                    height: 37.25560053999998,
+                    is_required: true,
+                },
+                {
+                    on_page: 1,
+                    type: 'signature_pad',
+                    offset_x: 253.15437142614985,
+                    offset_y: 218.27301736782994,
+                    width: 126.44699999999999,
+                    height: 25.537999999999993,
+                    is_required: false,
+                },
+                {
+                    on_page: 2,
+                    type: 'text',
+                    offset_x: 185.7008572647063,
+                    offset_y: 50.38610868284016,
+                    width: 33.95649999999999,
+                    height: 25.537999999999993,
+                    is_required: true,
+                },
+            ],
+        },
+        {
+            id: 2,
+            label: 'Signer 2',
+            position: 2,
+            elements: [
+                {
+                    on_page: 1,
+                    type: 'email',
+                    offset_x: 72,
+                    offset_y: 28,
+                    width: 47.2,
+                    height: 22.599999999999998,
+                    is_required: false,
+                },
+                {
+                    on_page: 1,
+                    type: 'textarea',
+                    offset_x: 375,
+                    offset_y: 20,
+                    width: 68.3,
+                    height: 22.599999999999998,
+                    text: 'hello anand',
+                    is_required: true,
+                },
+            ],
+        },
+    ]).map((item, sI) => ({
+        ...item,
+        uuid: (signerUuid = generateUniqueId('s_')),
+        elements: item.elements.map((element) => ({
+            ...element,
+            uuid: generateUniqueId('e_'),
+            signer_index: sI + 1,
+            signer_label: item.label,
+            signer_uuid: signerUuid,
+        })),
+    }));
 </script>

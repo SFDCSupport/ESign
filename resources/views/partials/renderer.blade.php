@@ -774,6 +774,7 @@
             fabricObject.signer_index =
                 data.signer_index || getActiveSignerIndex();
             fabricObject.signer_uuid = data.signer_uuid || null;
+            fabricObject.is_required = data.is_required ?? true;
             fabricObject = setFabricControl(fabricObject);
 
             return fabricObject;
@@ -865,11 +866,11 @@
                 });
 
                 $(document).on('canvas:ready', () => {
-                    if (!blank(loadedData)) {
+                    if (loadedData.isNotEmpty()) {
                         canvasEditions.forEach((canvasEdition) => {
                             canvasEdition.clear();
 
-                            collect(loadedData)
+                            loadedData
                                 .pluck('elements')
                                 .flatten(1)
                                 .each((objInfo, i) => {
