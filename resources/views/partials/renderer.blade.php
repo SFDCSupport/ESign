@@ -788,10 +788,10 @@
                     canvasEditions.forEach((canvasEdition) => {
                         const fromObj = canvasEdition
                             .getObjects()
-                            .find((_obj) => _obj.signer_uuid === obj.from);
+                            .find((_obj) => _obj.signer_uuid === obj.uuid);
                         const toObj = canvasEdition
                             .getObjects()
-                            .find((_obj) => _obj.signer_uuid === obj.to);
+                            .find((_obj) => _obj.signer_uuid === obj.withUuid);
 
                         if (!blank(fromObj)) {
                             fromObj.position = obj.withIndex;
@@ -882,11 +882,11 @@
                 });
 
                 $(document).on('canvas:ready', () => {
-                    if (loadedData.isNotEmpty()) {
+                    if (collect(loadedData).isNotEmpty()) {
                         canvasEditions.forEach((canvasEdition) => {
                             canvasEdition.clear();
 
-                            loadedData
+                            collect(loadedData)
                                 .pluck('elements')
                                 .flatten(1)
                                 .each((objInfo, i) => {

@@ -118,7 +118,7 @@
         .on('signer:added', function (e, obj) {
             if (
                 obj.from === 'loadedObject' ||
-                loadedData.firstWhere('uuid', obj.uuid)
+                collect(loadedData).firstWhere('uuid', obj.uuid)
             ) {
                 return;
             }
@@ -127,6 +127,7 @@
                 uuid: obj.uuid,
                 label: obj.label,
                 position: obj.signer_index,
+                elements: [],
             });
 
             console.log('signer:added', loadedData);
@@ -163,11 +164,11 @@
             console.log('signer:removed', loadedData);
         })
         .on('signer:reordered', function (e, obj) {
-            const signerA = collect(loadedData).firstWhere(
+            const signerA = collect(loadedData).firstWhere('uuid', obj.uuid);
+            const signerB = collect(loadedData).firstWhere(
                 'uuid',
-                obj.from_uuid,
+                obj.withUuid,
             );
-            const signerB = collect(loadedData).firstWhere('uuid', obj.to_uuid);
 
             if (signerA && signerB) {
                 const tempPosition = signerA.position;
@@ -182,7 +183,6 @@
             if (obj.from === 'loadedObject') {
                 return;
             }
-
             const signerIndex = collect(loadedData).search(
                 (i) => i.uuid === obj.signer_uuid,
             );
@@ -321,14 +321,16 @@
                 },
             ],
         },
-    ]).map((item) => ({
-        ...item,
-        uuid: (signerUuid = generateUniqueId('s_')),
-        elements: item.elements.map((element) => ({
-            ...element,
-            uuid: generateUniqueId('e_'),
-            signer_label: item.label,
-            signer_uuid: signerUuid,
-        })),
-    }));
+    ])
+        .map((item) => ({
+            ...item,
+            uuid: (signerUuid = generateUniqueId('s_')),
+            elements: item.elements.map((element) => ({
+                ...element,
+                uuid: generateUniqueId('e_'),
+                signer_label: item.label,
+                signer_uuid: signerUuid,
+            })),
+        }))
+        .all();
 </script>
