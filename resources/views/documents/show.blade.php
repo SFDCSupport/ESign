@@ -168,14 +168,13 @@
                                             @else
                                                 @include('esign::documents.partials.signer')
                                             @endif
-
-                                            <a
-                                                id="signerAdd"
-                                                href="javascript: void(0)"
-                                                class="add-party-btn"
-                                                onclick="signerAdd()"
-                                            ></a>
                                         </ul>
+                                        <a
+                                            id="signerAdd"
+                                            href="javascript: void(0)"
+                                            class="add-party-btn"
+                                            onclick="signerAdd()"
+                                        ></a>
                                     </div>
                                 </div>
                             </div>
@@ -255,8 +254,8 @@
 
                 _element.remove();
                 $(document).trigger("signer:element:removed", {
-                    from: 'sidebar',
-                    uuid: _element.data("uuid"),
+                    from: "sidebar",
+                    uuid: _element.data("uuid")
                 });
 
                 signerElementUpdate();
@@ -281,24 +280,56 @@
 
                 _element.toggleClass("required", isRequired);
 
-                $(document).trigger('signer:element:updated', {
-                    from: 'sidebar',
-                    uuid: _element.data('uuid'),
-                    is_required: isRequired,
+                $(document).trigger("signer:element:updated", {
+                    from: "sidebar",
+                    uuid: _element.data("uuid"),
+                    is_required: isRequired
                 });
             };
             const signerUpdate = () => {
                 signerLi().find(".signerDelete,.signerReorder").toggleClass("d-none", totalSigners() <= 1);
                 $("#signerAdd").html("<i class=\"fa fa-user-plus\"></i> " + '{!! __('esign::label.add_nth_signer') !!}'.replace(":nth", ordinal(highestSignerIndex() + 1)));
+
+                const signerUl = $("ul#signerUl");
+
+                signerUl.find("li.signerLi .partyReorder a").removeClass('d-none');
+                signerUl.find("li.signerLi:first .partyReorder a:first").addClass('d-none');
+                signerUl.find("li.signerLi:last .partyReorder a:last").addClass('d-none');
             };
-            const signerReorder = (dir) => {
-                console.log(dir);
+            const signerReorder = (ele, dir) => {
+                const signerLi = $(ele).closest("li.signerLi");
+                const isUp = (dir === "up");
+
+                if (
+                    (signerLi.is("li:first-child") && isUp) ||
+                    (signerLi.is("li:last-child") && !isUp)
+                ) {
+                    return;
+                }
+
+                const ownIndex = signerLi.attr('data-signer-index');
+                const swapWith = signerLi[isUp ? "prev" : "next"]();
+                const swapWithIndex = swapWith.attr('data-signer-index');
+                const detachedLi = signerLi.detach();
+
+                detachedLi[isUp ? "insertBefore" : "insertAfter"](swapWith);
+                detachedLi.attr('data-signer-index', swapWithIndex);
+                swapWith.attr('data-signer-index', ownIndex);
+
+                signerUpdate();
+
+                $(document).trigger('signer:reordered', {
+                    uuid: signerLi.data('signer-uuid'),
+                    index: ownIndex,
+                    withUuid: swapWith.data('signer-uuid'),
+                    withIndex: swapWithIndex,
+                });
             };
             const signerAdd = (obj = null) => {
                 const _highestSigner = obj?.signer_index || obj?.index || highestSignerIndex() + 1;
                 const clonedLi = $("li.signerLi:last").clone();
                 const lastSigner = $("ul#signerUl li.signerLi:last");
-                const uuid = obj?.signer_uuid || obj?.uuid || generateUniqueId('s_');
+                const uuid = obj?.signer_uuid || obj?.uuid || generateUniqueId("s_");
 
                 const label = obj?.signer_label || obj?.label || ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}';
                 clonedLi.removeClass("selectedSigner");
@@ -314,10 +345,10 @@
                 });
                 clonedLi.find("a.signerLabel").html(label);
                 clonedLi.attr("data-signer-index", _highestSigner);
-                clonedLi.attr('data-signer-uuid', uuid);
+                clonedLi.attr("data-signer-uuid", uuid);
                 clonedLi.insertAfter(lastSigner);
 
-                if(obj?.from !== 'loadedObject') {
+                if (obj?.from !== "loadedObject") {
                     $(document).trigger("signer:added", {
                         label,
                         uuid,
@@ -376,11 +407,11 @@
                         signerUpdate();
                     })
                     .on("signer:element:set-active", function(e, obj) {
-                        if(obj.from === 'sidebar') {
+                        if (obj.from === "sidebar") {
                             return;
                         }
 
-                        obj.uuid && signerElementActive(obj.uuid)
+                        obj.uuid && signerElementActive(obj.uuid);
                     })
                     .on("signer:element:added", function(e, obj) {
                         if (obj.from === "sidebar") {
@@ -395,12 +426,12 @@
 
                         if (_ele.length <= 0) {
                             signerAdd(obj);
-                        }else{
-                            _ele.attr('data-signer-uuid', obj.signer_uuid || generateUniqueId('s_'));
+                        } else {
+                            _ele.attr("data-signer-uuid", obj.signer_uuid || generateUniqueId("s_"));
                         }
                     })
                     .on("signer:element:removed", function(e, obj) {
-                        if(obj.from === 'sidebar') {
+                        if (obj.from === "sidebar") {
                             return;
                         }
 
@@ -409,7 +440,7 @@
                         }
                     })
                     .on("signer:element:updated", function(e, obj) {
-                        if(obj.from === 'sidebar') {
+                        if (obj.from === "sidebar") {
                             return;
                         }
 

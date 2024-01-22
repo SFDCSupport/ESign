@@ -120,25 +120,23 @@
         .on('signer:added', function (e, obj) {
             if (
                 obj.from === 'loadedObject' ||
-                loadedData.where('uuid', obj.uuid)
+                loadedData.firstWhere('uuid', obj.uuid)
             ) {
                 return;
             }
-
-            console.log('signer:added', obj);
 
             collect(loadedData).push({
                 uuid: obj.uuid,
                 label: obj.label,
                 position: obj.signer_index,
             });
+
+            console.log('signer:added', loadedData);
         })
         .on('signer:updated', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
-
-            console.log('signer:updated', obj);
 
             const index = collect(loadedData).search(
                 (i) => i.uuid === obj.uuid,
@@ -152,21 +150,21 @@
                     })
                     .all();
             }
+
+            console.log('signer:updated', loadedData);
         })
         .on('signer:removed', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
 
-            console.log('signer:removed', obj);
-
             loadedData = collect(loadedData)
                 .reject((i) => i.uuid === obj.uuid)
                 .all();
+
+            console.log('signer:removed', loadedData);
         })
         .on('signer:reordered', function (e, obj) {
-            console.log('signer:reordered', obj);
-
             const signerA = collect(loadedData).firstWhere(
                 'uuid',
                 obj.from_uuid,
@@ -179,13 +177,13 @@
                 signerA.position = signerB.position;
                 signerB.position = tempPosition;
             }
+
+            console.log('signer:reordered', loadedData);
         })
         .on('signer:element:added', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
-
-            console.log('signer:element:added', obj);
 
             const signerIndex = collect(loadedData).search(
                 (i) => i.uuid === obj.signer_uuid,
@@ -204,13 +202,13 @@
                     signer_uuid: obj.signer_uuid,
                 });
             }
+
+            console.log('signer:element:added', loadedData);
         })
         .on('signer:element:updated', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
-
-            console.log('signer:element:updated', obj);
 
             const signerIndex = collect(loadedData).search(
                 (i) => i.uuid === obj.signer_uuid,
@@ -235,13 +233,13 @@
                         .all();
                 }
             }
+
+            console.log('signer:element:updated', loadedData);
         })
         .on('signer:element:removed', function (e, obj) {
             if (obj.from === 'loadedObject') {
                 return;
             }
-
-            console.log('signer:element:removed', obj);
 
             const signerIndex = loadedData.search(
                 (i) => i.uuid === obj.signer_uuid,
@@ -260,6 +258,8 @@
                         .all();
                 }
             }
+
+            console.log('signer:element:removed', loadedData);
         });
 
     let loadedData = collect([

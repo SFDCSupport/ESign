@@ -786,6 +786,26 @@
             } catch (e) {}
 
             $(document)
+                .on('signer:reordered', (e, obj) => {
+                    canvasEditions.forEach((canvasEdition) => {
+                        const fromObj = canvasEdition
+                            .getObjects()
+                            .find((_obj) => _obj.signer_uuid === obj.from);
+                        const toObj = canvasEdition
+                            .getObjects()
+                            .find((_obj) => _obj.signer_uuid === obj.to);
+
+                        if (!blank(fromObj)) {
+                            fromObj.position = obj.withIndex;
+                            fromObj.signer_index = obj.withIndex;
+                        }
+
+                        if (!blank(toObj)) {
+                            toObj.position = obj.index;
+                            toObj.signer_index = obj.index;
+                        }
+                    });
+                })
                 .on('move-to-canvas', (e, index) => {
                     const dataIndexSelector = $(
                         `div[data-canvas-index="${index}"]`,
