@@ -136,14 +136,14 @@
                                             'text/plain',
                                         ),
                                     );
-                                    const type = draggedData.type;
+                                    const eleType = draggedData.eleType;
                                     const text = draggedData.text;
                                     const height = draggedData.height || 20;
                                     const width = draggedData.width || 60;
                                     const fontSize = 20;
 
                                     const obj = createFabricObject({
-                                        type,
+                                        eleType,
                                         text,
                                         height,
                                         width,
@@ -198,16 +198,16 @@
                                 .on('mouse:down:before', function (e) {})
                                 .on('mouse:down', function (e) {
                                     if (isSigning && e.target) {
-                                        const type = e.target.eleType;
+                                        const eleType = e.target.eleType;
                                         const obj = e.target;
 
-                                        switch (type) {
+                                        switch (eleType) {
                                             case 'signature_pad':
                                                 const isSignatureObj = !blank(
                                                     obj.signature,
                                                 );
                                                 let data = {
-                                                    type,
+                                                    eleType,
                                                     obj,
                                                 };
 
@@ -234,8 +234,8 @@
                                                 break;
                                             default:
                                                 console.warn(
-                                                    'Unknown type:',
-                                                    type,
+                                                    'Unknown eleType:',
+                                                    eleType,
                                                 );
 
                                                 break;
@@ -716,9 +716,9 @@
                 color: '#333333',
             };
 
-            const text = $.trim(data.text || data.type);
+            const text = $.trim(data.label ?? data.text ?? data.eleType);
 
-            switch (data.type) {
+            switch (data.eleType) {
                 case 'text':
                 case 'signature_pad':
                     fabricObject = new fabric.IText(text, {
@@ -769,7 +769,8 @@
                     });
             }
 
-            fabricObject.eleType = data.type;
+            fabricObject.eleType = data.eleType;
+            fabricObject.label = data.label ?? undefined;
             fabricObject.uuid = _uuid;
             fabricObject.signer_uuid =
                 data.signer_uuid || getActiveSigner() || null;
@@ -844,7 +845,7 @@
                     const oldObj = obj.obj;
                     const canvas = oldObj.canvas;
 
-                    if (obj.type === 'signature_pad' && obj.signature) {
+                    if (obj.eleType === 'signature_pad' && obj.signature) {
                         canvas.remove(oldObj);
 
                         fabric.Image.fromURL(obj.signature, (newImg) => {
@@ -868,7 +869,7 @@
 
                             setFabricControl(newImg);
 
-                            newImg.eleType = obj.type;
+                            newImg.eleType = obj.eleType;
                             newImg.signature = obj.signature;
 
                             canvas.add(newImg);
@@ -882,7 +883,7 @@
                     container: pdfViewer[0],
                 });
 
-                loadedData = collect(@json(count($document->signers ?? 0) > 0 ? $document->signers : [['label' => '1st Signer', 'position' => 1, 'elements' => []]]))
+                loadedData = collect(@json(count($formattedData ?? 0) > 0 ? $formattedData : [['label' => '1st Signer', 'position' => 1, 'elements' => []]]))
                     .map((item, i) => {
                         const signerUuid = generateUniqueId('s_');
 
@@ -929,7 +930,7 @@
                                         toast(
                                             'error',
                                             `Invalid element ${
-                                                i + 1 + ' ' + objInfo?.type
+                                                i + 1 + ' ' + objInfo?.eleType
                                             } position on page ${objPage} while total pages are ${totalPages}!`,
                                         );
                                         return;
@@ -964,13 +965,13 @@
 
             $('.draggable').on('dragstart', function (e) {
                 const _t = $(this);
-                const type = _t.attr('data-type');
+                const eleType = _t.attr('data-type');
                 const text = _t.find('span').text();
                 const height = _t.attr('data-height') || 50;
                 const width = _t.attr('data-width') || 100;
 
                 const data = {
-                    type,
+                    eleType,
                     text,
                     height,
                     width,

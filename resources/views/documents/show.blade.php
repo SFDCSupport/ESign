@@ -353,17 +353,20 @@
                 $(document).on("click", "#documentReplaceBtn", () => {
                     $('#{{ $dropZoneID }}').trigger("click");
                 }).on("click", "#documentRemoveBtn", () => {
+                    $(document).trigger('loader:show');
+
                     $.post('{{ route('esign.attachment.remove', ['attachment' => $document?->document?->id ?? '1']) }}', {
                         id: getDocumentId()
                     }).done((r) => {
                         const isSuccess = r.status;
 
+                        toast(isSuccess ? "success" : "error", r.message || (isSuccess ? "Done" : "Error"));
+
                         if (isSuccess) {
                             location.reload(true);
                         }
-
-                        toast(isSuccess ? "success" : "error", r.message || (isSuccess ? "Done" : "Error"));
                     }).fail((x) => {
+                        $(document).trigger('loader:hide');
                         toast("error", x.responseText);
                     });
                 });
