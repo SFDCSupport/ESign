@@ -882,6 +882,34 @@
                     container: pdfViewer[0],
                 });
 
+                loadedData = collect(@json(count($document->signers ?? 0) > 0 ? $document->signers : [['label' => '1st Signer', 'position' => 1, 'elements' => []]]))
+                    .map((item, i) => {
+                        const signerUuid = generateUniqueId('s_');
+
+                        signerAdd({
+                            from: 'loadedData',
+                            signer_index: i + 1,
+                            signer_uuid: signerUuid,
+                            signer_label: item.label,
+                        });
+
+                        if (i === 0) {
+                            getActiveSigner(signerUuid, item.label);
+                        }
+
+                        return {
+                            ...item,
+                            uuid: signerUuid,
+                            elements: item.elements.map((element) => ({
+                                ...element,
+                                uuid: generateUniqueId('e_'),
+                                signer_label: item.label,
+                                signer_uuid: signerUuid,
+                            })),
+                        };
+                    })
+                    .all();
+
                 $(document).on('canvas:ready', () => {
                     if (collect(loadedData).isNotEmpty()) {
                         canvasEditions.forEach((canvasEdition) => {
@@ -920,7 +948,7 @@
                                             {
                                                 ...objInfo,
                                                 ...obj,
-                                                from: 'loadedObject',
+                                                from: 'loadedData',
                                             },
                                         );
                                     }

@@ -1,4 +1,6 @@
 <script>
+    let loadedData = [];
+
     const getActiveSigner = (uuid = null, label = null) => {
         const _ele = $('span.selectedSigner[data-active-signer]');
 
@@ -128,7 +130,7 @@
     $(document)
         .on('signer:added', function (e, obj) {
             if (
-                obj.from === 'loadedObject' ||
+                obj.from === 'loadedData' ||
                 collect(loadedData).firstWhere('uuid', obj.uuid)
             ) {
                 return;
@@ -144,7 +146,7 @@
             console.log('signer:added', loadedData);
         })
         .on('signer:updated', function (e, obj) {
-            if (obj.from === 'loadedObject') {
+            if (obj.from === 'loadedData') {
                 return;
             }
 
@@ -164,7 +166,7 @@
             console.log('signer:updated', loadedData);
         })
         .on('signer:removed', function (e, obj) {
-            if (obj.from === 'loadedObject') {
+            if (obj.from === 'loadedData') {
                 return;
             }
 
@@ -199,7 +201,7 @@
             console.log('signer:reordered', loadedData);
         })
         .on('signer:element:added', function (e, obj) {
-            if (obj.from === 'loadedObject') {
+            if (obj.from === 'loadedData') {
                 return;
             }
 
@@ -224,7 +226,7 @@
             console.log('signer:element:added', obj, loadedData);
         })
         .on('signer:element:updated', function (e, obj) {
-            if (obj.from === 'loadedObject') {
+            if (obj.from === 'loadedData') {
                 return;
             }
 
@@ -260,7 +262,7 @@
             console.log('signer:element:updated', loadedData);
         })
         .on('signer:element:removed', function (e, obj) {
-            if (obj.from === 'loadedObject') {
+            if (obj.from === 'loadedData') {
                 return;
             }
 
@@ -312,36 +314,4 @@
                 }
             });
         });
-
-    let loadedData = collect(@json($document->signers ?? [['label' => '1st Signer', 'position' => 1, 'elements' => []]]))
-        .map((item, i) => {
-            const signerUuid = generateUniqueId('s_');
-
-            if (i === 0) {
-                getActiveSigner(signerUuid);
-            }
-
-            const signerLi = $(`#signerUl li.signerLi:eq(${i})`);
-            signerLi.attr('data-signer-uuid', signerUuid);
-
-            if (!blank(item.label)) {
-                if (i === 0) {
-                    getActiveSigner(null, item.label);
-                }
-
-                signerLi.find('.signerLabel').html(item.label);
-            }
-
-            return {
-                ...item,
-                uuid: signerUuid,
-                elements: item.elements.map((element) => ({
-                    ...element,
-                    uuid: generateUniqueId('e_'),
-                    signer_label: item.label,
-                    signer_uuid: signerUuid,
-                })),
-            };
-        })
-        .all();
 </script>

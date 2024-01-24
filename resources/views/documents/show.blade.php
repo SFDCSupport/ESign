@@ -145,15 +145,7 @@
                                     </a>
                                 </div>
                                 <div class="drop-content">
-                                    <ul id="signerUl">
-                                        @if ($hasSigners)
-                                            @foreach ($document->signers as $signer)
-                                                @include('esign::documents.partials.signer', compact('signer'))
-                                            @endforeach
-                                        @else
-                                            @include('esign::documents.partials.signer')
-                                        @endif
-                                    </ul>
+                                    <ul id="signerUl"></ul>
                                     <a
                                         id="signerAdd"
                                         href="javascript: void(0)"
@@ -197,7 +189,8 @@
     </div>
 
     @include('esign::partials.renderer')
-    @include('esign::documents.partials.element-template')
+    @include('esign::documents.partials.template-signer')
+    @include('esign::documents.partials.template-element')
 
     @pushonce('js')
         <script>
@@ -310,10 +303,9 @@
                 });
             };
             const signerAdd = (obj = null) => {
-                console.log(obj);
-                const _highestSigner = obj?.signer_index || obj?.index || highestSignerIndex() + 1;
-                const clonedLi = $("li.signerLi:last").clone();
-                const lastSigner = $("ul#signerUl li.signerLi:last");
+                const hasSigners = $("ul#signerUl li.signerLi").length > 0;
+                const _highestSigner = obj?.signer_index || obj?.index || (hasSigners ? highestSignerIndex() : 0) + 1;
+                const clonedLi = hasSigners ? $("li.signerLi:last").clone() : $($.trim($('#signerTemplate').html()));
                 const uuid = obj?.signer_uuid || obj?.uuid || generateUniqueId("s_");
 
                 const label = obj?.signer_label || obj?.label || ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}';
@@ -321,9 +313,9 @@
                 clonedLi.find("a.signerLabel").html(label);
                 clonedLi.attr("data-signer-index", _highestSigner);
                 clonedLi.attr("data-signer-uuid", uuid);
-                clonedLi.insertAfter(lastSigner);
+                clonedLi[hasSigners ? 'insertAfter' : 'appendTo'](hasSigners ? $("ul#signerUl li.signerLi:last") : $("ul#signerUl"));
 
-                if (obj?.from !== "loadedObject") {
+                if (obj?.from !== "loadedData") {
                     $(document).trigger("signer:added", {
                         label,
                         uuid,
@@ -377,13 +369,7 @@
                 });
                 @endisset
 
-                $(document).on("signer:add", function(e, obj) {
-                    if (obj.from === "sidebar") {
-                        return;
-                    }
-
-                    signerAdd(obj);
-                }).on("signer:added", function(e, obj) {
+                $(document).on("signer:added", function(e, obj) {
                     if (obj.from === "sidebar") {
                         return;
                     }
