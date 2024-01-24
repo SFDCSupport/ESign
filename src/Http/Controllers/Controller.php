@@ -36,6 +36,16 @@ class Controller extends Base
             'is_current' => false,
         ]) && $attachment->delete();
 
+        if ($isDeleted && $type === 'document') {
+            $attachment->model->signers->each(function ($signer) {
+                $signer->elements->each(function ($element) {
+                    $element->delete();
+                });
+
+                $signer->delete();
+            });
+        }
+
         return $this->jsonResponse([
             'status' => $isDeleted,
         ]);

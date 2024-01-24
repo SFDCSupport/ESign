@@ -238,7 +238,7 @@
                 $(document).trigger("signer:element:removed", {
                     from: "sidebar",
                     uuid: _element.attr("data-uuid"),
-                    signer_uuid: _element.attr("data-element-signer-uuid"),
+                    signer_uuid: _element.attr("data-element-signer-uuid")
                 });
 
                 signerElementUpdate();
@@ -266,7 +266,7 @@
                 $(document).trigger("signer:element:updated", {
                     from: "sidebar",
                     uuid: _element.attr("data-uuid"),
-                    signer_uuid: _element.attr('data-element-signer-uuid'),
+                    signer_uuid: _element.attr("data-element-signer-uuid"),
                     is_required: isRequired
                 });
             };
@@ -336,15 +336,24 @@
             };
             const signerRemove = (signer) => {
                 const signerLi = $(signer).closest("li.signerLi");
+                const uuid = signerLi.attr("data-signer-uuid");
 
                 signerLi.remove();
 
+                $(`div.addedElement[data-element-signer-uuid="${uuid}"] a.removeAddedElement`).each(function() {
+                    $(this).trigger("click");
+                });
+
                 $(document).trigger("signer:removed", {
-                    from: "sidebar",
-                    uuid: signerLi.attr("data-signer-uuid"),
+                    ...uuid,
+                    from: "sidebar"
                 });
 
                 signerUpdate();
+
+                if(getActiveSigner() === uuid) {
+                    $('ul#signerUl li.signerLi:first a.signerLabel').trigger('click');
+                }
             };
 
             $(() => {
@@ -368,7 +377,7 @@
                 });
                 @endisset
 
-                $(document).on('signer:add', function (e, obj) {
+                $(document).on("signer:add", function(e, obj) {
                     if (obj.from === "sidebar") {
                         return;
                     }
@@ -463,10 +472,10 @@
                     $.post('{{ route('esign.documents.signers.store', $document) }}', $.extend({}, { signers: loadedData }, {
                         _token: '{{ csrf_token() }}',
                         document_id: '{{ $document->id }}',
-                        mode: 'create',
+                        mode: "create"
                     })).done((r) => {
-                        if(r.data) {
-                            $(document).trigger('process-ids', r.data);
+                        if (r.data) {
+                            $(document).trigger("process-ids", r.data);
                         }
 
                         $(document).trigger("loader:hide");
