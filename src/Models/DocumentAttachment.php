@@ -16,14 +16,18 @@ class DocumentAttachment extends Model
      * @var array<int,string>
      */
     protected $fillable = [
+        'id',
         'model_type',
         'model_id',
         'type',
-        'file_name',
         'disk',
+        'bucket',
+        'file_name',
         'extension',
         'path',
         'is_current',
+        'created_at', 'updated_at', 'deleted_at',
+        'created_by', 'updated_by', 'deleted_by',
     ];
 
     /**

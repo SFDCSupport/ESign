@@ -25,14 +25,14 @@ class Document extends Model implements Attachable, HasLocalePreference
      * @var array<int,string>
      */
     protected $fillable = [
+        'id',
         'title',
-        'file_name',
-        'disk',
-        'extension',
-        'path',
         'template_id',
         'status',
         'notification_sequence',
+        'link_sent_to_all',
+        'created_at', 'updated_at', 'deleted_at',
+        'created_by', 'updated_by', 'deleted_by',
     ];
 
     /**

@@ -35,12 +35,15 @@ class SignerRequest extends FormRequest
         if ($mode === 'create') {
             return [
                 'signers.*.id' => 'sometimes|uuid',
+                'signers.*.uuid' => 'required',
                 'signers.*.label' => 'required',
                 'signers.*.position' => 'required|integer',
                 'signers.*.elements.*.id' => 'sometimes|uuid',
+                'signers.*.elements.*.uuid' => 'required',
                 'signers.*.elements.*.on_page' => 'required|integer',
                 'signers.*.elements.*.offset_x' => 'required',
                 'signers.*.elements.*.offset_y' => 'required',
+                'signers.*.elements.*.type' => 'required',
                 'signers.*.elements.*.width' => 'required',
                 'signers.*.elements.*.height' => 'required',
                 'signers.*.elements.*.is_required' => 'sometimes',

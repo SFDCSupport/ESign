@@ -12,6 +12,17 @@ class SignerResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [];
+        return [
+            'id' => $this->id,
+            'email' => $this->email,
+            'signer_label' => $this->label,
+            'signing_status' => $this->signing_status,
+            'read_status' => $this->read_status,
+            'send_status' => $this->send_status,
+            'position' => $this->position,
+            'elements' => ElementResource::collection(
+                $this->whenLoaded('elements'),
+            ),
+        ];
     }
 }

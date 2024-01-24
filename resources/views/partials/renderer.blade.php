@@ -14,7 +14,7 @@
         let windowWidth = window.innerWidth;
         const pdfPreviewer = document.getElementById('previewViewer');
         const pdfViewer = $('#pdfViewer');
-        const url = pdfViewer.data('url');
+        const url = pdfViewer.attr('data-url');
 
         const loadPDF = (url, viewer) => {
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
@@ -158,6 +158,7 @@
                                         'signer:element:added',
                                         {
                                             ...obj,
+                                            on_page: pageIndex + 1,
                                             from: 'canvas',
                                         },
                                     );
@@ -890,6 +891,7 @@
                                 .pluck('elements')
                                 .flatten(1)
                                 .each((objInfo, i) => {
+                                    console.log(objInfo);
                                     const objPage = objInfo?.on_page;
                                     const totalPages = canvasEditions.length;
 
@@ -935,17 +937,12 @@
 
             $('.draggable').on('dragstart', function (e) {
                 const _t = $(this);
-                const type = _t.data('type');
+                const type = _t.attr('data-type');
                 const text = _t.find('span').text();
-                const height = _t.data('height') || 50;
-                const width = _t.data('width') || 100;
-                const uuid =
-                    $(
-                        `li.signerLi[data-signer-uuid="${getActiveSigner()}"]`,
-                    ).attr('data-signer-uuid') || null;
+                const height = _t.attr('data-height') || 50;
+                const width = _t.attr('data-width') || 100;
 
                 const data = {
-                    uuid,
                     type,
                     text,
                     height,

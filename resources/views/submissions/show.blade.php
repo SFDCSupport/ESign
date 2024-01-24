@@ -1,6 +1,6 @@
 <x-esign::layout
     :title="__('esign::label.submissions')"
-    :documentId="$document->id"
+    :document="$document"
 >
     XYZ
 </x-esign::layout>

@@ -14,7 +14,14 @@ class DocumentSignerElement extends Model
     /**
      * @var array<int,string>
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'id', 'signer_id', 'document_id',
+        'type', 'label',
+        'on_page', 'offset_x', 'offset_y',
+        'width', 'height', 'position',
+        'created_at', 'updated_at', 'deleted_at',
+        'created_by', 'updated_by', 'deleted_by',
+    ];
 
     /**
      * @var array<string,string>
@@ -22,6 +29,17 @@ class DocumentSignerElement extends Model
     protected $casts = [
         'type' => ElementType::class,
     ];
+
+    /**
+     * @return BelongsTo<Document, DocumentSignerElement>
+     */
+    public function document()
+    {
+        return $this->belongsTo(
+            related: Document::class,
+            foreignKey: 'document_id',
+        );
+    }
 
     /**
      * @return BelongsTo<DocumentSigner, DocumentSignerElement>

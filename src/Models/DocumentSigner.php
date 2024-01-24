@@ -19,7 +19,14 @@ class DocumentSigner extends Model
     /**
      * @var array<int,string>
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'id', 'document_id',
+        'email', 'label',
+        'signing_status', 'read_status', 'send_status',
+        'position',
+        'created_at', 'updated_at', 'deleted_at',
+        'created_by', 'updated_by', 'deleted_by',
+    ];
 
     /**
      * @var array<string,string>

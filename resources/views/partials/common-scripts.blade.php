@@ -1,6 +1,13 @@
 <script>
-    const getActiveSigner = () =>
-        $('.selectedSigner[data-active-signer]').attr('data-active-signer');
+    const getActiveSigner = (uuid = null) => {
+        const _ele = $('span.selectedSigner[data-active-signer]');
+
+        if (uuid) {
+            _ele.attr('data-active-signer', uuid);
+        }
+
+        return uuid ?? _ele.attr('data-active-signer');
+    };
     const generateUniqueId = (() => {
         let counter = 0;
 
@@ -157,9 +164,17 @@
                 return;
             }
 
-            loadedData = collect(loadedData)
-                .reject((i) => i.uuid === obj.uuid)
-                .all();
+            const index = collect(loadedData).search(
+                (i) => i.uuid === obj.uuid,
+            );
+
+            if (index !== false) {
+                loadedData[index] = collect(loadedData[index])
+                    .merge({
+                        is_deleted: true,
+                    })
+                    .all();
+            }
 
             console.log('signer:removed', loadedData);
         })
@@ -183,17 +198,18 @@
             if (obj.from === 'loadedObject') {
                 return;
             }
+
             const signerIndex = collect(loadedData).search(
                 (i) => i.uuid === obj.signer_uuid,
             );
 
             if (signerIndex !== false) {
                 loadedData[signerIndex].elements.push({
+                    uuid: obj.uuid,
                     on_page: obj.on_page,
-                    signer_index: obj.signer_index,
                     type: obj.eleType,
-                    offset_x: obj.offset_x,
-                    offset_y: obj.offset_y,
+                    offset_x: obj.left,
+                    offset_y: obj.top,
                     width: obj.width,
                     height: obj.height,
                     is_required: obj.is_required,
@@ -201,7 +217,7 @@
                 });
             }
 
-            console.log('signer:element:added', loadedData);
+            console.log('signer:element:added', obj, loadedData);
         })
         .on('signer:element:updated', function (e, obj) {
             if (obj.from === 'loadedObject') {
@@ -221,13 +237,18 @@
                     loadedData[signerIndex].elements[elementIndex] = collect(
                         loadedData[signerIndex].elements[elementIndex],
                     )
-                        .merge({
-                            offset_x: obj.offset_x,
-                            offset_y: obj.offset_y,
-                            width: obj.width,
-                            height: obj.height,
-                            is_required: obj.is_required,
-                        })
+                        .merge(
+                            obj.from !== 'sidebar'
+                                ? {
+                                      offset_x: obj.left,
+                                      offset_y: obj.top,
+                                      width: obj.width,
+                                      height: obj.height,
+                                  }
+                                : {
+                                      is_required: obj.is_required ?? true,
+                                  },
+                        )
                         .all();
                 }
             }
@@ -239,7 +260,7 @@
                 return;
             }
 
-            const signerIndex = loadedData.search(
+            const signerIndex = collect(loadedData).search(
                 (i) => i.uuid === obj.signer_uuid,
             );
 
@@ -249,88 +270,50 @@
                 ).search((e) => e.uuid === obj.uuid);
 
                 if (elementIndex !== false) {
-                    loadedData[signerIndex].elements = collect(
-                        loadedData[signerIndex].elements,
+                    loadedData[signerIndex].elements[elementIndex] = collect(
+                        loadedData[signerIndex].elements[elementIndex],
                     )
-                        .reject((e) => e.uuid === obj.uuid)
+                        .merge({
+                            is_deleted: true,
+                        })
                         .all();
                 }
             }
 
             console.log('signer:element:removed', loadedData);
+        })
+        .on('process-ids', function (e, obj) {
+            collect(obj).each((v, k) => {
+                console.log('v', v, 'k', k);
+            });
         });
 
-    let loadedData = collect([
-        {
-            id: 1,
-            label: 'Signer 1',
-            position: 1,
-            elements: [
-                {
-                    on_page: 1,
-                    type: 'signature_pad',
-                    offset_x: 238.34674585238713,
-                    offset_y: 112.34266801044906,
-                    width: 184.46467700999992,
-                    height: 37.25560053999998,
-                    is_required: true,
-                },
-                {
-                    on_page: 1,
-                    type: 'signature_pad',
-                    offset_x: 253.15437142614985,
-                    offset_y: 218.27301736782994,
-                    width: 126.44699999999999,
-                    height: 25.537999999999993,
-                    is_required: false,
-                },
-                {
-                    on_page: 2,
-                    type: 'text',
-                    offset_x: 185.7008572647063,
-                    offset_y: 50.38610868284016,
-                    width: 33.95649999999999,
-                    height: 25.537999999999993,
-                    is_required: true,
-                },
-            ],
-        },
-        {
-            id: 2,
-            label: 'Signer 2',
-            position: 2,
-            elements: [
-                {
-                    on_page: 1,
-                    type: 'email',
-                    offset_x: 72,
-                    offset_y: 28,
-                    width: 47.2,
-                    height: 22.599999999999998,
-                    is_required: false,
-                },
-                {
-                    on_page: 1,
-                    type: 'textarea',
-                    offset_x: 375,
-                    offset_y: 20,
-                    width: 68.3,
-                    height: 22.599999999999998,
-                    text: 'hello anand',
-                    is_required: true,
-                },
-            ],
-        },
-    ])
-        .map((item) => ({
-            ...item,
-            uuid: (signerUuid = generateUniqueId('s_')),
-            elements: item.elements.map((element) => ({
-                ...element,
-                uuid: generateUniqueId('e_'),
-                signer_label: item.label,
-                signer_uuid: signerUuid,
-            })),
-        }))
+    let loadedData = collect(@json($document->signers ?? [['label' => '1st Signer', 'position' => 1, 'elements' => []]]))
+        .map((item, i) => {
+            const signerUuid = generateUniqueId('s_');
+
+            if (i === 0) {
+                getActiveSigner(signerUuid);
+            }
+
+            const signerLi = $(`#signerUl li.signerLi:eq(${i})`);
+            signerLi.attr('data-signer-uuid', signerUuid);
+
+            if (!blank(item.label)) {
+                signerLi.find('.signerLabel').html(item.label);
+            }
+
+            return {
+                ...item,
+                uuid: signerUuid,
+                elements: item.elements.map((element) => ({
+                    ...element,
+                    uuid: generateUniqueId('e_'),
+                    signer_label: item.label,
+                    signer_uuid: signerUuid,
+                })),
+            };
+        })
         .all();
+    console.log(loadedData);
 </script>

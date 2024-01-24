@@ -5,7 +5,7 @@
 
 <x-esign::layout
     :title="$document->title"
-    :documentId="$document->id"
+    :document="$document"
     :isSigningRoute="$isSigningRoute"
 >
     @pushonce('footJs')
@@ -237,7 +237,8 @@
                 _element.remove();
                 $(document).trigger("signer:element:removed", {
                     from: "sidebar",
-                    uuid: _element.data("uuid")
+                    uuid: _element.attr("data-uuid"),
+                    signer_uuid: _element.attr("data-element-signer-uuid"),
                 });
 
                 signerElementUpdate();
@@ -264,7 +265,8 @@
 
                 $(document).trigger("signer:element:updated", {
                     from: "sidebar",
-                    uuid: _element.data("uuid"),
+                    uuid: _element.attr("data-uuid"),
+                    signer_uuid: _element.attr('data-element-signer-uuid'),
                     is_required: isRequired
                 });
             };
@@ -301,13 +303,14 @@
                 signerUpdate();
 
                 $(document).trigger("signer:reordered", {
-                    uuid: signerLi.data("signer-uuid"),
+                    uuid: signerLi.attr("data-signer-uuid"),
+                    withUuid: swapWith.attr("data-signer-uuid"),
                     index: ownIndex,
-                    withUuid: swapWith.data("signer-uuid"),
                     withIndex: swapWithIndex
                 });
             };
             const signerAdd = (obj = null) => {
+                console.log(obj);
                 const _highestSigner = obj?.signer_index || obj?.index || highestSignerIndex() + 1;
                 const clonedLi = $("li.signerLi:last").clone();
                 const lastSigner = $("ul#signerUl li.signerLi:last");
@@ -357,7 +360,13 @@
                 });
                 @endisset
 
-                $(document).on("signer:added", function(e, obj) {
+                $(document).on('signer:add', function (e, obj) {
+                    if (obj.from === "sidebar") {
+                        return;
+                    }
+
+                    signerAdd(obj);
+                }).on("signer:added", function(e, obj) {
                     if (obj.from === "sidebar") {
                         return;
                     }
@@ -396,7 +405,6 @@
                             _li.attr("data-signer-uuid", obj.signer_uuid);
                             $("#recipientsContainer span.selectedSigner").attr("data-active-signer", obj.signer_uuid);
                         } else if ($(`#signerUl li.signerLi[data-signer-uuid="${obj.signer_uuid}"]`).length <= 0) {
-                            console.log(obj.signer_uuid);
                             signerAdd(obj);
                         }
 
@@ -449,7 +457,10 @@
                         document_id: '{{ $document->id }}',
                         mode: 'create',
                     })).done((r) => {
-                        console.log(r);
+                        if(r.data) {
+                            $(document).trigger('process-ids', r.data);
+                        }
+
                         $(document).trigger("loader:hide");
                     }).fail((x) => {
                         toast("error", x.responseText);

@@ -1,4 +1,4 @@
-<x-esign::layout :title="$title" :signerId="$signer->id">
+<x-esign::layout :title="$title" :signer="$signer">
     @pushonce('css')
         <style></style>
     @endpushonce

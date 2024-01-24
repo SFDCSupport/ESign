@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Events\SendDocumentLink;
 use NIIT\ESign\Http\Requests\DocumentRequest;
+use NIIT\ESign\Http\Resources\DocumentResource;
 use NIIT\ESign\Models\Document;
 
 class DocumentController extends Controller
@@ -43,7 +44,11 @@ class DocumentController extends Controller
             return redirect()->route('esign.documents.submissions.index', $document);
         }
 
-        return view('esign::documents.show', compact('document'));
+        $document->loadMissing('document', 'signers.elements');
+
+        return view('esign::documents.show', [
+            'document' => new DocumentResource($document),
+        ]);
     }
 
     public function edit(Document $document)

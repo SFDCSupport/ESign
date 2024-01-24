@@ -1,7 +1,7 @@
 @props([
     'title' => null,
-    'signerId' => null,
-    'documentId' => null,
+    'signer' => null,
+    'document' => null,
     'isSigningRoute' => false,
 ])
 
@@ -12,10 +12,10 @@
         <meta name="theme-color" content="#712cf9" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="csrf-token" content="{{ csrf_token() }}" />
-        <meta name="document-id" content="{{ $documentId ?? '' }}" />
-        <meta name="signer-id" content="{{ $signerId ?? '' }}" />
+        <meta name="document-id" content="{{ $document->id ?? '' }}" />
+        <meta name="signer-id" content="{{ $signer->id ?? '' }}" />
         <title>
-            {{ __('esign::label.app_name').(! blank($title) ? ' - '.$title : '') }}
+            {{ (! blank($title) ? $title.' - ' : '').__('esign::label.app_name') }}
             
         </title>
 
