@@ -1,9 +1,13 @@
 <script>
-    const getActiveSigner = (uuid = null) => {
+    const getActiveSigner = (uuid = null, label = null) => {
         const _ele = $('span.selectedSigner[data-active-signer]');
 
         if (uuid) {
             _ele.attr('data-active-signer', uuid);
+        }
+
+        if (label) {
+            _ele.html(label);
         }
 
         return uuid ?? _ele.attr('data-active-signer');
@@ -283,8 +287,29 @@
             console.log('signer:element:removed', loadedData);
         })
         .on('process-ids', function (e, obj) {
-            collect(obj).each((v, k) => {
-                console.log('v', v, 'k', k);
+            const loadedDataCollection = collect(loadedData);
+
+            collect(obj).each((newData, uuid) => {
+                const item = loadedDataCollection.firstWhere('uuid', uuid);
+
+                if (item) {
+                    item.id = newData.id;
+
+                    if (newData.elements) {
+                        collect(newData.elements).each(
+                            (newElementId, newElementUuid) => {
+                                console.log(newElementId, newElementUuid);
+                                const element = collect(
+                                    item.elements,
+                                ).firstWhere('uuid', newElementUuid);
+
+                                if (element) {
+                                    element.id = newElementId;
+                                }
+                            },
+                        );
+                    }
+                }
             });
         });
 
@@ -300,6 +325,10 @@
             signerLi.attr('data-signer-uuid', signerUuid);
 
             if (!blank(item.label)) {
+                if (i === 0) {
+                    getActiveSigner(null, item.label);
+                }
+
                 signerLi.find('.signerLabel').html(item.label);
             }
 
@@ -315,5 +344,4 @@
             };
         })
         .all();
-    console.log(loadedData);
 </script>

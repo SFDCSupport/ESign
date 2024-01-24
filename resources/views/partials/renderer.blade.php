@@ -891,7 +891,6 @@
                                 .pluck('elements')
                                 .flatten(1)
                                 .each((objInfo, i) => {
-                                    console.log(objInfo);
                                     const objPage = objInfo?.on_page;
                                     const totalPages = canvasEditions.length;
 

@@ -24,28 +24,31 @@ class SignerController extends Controller
 
         foreach ($request->validated()['signers'] as $i => $signer) {
             $documentId = $request->document_id;
+            $isSignerDeleted = $signer['is_deleted'] ?? false;
 
             /** @var DocumentSigner $signerModel */
             $signerModel = $document->signers()->updateOrCreate([
                 'id' => $signer['id'] ?? null,
                 'document_id' => $documentId,
             ], [
-                'label' => $signer['label'],
+                'label' => $signer['label'] ?? __('esign::label.nth_signer', ['nth' => ordinal($i)]),
                 'position' => $signer['position'] ?? ($i + 1),
-                'deleted_at' => $signer['is_deleted'] ? now() : null,
-                'deleted_by' => $signer['is_deleted'] ? $request->user()->id : null,
+                'deleted_at' => $isSignerDeleted ? now() : null,
+                'deleted_by' => $isSignerDeleted ? $request->user()->id : null,
             ]);
 
             $response[$signer['uuid']]['id'] = $signerModel->id;
 
             foreach ($signer['elements'] ?? [] as $index => $element) {
+                $isElementDeleted = $element['is_deleted'] ?? false;
+
                 /** @var DocumentSignerElement $elementModel */
                 $elementModel = $signerModel->elements()->updateOrCreate([
                     'id' => $element['id'] ?? null,
                     'signer_id' => $signerModel->id,
                     'document_id' => $documentId,
                 ], [
-                    //                    'label' => $element['label'],
+                    'label' => $element['label'] ?? str($element['type'])->title()->value(),
                     'type' => $element['type'],
                     'on_page' => $element['on_page'],
                     'width' => $element['width'],
@@ -53,8 +56,8 @@ class SignerController extends Controller
                     'offset_x' => $element['offset_x'],
                     'offset_y' => $element['offset_y'],
                     'position' => $element['position'] ?? ($index + 1),
-                    'deleted_at' => $element['is_deleted'] ? now() : null,
-                    'deleted_by' => $signer['is_deleted'] ? $request->user()->id : null,
+                    'deleted_at' => $isElementDeleted ? now() : null,
+                    'deleted_by' => $isElementDeleted ? $request->user()->id : null,
                 ]);
 
                 $response[$signer['uuid']]['elements'][$element['uuid']] = $elementModel->id;

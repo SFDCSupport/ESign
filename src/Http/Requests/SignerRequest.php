@@ -37,6 +37,7 @@ class SignerRequest extends FormRequest
                 'signers.*.id' => 'sometimes|uuid',
                 'signers.*.uuid' => 'required',
                 'signers.*.label' => 'required',
+                'signers.*.is_deleted' => 'sometimes',
                 'signers.*.position' => 'required|integer',
                 'signers.*.elements.*.id' => 'sometimes|uuid',
                 'signers.*.elements.*.uuid' => 'required',
@@ -47,6 +48,7 @@ class SignerRequest extends FormRequest
                 'signers.*.elements.*.width' => 'required',
                 'signers.*.elements.*.height' => 'required',
                 'signers.*.elements.*.is_required' => 'sometimes',
+                'signers.*.elements.*.is_deleted' => 'sometimes',
             ];
         }
 

@@ -335,7 +335,15 @@
                 signerUpdate();
             };
             const signerRemove = (signer) => {
-                $(signer).closest("li.signerLi").remove();
+                const signerLi = $(signer).closest("li.signerLi");
+
+                signerLi.remove();
+
+                $(document).trigger("signer:removed", {
+                    from: "sidebar",
+                    uuid: signerLi.attr("data-signer-uuid"),
+                });
+
                 signerUpdate();
             };
 

@@ -15,7 +15,7 @@ class ElementResource extends JsonResource
         return [
             'id' => $this->id,
             'signer_id' => $this->signer_id,
-            'type' => $this->type,
+            'eleType' => $this->type,
             'label' => $this->label,
             'on_page' => $this->on_page,
             'offset_x' => $this->offset_x,
