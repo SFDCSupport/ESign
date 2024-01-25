@@ -15,7 +15,7 @@ class SignerResource extends JsonResource
         return [
             'id' => $this->id,
             'email' => $this->email,
-            'signer_label' => $this->label,
+            'label' => $this->label,
             'signing_status' => $this->signing_status,
             'read_status' => $this->read_status,
             'send_status' => $this->send_status,

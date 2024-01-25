@@ -31,7 +31,7 @@ return new class extends Migration
             $table->longText('body');
             $table->timestamps();
             $table->softDeletes();
-            $table->userStamps();
+            $table->eSignUserStamps();
         });
 
         Schema::create('e_documents', function (Blueprint $table) {
@@ -43,7 +43,7 @@ return new class extends Migration
             $table->boolean('link_sent_to_all')->default(false);
             $table->timestamps();
             $table->softDeletes();
-            $table->userStamps();
+            $table->eSignUserStamps();
         });
 
         Schema::create('e_document_attachments', function (Blueprint $table) {
@@ -58,7 +58,7 @@ return new class extends Migration
             $table->boolean('is_current')->default(1);
             $table->timestamps();
             $table->softDeletes();
-            $table->userStamps();
+            $table->eSignUserStamps();
         });
 
         Schema::create('e_document_signers', function (Blueprint $table) {
@@ -72,7 +72,7 @@ return new class extends Migration
             $table->integer('position')->default(0);
             $table->timestamps();
             $table->softDeletes();
-            $table->userStamps();
+            $table->eSignUserStamps();
         });
 
         Schema::create('e_document_signer_elements', function (Blueprint $table) {
@@ -89,7 +89,7 @@ return new class extends Migration
             $table->integer('position')->default(0);
             $table->timestamps();
             $table->softDeletes();
-            $table->userStamps();
+            $table->eSignUserStamps();
         });
 
         Schema::create('e_document_submissions', function (Blueprint $table) {
@@ -100,6 +100,7 @@ return new class extends Migration
             $table->longText('data');
             $table->timestamps();
             $table->softDeletes();
+            $table->eSignUserStamps('restored_at');
         });
 
         Schema::create('e_audits', function (Blueprint $table) {
@@ -110,6 +111,7 @@ return new class extends Migration
             $table->json('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->eSignUserStamps('restored_at');
         });
     }
 

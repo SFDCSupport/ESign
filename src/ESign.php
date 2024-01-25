@@ -5,6 +5,7 @@ namespace NIIT\ESign;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\View as ViewFacade;
 use Illuminate\View\View;
 
@@ -36,8 +37,10 @@ class ESign
     public function proceed(): void
     {
         if ($this->addMacros) {
-            collect(['userStamps', 'notify'])->each(function ($macro) {
-                if (method_exists($this, ($method = 'register'.str($macro)->title()->value().'Macro'))) {
+            collect(['eSignUserStamps', 'notify'])->each(function ($macro) {
+                $method = 'register'.($macro === 'eSignUserStamps' ? 'ESignUserStamps' : 'Notify').'Macro';
+
+                if (method_exists($this, $method)) {
                     $this->{$method}();
                 }
             });
@@ -61,25 +64,27 @@ class ESign
         }
     }
 
-    private function registerUserStampsMacro(): void
+    private function registerESignUserStampsMacro(): void
     {
-        if (! Blueprint::hasMacro('userStamps')) {
+        if (Blueprint::hasMacro('eSignUserStamps')) {
             return;
         }
 
-        Blueprint::macro('userStamps', function ($fields = [
-            'created_by', 'updated_by', 'deleted_by',
+        Blueprint::macro('eSignUserStamps', function ($fields = [
+            'restored_at', 'created_by', 'updated_by', 'deleted_by', 'restored_by',
         ]) {
-            foreach ($fields as $col) {
+            foreach (Arr::wrap($fields) as $col) {
+                $method = $col === 'restored_at' ? 'timestamp' : 'unsignedBigInteger';
+
                 /** @var Blueprint $this */
-                $this->unsignedBigInteger($col)->nullable();
+                $this->{$method}($col)->nullable();
             }
         });
     }
 
-    private function registerNotifyMacros(): void
+    private function registerNotifyMacro(): void
     {
-        if (! JsonResponse::hasMacro('notify')) {
+        if (JsonResponse::hasMacro('notify')) {
             return;
         }
 

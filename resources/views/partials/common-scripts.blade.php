@@ -213,7 +213,7 @@
                 loadedData[signerIndex].elements.push({
                     uuid: obj.uuid,
                     on_page: obj.on_page,
-                    type: obj.eleType,
+                    eleType: obj.eleType,
                     offset_x: obj.left,
                     offset_y: obj.top,
                     width: obj.width,

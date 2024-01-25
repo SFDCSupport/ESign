@@ -15,7 +15,6 @@ class Audit extends Model
     protected $fillable = [
         'id', 'document_id', 'signer_id',
         'event', 'metadata',
-        'created_at', 'updated_at', 'deleted_at',
     ];
 
     /**

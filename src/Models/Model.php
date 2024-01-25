@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model as Base;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use NIIT\ESign\Concerns\Auditable;
+use NIIT\ESign\Concerns\HasUserStamps;
 
 abstract class Model extends Base
 {
-    use Auditable, HasFactory, HasUuids, RevisionableTrait, SoftDeletes;
+    use Auditable, HasFactory, HasUserStamps, HasUuids, RevisionableTrait, SoftDeletes;
 }

@@ -19,8 +19,6 @@ class DocumentSignerElement extends Model
         'type', 'label',
         'on_page', 'offset_x', 'offset_y',
         'width', 'height', 'position',
-        'created_at', 'updated_at', 'deleted_at',
-        'created_by', 'updated_by', 'deleted_by',
     ];
 
     /**

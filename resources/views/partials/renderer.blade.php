@@ -586,7 +586,7 @@
                     console.log('Object Info:', {
                         ...additionalInfo,
                         on_page: canvasEdition.page_index + 1,
-                        type: obj.eleType,
+                        eleType: obj.eleType,
                         offset_x: obj.left,
                         offset_y: obj.top,
                         width: obj.width,

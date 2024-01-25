@@ -2,13 +2,10 @@
 
 namespace NIIT\ESign\Models;
 
-use App\Traits\Userstamps;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Template extends Model
 {
-    use Userstamps;
-
     /** @var string */
     protected $table = 'e_templates';
 
@@ -19,8 +16,6 @@ class Template extends Model
         'id',
         'label',
         'body',
-        'created_at', 'updated_at', 'deleted_at',
-        'created_by', 'updated_by', 'deleted_by',
     ];
 
     /**

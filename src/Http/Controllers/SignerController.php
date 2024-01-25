@@ -48,8 +48,8 @@ class SignerController extends Controller
                     'signer_id' => $signerModel->id,
                     'document_id' => $documentId,
                 ], [
-                    'label' => $element['label'] ?? str($element['type'])->title()->value(),
-                    'type' => $element['type'],
+                    'label' => $element['label'] ?? str($element['eleType'])->title()->value(),
+                    'type' => $element['eleType'],
                     'on_page' => $element['on_page'],
                     'width' => $element['width'],
                     'height' => $element['height'],

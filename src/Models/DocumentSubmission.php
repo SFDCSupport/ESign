@@ -15,7 +15,6 @@ class DocumentSubmission extends Model
     protected $fillable = [
         'id', 'document_id', 'signer_id',
         'signer_element_id', 'data',
-        'created_at', 'updated_at', 'deleted_at',
     ];
 
     /**

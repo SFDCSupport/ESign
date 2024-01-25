@@ -2,7 +2,6 @@
 
 namespace NIIT\ESign\Models;
 
-use App\Traits\Userstamps;
 use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,7 +15,7 @@ use NIIT\ESign\Enum\NotificationSequence;
 
 class Document extends Model implements Attachable, HasLocalePreference
 {
-    use HasAttachment, Userstamps;
+    use HasAttachment;
 
     /** @var string */
     protected $table = 'e_documents';
@@ -31,8 +30,6 @@ class Document extends Model implements Attachable, HasLocalePreference
         'status',
         'notification_sequence',
         'link_sent_to_all',
-        'created_at', 'updated_at', 'deleted_at',
-        'created_by', 'updated_by', 'deleted_by',
     ];
 
     /**

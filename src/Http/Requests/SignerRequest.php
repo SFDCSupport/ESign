@@ -44,7 +44,7 @@ class SignerRequest extends FormRequest
                 'signers.*.elements.*.on_page' => 'required|integer',
                 'signers.*.elements.*.offset_x' => 'required',
                 'signers.*.elements.*.offset_y' => 'required',
-                'signers.*.elements.*.type' => 'required',
+                'signers.*.elements.*.eleType' => 'required',
                 'signers.*.elements.*.width' => 'required',
                 'signers.*.elements.*.height' => 'required',
                 'signers.*.elements.*.is_required' => 'sometimes',
