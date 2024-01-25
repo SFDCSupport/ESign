@@ -64,6 +64,7 @@ return new class extends Migration
         Schema::create('e_document_signers', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('document_id')->constrained('e_documents');
+            $table->uuid('url')->unique();
             $table->string('email')->nullable();
             $table->string('label');
             $table->enum('signing_status', SigningStatus::values())->default(SigningStatus::NOT_SIGNED);
@@ -113,6 +114,10 @@ return new class extends Migration
             $table->softDeletes();
             $table->eSignUserStamps('restored_at');
         });
+
+        \Illuminate\Support\Facades\DB::table('migrations')
+            ->where('migration', '=', 'esign_migrations')
+            ->delete();
     }
 
     public function down(): void

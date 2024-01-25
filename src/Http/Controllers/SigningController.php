@@ -10,6 +10,7 @@ use NIIT\ESign\Events\ReadStatusChanged;
 use NIIT\ESign\Events\SigningProcessStarted;
 use NIIT\ESign\Events\SigningStatusChanged;
 use NIIT\ESign\Http\Requests\SigningRequest;
+use NIIT\ESign\Http\Resources\SignerResource;
 use NIIT\ESign\Models\DocumentSigner;
 
 class SigningController extends Controller
@@ -18,7 +19,14 @@ class SigningController extends Controller
     {
         SigningProcessStarted::dispatch($signer);
 
-        return view('esign::index');
+        $document = $signer->loadMissing('document.document', 'elements')->document;
+        $formattedData = [json_decode((new SignerResource($signer))->toJson(), true)];
+
+        return view('esign::documents.show', compact(
+            'signer',
+            'document',
+            'formattedData',
+        ));
     }
 
     public function store(SigningRequest $request, DocumentSigner $signer)

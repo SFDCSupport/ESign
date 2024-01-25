@@ -2,6 +2,7 @@
 
 namespace NIIT\ESign\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use NIIT\ESign\Enum\ElementType;
@@ -58,6 +59,28 @@ class DocumentSignerElement extends Model
         return $this->hasOne(
             related: DocumentSubmission::class,
             foreignKey: 'signer_element_id'
+        );
+    }
+
+    public function position(): Attribute
+    {
+        return new Attribute(
+            set: function (?string $value, array $attributes) {
+                if ($value) {
+                    return $value;
+                }
+
+                if (! isset($attributes['document_id'], $attributes['signer_id'])) {
+                    return 1;
+                }
+
+                $maxPriority = DocumentSignerElement::where([
+                    'signer_id' => $attributes['signer_id'],
+                    'document_id' => $attributes['document_id'],
+                ])->max('position') ?? 0;
+
+                return $maxPriority + 1;
+            },
         );
     }
 }

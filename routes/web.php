@@ -52,6 +52,6 @@ Route::name('signing.')
     ->middleware([
         SigningMiddleware::class,
     ])->group(function () {
-        Route::get('/{signer}', [SigningController::class, 'index']);
-        Route::post('/{signer}', [SigningController::class, 'store']);
+        Route::get('/{signing_url}', [SigningController::class, 'index']);
+        Route::post('/{signing_url}', [SigningController::class, 'store']);
     });

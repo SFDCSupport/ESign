@@ -6,6 +6,7 @@
 <x-esign::layout
     :title="$document->title"
     :document="$document"
+    :signer="$signer ?? null"
     :isSigningRoute="$isSigningRoute"
 >
     @pushonce('footJs')
@@ -49,7 +50,7 @@
     <div class="container-fluid">
         <div class="row">
             <div
-                class="col-sm-2 dark-grey-bg @if($isSigningRoute || !$documentExists) d-none @endif"
+                class="col-sm-2 dark-grey-bg @if(!$documentExists) d-none @endif"
             >
                 <div class="add-doc-sec">
                     <div class="text-center mb-2">
@@ -58,24 +59,26 @@
                         </p>
                     </div>
 
-                    <div class="text-center mb-2">
-                        <a
-                            href="javascript: void(0);"
-                            id="documentReplaceBtn"
-                            class="btn btn-sm btn-dark replace-doc-btn"
-                        >
-                            {{ __('esign::label.replace') }}
-                        </a>
+                    @if (! $isSigningRoute)
+                        <div class="text-center mb-2">
+                            <a
+                                href="javascript: void(0);"
+                                id="documentReplaceBtn"
+                                class="btn btn-sm btn-dark replace-doc-btn"
+                            >
+                                {{ __('esign::label.replace') }}
+                            </a>
 
-                        <a
-                            href="javascript: void(0);"
-                            class="edit-docs-btn"
-                            id="documentRemoveBtn"
-                        >
-                            <i class="fa fa-times"></i>
-                            Remove
-                        </a>
-                    </div>
+                            <a
+                                href="javascript: void(0);"
+                                class="edit-docs-btn"
+                                id="documentRemoveBtn"
+                            >
+                                <i class="fa fa-times"></i>
+                                Remove
+                            </a>
+                        </div>
+                    @endif
 
                     <div class="edit-docs-file">
                         <div id="previewViewer"></div>
@@ -84,7 +87,7 @@
             </div>
 
             <main
-                class="@if($isSigningRoute || !$documentExists) col-12 @else col-md-7 ms-sm-auto col-lg-7 px-md-0 @endif"
+                class="@if($isSigningRoute || !$documentExists) col-10 @else col-md-7 ms-sm-auto col-lg-7 px-md-0 @endif"
             >
                 @if ($documentExists)
                     <div
@@ -95,96 +98,105 @@
                     @include('esign::documents.modals.send-mail-to-recipient', compact('document'))
                 @endif
 
-                @php($dropZoneID = \Illuminate\Support\Str::random(12))
+                @if (! $isSigningRoute)
+                    @php($dropZoneID = \Illuminate\Support\Str::random(12))
 
-                @include('esign::partials.dropzone', [
-                    'page' => 'inner',
-                    'id' => $dropZoneID,
-                    'hidden' => $documentExists
-                ])
+                    @include('esign::partials.dropzone', [
+                        'page' => 'inner',
+                        'id' => $dropZoneID,
+                        'hidden' => $documentExists
+                    ])
+                @endif
             </main>
-            <div
-                id="recipientsContainer"
-                class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary @if($isSigningRoute || !$documentExists) d-none @endif"
-            >
+            @if (! $isSigningRoute)
                 <div
-                    class="offcanvas-md offcanvas-end bg-body-tertiary"
-                    tabindex="-1"
-                    id="sidebarMenu"
-                    aria-labelledby="sidebarMenuLabel"
+                    id="recipientsContainer"
+                    class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary @if($isSigningRoute || !$documentExists) d-none @endif"
                 >
-                    <div class="offcanvas-header">
-                        <h5 class="offcanvas-title" id="sidebarMenuLabel"></h5>
-                        <button
-                            type="button"
-                            class="btn-close"
-                            data-bs-dismiss="offcanvas"
-                            data-bs-target="#sidebarMenu"
-                            aria-label="{{ __('esign::label.close') }}"
-                        ></button>
-                    </div>
                     <div
-                        class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto"
+                        class="offcanvas-md offcanvas-end bg-body-tertiary"
+                        tabindex="-1"
+                        id="sidebarMenu"
+                        aria-labelledby="sidebarMenuLabel"
                     >
-                        @php($hasSigners = ($totalSigners = $document->signers->count()) > 0)
+                        <div class="offcanvas-header">
+                            <h5
+                                class="offcanvas-title"
+                                id="sidebarMenuLabel"
+                            ></h5>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="offcanvas"
+                                data-bs-target="#sidebarMenu"
+                                aria-label="{{ __('esign::label.close') }}"
+                            ></button>
+                        </div>
+                        <div
+                            class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto"
+                        >
+                            @php($hasSigners = ($totalSigners = $document->signers->count()) > 0)
 
-                        <div class="select-party">
-                            <div class="dropdown_c dropdown_click">
-                                <div class="selecteddropdown">
-                                    <span
-                                        class="selectedSigner"
-                                        data-active-signer
-                                    >
-                                        {{ __('esign::label.nth_signer', ['nth' => ordinal(1)]) }}
-                                    </span>
-                                    <a
-                                        href="javascript: void(0);"
-                                        class="add-party"
-                                    >
-                                        <i class="fa fa-plus"></i>
-                                    </a>
-                                </div>
-                                <div class="drop-content">
-                                    <ul id="signerUl"></ul>
-                                    <a
-                                        id="signerAdd"
-                                        href="javascript: void(0)"
-                                        class="add-party-btn"
-                                        onclick="signerAdd()"
-                                    ></a>
+                            <div class="select-party">
+                                <div class="dropdown_c dropdown_click">
+                                    <div class="selecteddropdown">
+                                        <span
+                                            class="selectedSigner"
+                                            data-active-signer
+                                        >
+                                            {{ __('esign::label.nth_signer', ['nth' => ordinal(1)]) }}
+                                        </span>
+                                        <a
+                                            href="javascript: void(0);"
+                                            class="add-party"
+                                        >
+                                            <i class="fa fa-plus"></i>
+                                        </a>
+                                    </div>
+                                    <div class="drop-content">
+                                        <ul id="signerUl"></ul>
+                                        <a
+                                            id="signerAdd"
+                                            href="javascript: void(0)"
+                                            class="add-party-btn"
+                                            onclick="signerAdd()"
+                                        ></a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="editable-section addedElements"></div>
+                            <div class="editable-section addedElements"></div>
 
-                        <div class="icons-box">
-                            @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
-                                @php([$label, $icon] = $data)
+                            <div class="icons-box">
+                                @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
+                                    @php([$label, $icon] = $data)
 
-                                <a
-                                    href="javascript: void(0);"
-                                    class="draggable icons-box-btn bg-white elementType"
-                                    data-type="{{ $type }}"
-                                >
-                                    <span class="draggable-left-icon">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </span>
-                                    <div
-                                        class="flex items-center flex-col px-2 py-2"
+                                    <a
+                                        href="javascript: void(0);"
+                                        class="draggable icons-box-btn bg-white elementType"
+                                        data-type="{{ $type }}"
                                     >
-                                        <i class="{{ $icon }} elementIcon"></i>
-                                        <span class="text-xs mt-1">
-                                            {{ $label }}
+                                        <span class="draggable-left-icon">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                            <i class="fas fa-ellipsis-v"></i>
                                         </span>
-                                    </div>
-                                </a>
-                            @endforeach
+                                        <div
+                                            class="flex items-center flex-col px-2 py-2"
+                                        >
+                                            <i
+                                                class="{{ $icon }} elementIcon"
+                                            ></i>
+                                            <span class="text-xs mt-1">
+                                                {{ $label }}
+                                            </span>
+                                        </div>
+                                    </a>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
 
@@ -305,7 +317,7 @@
             const signerAdd = (obj = null) => {
                 const hasSigners = $("ul#signerUl li.signerLi").length > 0;
                 const _highestSigner = obj?.signer_index || obj?.index || (hasSigners ? highestSignerIndex() : 0) + 1;
-                const clonedLi = hasSigners ? $("li.signerLi:last").clone() : $($.trim($('#signerTemplate').html()));
+                const clonedLi = hasSigners ? $("li.signerLi:last").clone() : $($.trim($("#signerTemplate").html()));
                 const uuid = obj?.signer_uuid || obj?.uuid || generateUniqueId("s_");
 
                 const label = obj?.signer_label || obj?.label || ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}';
@@ -313,7 +325,7 @@
                 clonedLi.find("a.signerLabel").html(label);
                 clonedLi.attr("data-signer-index", _highestSigner);
                 clonedLi.attr("data-signer-uuid", uuid);
-                clonedLi[hasSigners ? 'insertAfter' : 'appendTo'](hasSigners ? $("ul#signerUl li.signerLi:last") : $("ul#signerUl"));
+                clonedLi[hasSigners ? "insertAfter" : "appendTo"](hasSigners ? $("ul#signerUl li.signerLi:last") : $("ul#signerUl"));
 
                 if (obj?.from !== "loadedData") {
                     $(document).trigger("signer:added", {
@@ -343,8 +355,8 @@
 
                 signerUpdate();
 
-                if(getActiveSigner() === uuid) {
-                    $('ul#signerUl li.signerLi:first a.signerLabel').trigger('click');
+                if (getActiveSigner() === uuid) {
+                    $("ul#signerUl li.signerLi:first a.signerLabel").trigger("click");
                 }
             };
 
@@ -353,7 +365,7 @@
                 $(document).on("click", "#documentReplaceBtn", () => {
                     $('#{{ $dropZoneID }}').trigger("click");
                 }).on("click", "#documentRemoveBtn", () => {
-                    $(document).trigger('loader:show');
+                    $(document).trigger("loader:show");
 
                     $.post('{{ route('esign.attachment.remove', ['attachment' => $document?->document?->id ?? '1']) }}', {
                         id: getDocumentId()
@@ -366,7 +378,7 @@
                             location.reload(true);
                         }
                     }).fail((x) => {
-                        $(document).trigger('loader:hide');
+                        $(document).trigger("loader:hide");
                         toast("error", x.responseText);
                     });
                 });
@@ -401,7 +413,7 @@
                         obj.uuid && signerElementActive(obj.uuid);
                     })
                     .on("signer:element:added", function(e, obj) {
-                        if (obj.from === "sidebar") {
+                        if (obj.from === "sidebar" || obj.for === "signer") {
                             return;
                         }
 

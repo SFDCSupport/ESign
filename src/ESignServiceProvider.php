@@ -34,6 +34,8 @@ class ESignServiceProvider extends ServiceProvider
     {
         (new ESign($this->app))->addMacros()->proceed();
 
+        Route::bind('signing_url', fn (string $value) => DocumentSigner::where('url', $value)->firstOrFail());
+
         Route::name(self::NAME.'.')
             ->prefix(self::NAME)
             ->middleware([

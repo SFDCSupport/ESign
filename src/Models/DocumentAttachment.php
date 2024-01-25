@@ -36,6 +36,10 @@ class DocumentAttachment extends Model
         'type' => AttachmentType::class,
     ];
 
+    protected $appends = [
+        'url',
+    ];
+
     public function model(): MorphTo
     {
         return $this->morphTo(

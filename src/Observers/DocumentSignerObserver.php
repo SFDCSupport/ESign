@@ -1,13 +1,21 @@
 <?php
+/*
+ * @author : Anand Pilania
+ * @mailto : Anand.Pilania@niit.com
+ * @updated : 1/25/24, 11:35 AM
+ */
 
 namespace NIIT\ESign\Observers;
 
+use Illuminate\Support\Str;
 use NIIT\ESign\Models\DocumentSigner as Signer;
 
 class DocumentSignerObserver
 {
     public function creating(Signer $signer): void
     {
+        $signer->url = Str::orderedUuid();
+
         if (
             ! blank($signer->position) ||
             blank($documentId = $signer->document_id)

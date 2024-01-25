@@ -941,12 +941,18 @@
                                         canvasEdition.page_index + 1
                                     ) {
                                         const obj = createFabricObject(objInfo);
+                                        const cFor = isSigning
+                                            ? {
+                                                  for: 'signer',
+                                              }
+                                            : {};
 
                                         canvasEdition.add(obj);
 
                                         $(document).trigger(
                                             'signer:element:added',
                                             {
+                                                ...cFor,
                                                 ...objInfo,
                                                 ...obj,
                                                 from: 'loadedData',
