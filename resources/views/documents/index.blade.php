@@ -73,7 +73,9 @@
                         ever since the 1500s,
                     </p>
                 </div>
-                <fieldset class="filter-wrapper mb-2">
+                <fieldset class="filter-wrapper">
+                    <div class="filter-wrapper-inner">  
+                   <div class="filters-group">  
                     @foreach (__('esign::dropdown.document_filters') ?? [] as $key => $label)
                         <a
                             href="javascript: void(0);"
@@ -83,16 +85,20 @@
                             {{ $label }}
                         </a>
                     @endforeach
-                </fieldset>
-                <div class="form-outline mb-4">
-                    <input
-                        type="search"
-                        id="documentsSearch"
-                        class="form-control form-control-sm"
-                        placeholder="{{ __('esign::label.type_query') }}"
-                        aria-label="{{ __('esign::label.search') }}"
-                    />
+                    </div>
+
+                    <div class="form-outline filter-search-sec">
+                        <input
+                            type="search"
+                            id="documentsSearch"
+                            class="form-control form-control-sm"
+                            placeholder="{{ __('esign::label.type_query') }}"
+                            aria-label="{{ __('esign::label.search') }}"
+                        />
+                    </div>
                 </div>
+                </fieldset>
+                
             </div>
             <div class="container">
                 <div class="row documentsContainer" id="documentsContainer">

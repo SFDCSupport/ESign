@@ -91,8 +91,9 @@ body{
     border-radius: 2px;
     position: relative;
     margin-bottom: 20px;
+    border: 1px solid #efefef !important;
     background: #fff;
-    box-shadow: rgba(45, 62, 80, 0.08) 0px 3px 6px 0px;
+    box-shadow: rgba(45, 62, 80, 0.05) 0px 3px 6px 0px;
     transition: all 0.2s ease-in-out 0s;
     overflow: hidden;
 }
@@ -451,6 +452,7 @@ body{
 
 .edit-docs-file canvas{
   max-width: 100%;
+  margin-bottom: -5px;
 }
 
 .add-party-btn{
@@ -537,13 +539,13 @@ body{
     display: inline-block;
     width: 26px;
     height: 26px;
-    background: #b8b8b8;
+    background: #0d6efd;
     color: #fff;
     text-align: center;
     line-height: 27px;
     font-size: .8rem;
     border-radius: 100px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 }
 .pdfviewer-numbers:not(.canvasPdfNumber){
     bottom: 10px;
@@ -847,7 +849,6 @@ padding: 3px;
 .deleted-required-ele .form-check {
   min-height: 1.1rem;
 }
-
 .expand-section-bottom{
   max-width: 680px;
   position: fixed;
@@ -878,6 +879,7 @@ padding: 3px;
 .form_container{
   position: fixed;
   padding: 20px;
+  padding-top: 60px;
   bottom: 0px;
   border-radius: 7px;
   width: 100%;
@@ -887,10 +889,45 @@ padding: 3px;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
-.minimize_form_button{
+.minimize_form_button {
   position: absolute;
   right: 5px;
   top: 5px;
+}
+
+.sign-type-nav{
+  margin-top: 15px;
+}
+
+.sign-type-nav .nav-tabs{
+  border-bottom: 0px;
+  justify-content: center;
+}
+
+.sign-type-nav button.nav-link{
+  padding: 0px !important;
+  background: transparent !important;
+  border: 0px !important;
+}
+
+.sign-type-nav button.nav-link.active{
+  background-color: transparent !important;
+  border: 0px !important;
+}
+
+.sign-type-nav button.nav-link span{
+  width: 12px;
+  height: 12px;
+  border-radius: 100px;
+  background-color: #ddd;
+  display: inline-block;
+  margin: 5px;
+  border: 1px solid #bababa;
+}
+
+.sign-type-nav button.nav-link.active span{
+  background-color: #333;
+  border: 1px solid #333;
 }
 
 .upload-bg-sec {
@@ -940,6 +977,25 @@ padding: 3px;
 
 }
 
+.filter-wrapper{
+  text-align: center;
+  padding: 12px;
+  margin: 10px auto 30px !important;
+  border: 1px solid #cde6f5;
+  border-radius: 10px;
+  background: linear-gradient(97.03deg,#edf4ff -.58%,#defffe 92.09%);
+}
+
+.filter-wrapper-inner{
+  display: flex;
+  justify-content: space-between;
+  background: #fff;
+  padding: 18px;
+  border-radius: 8px;
+  align-items: center!important;
+  box-shadow: rgba(99, 99, 99, 0.1) 0px 2px 8px 0px;
+}
+
 .filter-wrapper a{
   display: inline-block;
   padding: 5px 18px;
@@ -952,15 +1008,18 @@ padding: 3px;
   border-radius: 50px;
 }
 
+.filter-wrapper .filter-search-sec{
+  min-width: 30%;
+}
+
+.filter-wrapper .filter-search-sec input{
+  background-color: #fcfcfc;
+  min-height: 38px;
+}
+
 .filter-wrapper a.active,
 .filter-wrapper a:hover{
   background: #e3e8ec;
   color: #0d6efd;
-}
-
-.filter-wrapper:before {
-  content: "Filter by:";
-  margin-right: 10px;
-  font-weight: 700;
 }
 
