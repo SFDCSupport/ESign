@@ -1,19 +1,13 @@
 @php
-    $isSigningRoute = request()->routeIs('esign.signing.*');
     $documentExists = $document->document?->exists();
 @endphp
 
-<x-esign::layout
-    :title="$document->title"
-    :document="$document"
-    :signer="$signer ?? null"
-    :isSigningRoute="$isSigningRoute"
->
+<x-esign::layout :title="$document->title" :document="$document">
     @pushonce('footJs')
         <script src="{{ url('vendor/esign/js/script.js') }}"></script>
     @endpushonce
 
-    <section class="header-bottom-section @if($isSigningRoute) d-none @endif">
+    <section class="header-bottom-section">
         <div class="container-fluid">
             <div
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
@@ -59,26 +53,24 @@
                         </p>
                     </div>
 
-                    @if (! $isSigningRoute)
-                        <div class="text-center mb-2">
-                            <a
-                                href="javascript: void(0);"
-                                id="documentReplaceBtn"
-                                class="btn btn-sm btn-dark replace-doc-btn"
-                            >
-                                {{ __('esign::label.replace') }}
-                            </a>
+                    <div class="text-center mb-2">
+                        <a
+                            href="javascript: void(0);"
+                            id="documentReplaceBtn"
+                            class="btn btn-sm btn-dark replace-doc-btn"
+                        >
+                            {{ __('esign::label.replace') }}
+                        </a>
 
-                            <a
-                                href="javascript: void(0);"
-                                class="edit-docs-btn"
-                                id="documentRemoveBtn"
-                            >
-                                <i class="fa fa-times"></i>
-                                Remove
-                            </a>
-                        </div>
-                    @endif
+                        <a
+                            href="javascript: void(0);"
+                            class="edit-docs-btn"
+                            id="documentRemoveBtn"
+                        >
+                            <i class="fa fa-times"></i>
+                            Remove
+                        </a>
+                    </div>
 
                     <div class="edit-docs-file">
                         <div id="previewViewer"></div>
@@ -87,7 +79,7 @@
             </div>
 
             <main
-                class="@if($isSigningRoute || !$documentExists) col-10 @else col-md-7 ms-sm-auto col-lg-7 px-md-0 @endif"
+                class="@if(!$documentExists) col-10 @else col-md-7 ms-sm-auto col-lg-7 px-md-0 @endif"
             >
                 @if ($documentExists)
                     <div
@@ -98,105 +90,97 @@
                     @include('esign::documents.modals.send-mail-to-recipient', compact('document'))
                 @endif
 
-                @if (! $isSigningRoute)
-                    @php($dropZoneID = \Illuminate\Support\Str::random(12))
+                @php($dropZoneID = \Illuminate\Support\Str::random(12))
 
-                    @include('esign::partials.dropzone', [
-                        'page' => 'inner',
-                        'id' => $dropZoneID,
-                        'hidden' => $documentExists
-                    ])
-                @endif
+                @include('esign::partials.dropzone', [
+                    'page' => 'inner',
+                    'id' => $dropZoneID,
+                    'hidden' => $documentExists
+                ])
             </main>
-            @if (! $isSigningRoute)
+
+            <div
+                id="recipientsContainer"
+                class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary @if(!$documentExists) d-none @endif"
+            >
                 <div
-                    id="recipientsContainer"
-                    class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary @if($isSigningRoute || !$documentExists) d-none @endif"
+                    class="offcanvas-md offcanvas-end bg-body-tertiary"
+                    tabindex="-1"
+                    id="sidebarMenu"
+                    aria-labelledby="sidebarMenuLabel"
                 >
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="sidebarMenuLabel"></h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="offcanvas"
+                            data-bs-target="#sidebarMenu"
+                            aria-label="{{ __('esign::label.close') }}"
+                        ></button>
+                    </div>
                     <div
-                        class="offcanvas-md offcanvas-end bg-body-tertiary"
-                        tabindex="-1"
-                        id="sidebarMenu"
-                        aria-labelledby="sidebarMenuLabel"
+                        class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto"
                     >
-                        <div class="offcanvas-header">
-                            <h5
-                                class="offcanvas-title"
-                                id="sidebarMenuLabel"
-                            ></h5>
-                            <button
-                                type="button"
-                                class="btn-close"
-                                data-bs-dismiss="offcanvas"
-                                data-bs-target="#sidebarMenu"
-                                aria-label="{{ __('esign::label.close') }}"
-                            ></button>
-                        </div>
-                        <div
-                            class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto"
-                        >
-                            @php($hasSigners = ($totalSigners = $document->signers->count()) > 0)
+                        @php($hasSigners = ($totalSigners = $document->signers->count()) > 0)
 
-                            <div class="select-party">
-                                <div class="dropdown_c dropdown_click">
-                                    <div class="selecteddropdown">
-                                        <span
-                                            class="selectedSigner"
-                                            data-active-signer
-                                        >
-                                            {{ __('esign::label.nth_signer', ['nth' => ordinal(1)]) }}
-                                        </span>
-                                        <a
-                                            href="javascript: void(0);"
-                                            class="add-party"
-                                        >
-                                            <i class="fa fa-plus"></i>
-                                        </a>
-                                    </div>
-                                    <div class="drop-content">
-                                        <ul id="signerUl"></ul>
-                                        <a
-                                            id="signerAdd"
-                                            href="javascript: void(0)"
-                                            class="add-party-btn"
-                                            onclick="signerAdd()"
-                                        ></a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="editable-section addedElements"></div>
-
-                            <div class="icons-box">
-                                @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
-                                    @php([$label, $icon] = $data)
-
+                        <div class="select-party">
+                            <div class="dropdown_c dropdown_click">
+                                <div class="selecteddropdown">
+                                    <span
+                                        class="selectedSigner"
+                                        data-active-signer
+                                    >
+                                        {{ __('esign::label.nth_signer', ['nth' => ordinal(1)]) }}
+                                    </span>
                                     <a
                                         href="javascript: void(0);"
-                                        class="draggable icons-box-btn bg-white elementType"
-                                        data-type="{{ $type }}"
+                                        class="add-party"
                                     >
-                                        <span class="draggable-left-icon">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </span>
-                                        <div
-                                            class="flex items-center flex-col px-2 py-2"
-                                        >
-                                            <i
-                                                class="{{ $icon }} elementIcon"
-                                            ></i>
-                                            <span class="text-xs mt-1">
-                                                {{ $label }}
-                                            </span>
-                                        </div>
+                                        <i class="fa fa-plus"></i>
                                     </a>
-                                @endforeach
+                                </div>
+                                <div class="drop-content">
+                                    <ul id="signerUl"></ul>
+                                    <a
+                                        id="signerAdd"
+                                        href="javascript: void(0)"
+                                        class="add-party-btn"
+                                        onclick="signerAdd()"
+                                    ></a>
+                                </div>
                             </div>
+                        </div>
+
+                        <div class="editable-section addedElements"></div>
+
+                        <div class="icons-box">
+                            @foreach (\NIIT\ESign\Enum\ElementType::withIcons(true) as $type => $data)
+                                @php([$label, $icon] = $data)
+
+                                <a
+                                    href="javascript: void(0);"
+                                    class="draggable icons-box-btn bg-white elementType"
+                                    data-type="{{ $type }}"
+                                >
+                                    <span class="draggable-left-icon">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </span>
+                                    <div
+                                        class="flex items-center flex-col px-2 py-2"
+                                    >
+                                        <i class="{{ $icon }} elementIcon"></i>
+                                        <span class="text-xs mt-1">
+                                            {{ $label }}
+                                        </span>
+                                    </div>
+                                </a>
+                            @endforeach
                         </div>
                     </div>
                 </div>
-            @endif
+            </div>
         </div>
     </div>
 

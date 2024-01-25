@@ -21,7 +21,7 @@ class SigningController extends Controller
         $document = $signer->loadMissing('document.document', 'elements')->document;
         $formattedData = [json_decode((new SignerResource($signer))->toJson(), true)];
 
-        return view('esign::documents.show', compact(
+        return view('esign::index', compact(
             'signer',
             'document',
             'formattedData',

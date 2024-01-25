@@ -1,158 +1,74 @@
-<x-esign::layout :title="$title" :signer="$signer">
-    @pushonce('css')
-        <style></style>
+<x-esign::layout
+    :title="$document->title"
+    :document="$document"
+    :signer="$signer"
+    :isSigningRoute="true"
+>
+    @pushonce('footJs')
+        <script src="{{ url('vendor/esign/js/script.js') }}"></script>
     @endpushonce
 
-    <div>
-        <div class="xl:pl-72">
+    <section class="header-bottom-section d-none">
+        <div class="container-fluid">
             <div
-                class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-6 border-b border-white/5 bg-gray-900 px-4 shadow-sm sm:px-6 lg:px-8"
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
             >
-                <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-                    <form class="flex flex-1" action="#" method="GET">
-                        <label for="search-field" class="sr-only">Search</label>
-                        <div class="relative w-full">
-                            <svg
-                                class="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-500"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
-                            <input
-                                id="search-field"
-                                class="block h-full w-full border-0 bg-transparent py-0 pl-8 pr-0 text-white focus:ring-0 sm:text-sm"
-                                placeholder="Search..."
-                                type="search"
-                                name="search"
-                            />
-                        </div>
-                    </form>
+                <h4 class="h4">{{ $document->title }}</h4>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button
+                            type="button"
+                            class="btn btn-outline-dark"
+                            data-bs-toggle="modal"
+                            data-bs-target="#sendRecipientModal"
+                        >
+                            <i class="fas fa-user-plus"></i>
+                            {{ __('esign::label.send') }}
+                        </button>
+                    </div>
+                    <button
+                        id="saveBtn"
+                        type="button"
+                        onclick="saveBtnAction()"
+                        class="btn btn-primary d-flex align-items-center gap-1"
+                    >
+                        <i class="fas fa-save"></i>
+                        {{ __('esign::label.save') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-2 dark-grey-bg">
+                <div class="add-doc-sec">
+                    <div class="text-center mb-2">
+                        <p class="mb-0" style="font-size: 10px">
+                            {{ $document->title }}
+                        </p>
+                    </div>
+                    <div class="edit-docs-file">
+                        <div id="previewViewer"></div>
+                    </div>
                 </div>
             </div>
 
-            <form id="signersForm">
-                <main class="lg:pr-96">
-                    <header
-                        class="flex items-center justify-between border-b border-white/5 px-4 py-4 sm:px-6 sm:py-6 lg:px-8"
-                    >
-                        <label class="text-white">
-                            <input type="file" id="document" name="document" />
-                        </label>
-                    </header>
-
-                    <div class="p-4" id="documentContainer"></div>
-                </main>
-
-                <aside
-                    class="bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5"
-                >
-                    <header
-                        class="flex items-center justify-between border-b border-white/5 px-4 py-4 sm:px-6 sm:py-6 lg:px-8"
-                    >
-                        <label><select id="signers"></select></label>
-                        <div class="flex flex-row gap-4">
-                            <button
-                                type="button"
-                                id="addSigner"
-                                class="bg-white border border-white px-4 rounded"
-                            >
-                                Add Signer
-                            </button>
-                            <button
-                                type="button"
-                                id="saveButton"
-                                class="bg-white border border-white px-4 rounded"
-                            >
-                                Save
-                            </button>
-                        </div>
-                    </header>
-                    <div class="elementsContainer">
-                        <button
-                            type="button"
-                            class="inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        >
-                            <svg
-                                class="-ml-0.5 h-5 w-5"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
-                            Element1
-                        </button>
-                        <button
-                            type="button"
-                            class="inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        >
-                            <svg
-                                class="-ml-0.5 h-5 w-5"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
-                            Element2
-                        </button>
-                        <button
-                            type="button"
-                            class="inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        >
-                            <svg
-                                class="-ml-0.5 h-5 w-5"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
-                            Elemen3
-                        </button>
-                        <button
-                            type="button"
-                            class="inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        >
-                            <svg
-                                class="-ml-0.5 h-5 w-5"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
-                            Element4
-                        </button>
-                    </div>
-                </aside>
-            </form>
+            <main class="col-10">
+                <div
+                    id="pdfViewer"
+                    data-url="{{ $document->document->url }}"
+                ></div>
+            </main>
         </div>
     </div>
 
+    @include('esign::partials.renderer')
+
     @pushonce('js')
-        <script type="module"></script>
+        <script>
+            $(() => {});
+        </script>
     @endpushonce
 </x-esign::layout>

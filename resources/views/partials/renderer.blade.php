@@ -887,12 +887,14 @@
                     .map((item, i) => {
                         const signerUuid = generateUniqueId('s_');
 
-                        signerAdd({
-                            from: 'loadedData',
-                            signer_index: i + 1,
-                            signer_uuid: signerUuid,
-                            signer_label: item.label,
-                        });
+                        if (!isSigning) {
+                            signerAdd({
+                                from: 'loadedData',
+                                signer_index: i + 1,
+                                signer_uuid: signerUuid,
+                                signer_label: item.label,
+                            });
+                        }
 
                         if (i === 0) {
                             getActiveSigner(signerUuid, item.label);

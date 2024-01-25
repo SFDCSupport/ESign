@@ -3,14 +3,13 @@
 namespace NIIT\ESign\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class SigningRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return Gate::allows('update_signer');
+        return true;
     }
 
     /**
