@@ -552,52 +552,6 @@
             }
         };
 
-        const saveBtnAction = () => {
-            canvasEditions.forEach((canvasEdition, pageIndex) => {
-                canvasEdition.forEachObject((obj) => {
-                    let additionalInfo = {};
-
-                    if (isSigning) {
-                        if (
-                            obj instanceof fabric.Text ||
-                            obj instanceof fabric.IText
-                        ) {
-                            additionalInfo = {
-                                data: obj.text || obj.getText(),
-                            };
-                        }
-
-                        if (obj instanceof fabric.Image) {
-                            const objBackgroundColor = obj.backgroundColor;
-
-                            obj.backgroundColor = 'rgba(0,0,0,0)';
-
-                            additionalInfo = {
-                                data: obj.toDataURL({
-                                    format: 'png',
-                                    multiplier: 1,
-                                }),
-                            };
-
-                            obj.backgroundColor = objBackgroundColor;
-                        }
-                    }
-
-                    console.log('Object Info:', {
-                        ...additionalInfo,
-                        on_page: canvasEdition.page_index + 1,
-                        eleType: obj.eleType,
-                        offset_x: obj.left,
-                        offset_y: obj.top,
-                        width: obj.width,
-                        height: obj.height,
-                    });
-                });
-            });
-
-            $(document).trigger('signers-save');
-        };
-
         fabric.Canvas.prototype.getAbsoluteCoords = function (object) {
             return {
                 left: object.left + this._offset.left,

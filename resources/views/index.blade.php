@@ -8,7 +8,7 @@
         <script src="{{ url('vendor/esign/js/script.js') }}"></script>
     @endpushonce
 
-    <section class="header-bottom-section d-none">
+    <section class="header-bottom-section">
         <div class="container-fluid">
             <div
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
@@ -17,13 +17,13 @@
                 <div class="btn-toolbar mb-2 mb-md-0">
                     <div class="btn-group me-2">
                         <button
+                            id="draftBtn"
                             type="button"
+                            onclick="draftBtnAction()"
                             class="btn btn-outline-dark"
-                            data-bs-toggle="modal"
-                            data-bs-target="#sendRecipientModal"
                         >
-                            <i class="fas fa-user-plus"></i>
-                            {{ __('esign::label.send') }}
+                            <i class="fas fa-plane"></i>
+                            {{ __('esign::label.draft') }}
                         </button>
                     </div>
                     <button
@@ -68,6 +68,14 @@
 
     @pushonce('js')
         <script>
+            const draftBtnAction = () => {
+                $(document).trigger('loader:show');
+            };
+
+            const saveBtnAction = () => {
+                $(document).trigger('loader:show');
+            };
+
             $(() => {});
         </script>
     @endpushonce
