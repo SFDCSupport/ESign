@@ -4,6 +4,7 @@ namespace NIIT\ESign;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use NIIT\ESign\Models\Document;
@@ -34,7 +35,13 @@ class ESignServiceProvider extends ServiceProvider
     {
         (new ESign($this->app))->addMacros()->proceed();
 
-        Route::bind('signing_url', fn (string $value) => DocumentSigner::where('url', $value)->firstOrFail());
+        Route::bind('signing_url', function (string $value) {
+            $signer = DocumentSigner::where('url', $value)->firstOrFail();
+
+            Request::macro('signer', fn () => $signer);
+
+            return $signer;
+        });
 
         Route::name(self::NAME.'.')
             ->prefix(self::NAME)

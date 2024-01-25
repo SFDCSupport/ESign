@@ -2,7 +2,6 @@
 
 namespace NIIT\ESign\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use NIIT\ESign\Enum\ReadStatus;
 use NIIT\ESign\Enum\SigningStatus;
@@ -15,7 +14,7 @@ use NIIT\ESign\Models\DocumentSigner;
 
 class SigningController extends Controller
 {
-    public function index(Request $request, DocumentSigner $signer)
+    public function index(DocumentSigner $signer)
     {
         SigningProcessStarted::dispatch($signer);
 
