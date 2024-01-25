@@ -19,7 +19,7 @@
                         <button
                             id="draftBtn"
                             type="button"
-                            onclick="draftBtnAction()"
+                            onclick="saveBtnAction('draft')"
                             class="btn btn-outline-dark"
                         >
                             <i class="fas fa-plane"></i>
@@ -68,28 +68,27 @@
 
     @pushonce('js')
         <script>
-            const draftBtnAction = () => {
-                canvasEditions.forEach((cE) => {
-                    cE.getObjects().forEach((obj) => {
-                        console.log(obj);
-                    });
-                });
+            const saveBtnAction = (status = 'save') => {
+                if (undefined === canvasEditions) {
+                    toast('error', 'Something went wrong!');
+
+                    return;
+                }
+
+                let formData = new FormData();
 
                 $(document).trigger('loader:show');
-            };
 
-            const saveBtnAction = () => {
-                canvasEditions.forEach((canvasEdition, pageIndex) => {
-                    canvasEdition.forEachObject((obj) => {
-                        let additionalInfo = {};
-
+                canvasEditions.forEach((canvasEdition) => {
+                    canvasEdition.forEachObject((obj, index) => {
                         if (
                             obj instanceof fabric.Text ||
                             obj instanceof fabric.IText
                         ) {
-                            additionalInfo = {
-                                data: obj.text || obj.getText(),
-                            };
+                            formData.append(
+                                `element[${index}][data]`,
+                                obj.text || obj.getText(),
+                            );
                         }
 
                         if (obj instanceof fabric.Image) {
@@ -97,28 +96,76 @@
 
                             obj.backgroundColor = 'rgba(0,0,0,0)';
 
-                            additionalInfo = {
-                                data: obj.toDataURL({
-                                    format: 'png',
-                                    multiplier: 1,
-                                }),
-                            };
+                            formData.append(
+                                `element[${index}][data]`,
+                                dataURLtoBlob(
+                                    obj.toDataURL({
+                                        format: 'png',
+                                        multiplier: 1,
+                                    }),
+                                ),
+                            );
 
                             obj.backgroundColor = objBackgroundColor;
                         }
 
-                        console.log('Object Info:', {
-                            ...additionalInfo,
-                            on_page: canvasEdition.page_index + 1,
-                            eleType: obj.eleType,
-                            left: obj.left,
-                            top: obj.top,
-                            scale_x: obj.scale_x,
-                            scale_y: obj.scale_y,
-                            width: obj.width,
-                            height: obj.height,
-                        });
+                        formData.append(`element[${index}][id]`, obj.id);
+                        formData.append(`element[${index}][top]`, obj.top);
+                        formData.append(`element[${index}][left]`, obj.left);
+                        formData.append(`element[${index}][type]`, obj.eleType);
+                        formData.append(
+                            `element[${index}][on_page]`,
+                            obj.on_page,
+                        );
+                        formData.append(
+                            `element[${index}][scale_x]`,
+                            obj.scaleX,
+                        );
+                        formData.append(
+                            `element[${index}][scale_y]`,
+                            obj.scaleY,
+                        );
+                        formData.append(
+                            `element[${index}][width]`,
+                            obj.width * obj.scaleX,
+                        );
+                        formData.append(
+                            `element[${index}][height]`,
+                            obj.height * obj.scaleY,
+                        );
+                        formData.append(
+                            `element[${index}][bottom]`,
+                            (obj.top + obj.height) * obj.scaleY,
+                        );
                     });
+                });
+
+                formData.append('mode', status);
+                formData.append('_token', '{{ csrf_token() }}');
+
+                $.ajax({
+                    url: '{{ route('esign.signing.index', ['signing_url' => $signer->url]) }}',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    headers: {
+                        'X-ESign': 'your-custom-header-value',
+                    },
+                    success: (r) => {
+                        if (r.status === 1) {
+                            location.reload(true);
+
+                            return;
+                        }
+
+                        $(document).trigger('loader:hide');
+                        toast('error', r.msg ?? 'Something went wrong!');
+                    },
+                    error: (x) => {
+                        $(document).trigger('loader:hide');
+                        toast('error', x.responseText);
+                    },
                 });
             };
 

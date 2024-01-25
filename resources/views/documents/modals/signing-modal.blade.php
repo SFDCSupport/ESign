@@ -94,7 +94,7 @@
     <script>
         const signingModal = $('#signing_modal');
         let signaturePad = null;
-        let signingObj = null;
+        let signingData = null;
 
         const createSignaturePad = function () {
             signaturePad = new SignaturePad(
@@ -117,11 +117,11 @@
                     $('#signature-pad-reset').trigger('click');
                 })
                 .on('signing-modal:show', function (e, data) {
-                    if (!data.eleType) {
+                    if (!data.eleType || !data.id) {
                         return;
                     }
 
-                    signingObj = data.obj;
+                    signingData = data;
 
                     signingModal
                         .attr('data-ele-type', data.eleType)
@@ -131,7 +131,7 @@
                     signingModal.modal('hide');
                 })
                 .on('hidden.bs.modal', '#signing_modal', () => {
-                    signingObj = null;
+                    signingData = null;
                     $(document).trigger('signing-modal:clear:signature-pad');
                     signingModal.removeAttr('data-ele-type');
                     signingModal.find('input#typedSignature').val('');
@@ -142,9 +142,11 @@
                     signingModal.find('button.nav-link:first').trigger('click');
                 })
                 .on('click', '#addSigningBtn', (e) => {
-                    const eleType = signingModal.data('ele-type');
+                    const eleType =
+                        signingData?.eleType ??
+                        signingModal.attr('data-ele-type');
 
-                    if (blank(eleType) || blank(signingObj)) {
+                    if (blank(eleType) || blank(signingData)) {
                         toast('error', 'Something went wrong!');
 
                         return;
@@ -153,7 +155,9 @@
                     if (eleType === 'signature_pad') {
                         $(document).trigger('pad-to-fabric', {
                             eleType: eleType,
-                            obj: signingObj,
+                            id: signingData.id,
+                            obj: signingData.obj,
+                            on_page: signingData.on_page,
                             signature: signaturePad.toDataURL(),
                         });
                     }

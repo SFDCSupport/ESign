@@ -304,7 +304,6 @@
                     if (newData.elements) {
                         collect(newData.elements).each(
                             (newElementId, newElementUuid) => {
-                                console.log(newElementId, newElementUuid);
                                 const element = collect(
                                     item.elements,
                                 ).firstWhere('uuid', newElementUuid);

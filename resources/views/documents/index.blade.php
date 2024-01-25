@@ -74,31 +74,30 @@
                     </p>
                 </div>
                 <fieldset class="filter-wrapper">
-                    <div class="filter-wrapper-inner">  
-                   <div class="filters-group">  
-                    @foreach (__('esign::dropdown.document_filters') ?? [] as $key => $label)
-                        <a
-                            href="javascript: void(0);"
-                            class="filter-link @if($key === 'all') active @endif"
-                            data-filter="{{ $key }}"
-                        >
-                            {{ $label }}
-                        </a>
-                    @endforeach
-                    </div>
+                    <div class="filter-wrapper-inner">
+                        <div class="filters-group">
+                            @foreach (__('esign::dropdown.document_filters') ?? [] as $key => $label)
+                                <a
+                                    href="javascript: void(0);"
+                                    class="filter-link @if($key === 'all') active @endif"
+                                    data-filter="{{ $key }}"
+                                >
+                                    {{ $label }}
+                                </a>
+                            @endforeach
+                        </div>
 
-                    <div class="form-outline filter-search-sec">
-                        <input
-                            type="search"
-                            id="documentsSearch"
-                            class="form-control form-control-sm"
-                            placeholder="{{ __('esign::label.type_query') }}"
-                            aria-label="{{ __('esign::label.search') }}"
-                        />
+                        <div class="form-outline filter-search-sec">
+                            <input
+                                type="search"
+                                id="documentsSearch"
+                                class="form-control form-control-sm"
+                                placeholder="{{ __('esign::label.type_query') }}"
+                                aria-label="{{ __('esign::label.search') }}"
+                            />
+                        </div>
                     </div>
-                </div>
                 </fieldset>
-                
             </div>
             <div class="container">
                 <div class="row documentsContainer" id="documentsContainer">

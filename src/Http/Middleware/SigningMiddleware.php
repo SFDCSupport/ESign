@@ -23,7 +23,7 @@ class SigningMiddleware
         //        );
 
         abort_if(
-            $request->expectsJson() && ! $request->headers->contains('X-ESign'),
+            $request->expectsJson() && ! $request->headers->has('X-ESign'),
             403,
             'Forbidden'
         );

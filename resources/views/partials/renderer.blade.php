@@ -197,18 +197,25 @@
                                 .on('mouse:move', function (e) {})
                                 .on('mouse:down:before', function (e) {})
                                 .on('mouse:down', function (e) {
-                                    if (isSigning && e.target) {
-                                        const eleType = e.target.eleType;
-                                        const obj = e.target;
+                                    const target = e.target;
+
+                                    if (isSigning && target) {
+                                        const eleType = target.eleType;
+                                        const on_page = target.on_page;
+                                        const id = target.id;
+                                        const obj = target;
 
                                         switch (eleType) {
                                             case 'signature_pad':
                                                 const isSignatureObj = !blank(
                                                     obj.signature,
                                                 );
+
                                                 let data = {
                                                     eleType,
+                                                    on_page,
                                                     obj,
+                                                    id,
                                                 };
 
                                                 if (isSignatureObj) {
@@ -218,7 +225,7 @@
                                                             obj.signature,
                                                     };
                                                 }
-
+                                                console.log(target);
                                                 $(document).trigger(
                                                     isSignatureObj
                                                         ? 'fabric-to-pad'
@@ -704,7 +711,9 @@
                     });
             }
 
+            fabricObject.id = data.id ?? undefined;
             fabricObject.eleType = data.eleType;
+            fabricObject.on_page = data.on_page ?? undefined;
             fabricObject.label = data.label ?? undefined;
             fabricObject.uuid = _uuid;
             fabricObject.signer_uuid =
@@ -804,6 +813,8 @@
 
                             setFabricControl(newImg);
 
+                            newImg.id = obj.id;
+                            newImg.on_page = obj.on_page;
                             newImg.eleType = obj.eleType;
                             newImg.signature = obj.signature;
 
