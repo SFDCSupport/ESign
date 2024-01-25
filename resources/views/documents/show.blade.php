@@ -345,50 +345,20 @@
             };
 
             const saveBtnAction = () => {
-                if(undefined === canvasEditions) {
-                    toast('error', 'Something went wrong!');
-
-                    return;
-                }
-
                 canvasEditions.forEach((canvasEdition, pageIndex) => {
                     canvasEdition.forEachObject((obj) => {
                         let additionalInfo = {};
-
-                        if (isSigning) {
-                            if (
-                                obj instanceof fabric.Text ||
-                                obj instanceof fabric.IText
-                            ) {
-                                additionalInfo = {
-                                    data: obj.text || obj.getText(),
-                                };
-                            }
-
-                            if (obj instanceof fabric.Image) {
-                                const objBackgroundColor = obj.backgroundColor;
-
-                                obj.backgroundColor = 'rgba(0,0,0,0)';
-
-                                additionalInfo = {
-                                    data: obj.toDataURL({
-                                        format: 'png',
-                                        multiplier: 1,
-                                    }),
-                                };
-
-                                obj.backgroundColor = objBackgroundColor;
-                            }
-                        }
 
                         console.log('Object Info:', {
                             ...additionalInfo,
                             on_page: canvasEdition.page_index + 1,
                             eleType: obj.eleType,
-                            offset_x: obj.left,
-                            offset_y: obj.top,
-                            width: obj.width,
-                            height: obj.height,
+                            left: obj.left,
+                            top: obj.top,
+                            scale_x: obj.scaleX,
+                            scale_y: obj.scaleY,
+                            width: obj.width * obj.scaleX,
+                            height: obj.height * obj.scaleY,
                         });
                     });
                 });

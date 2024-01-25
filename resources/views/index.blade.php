@@ -69,14 +69,64 @@
     @pushonce('js')
         <script>
             const draftBtnAction = () => {
+                canvasEditions.forEach((cE) => {
+                    cE.getObjects().forEach((obj) => {
+                        console.log(obj);
+                    });
+                });
+
                 $(document).trigger('loader:show');
             };
 
             const saveBtnAction = () => {
-                $(document).trigger('loader:show');
+                canvasEditions.forEach((canvasEdition, pageIndex) => {
+                    canvasEdition.forEachObject((obj) => {
+                        let additionalInfo = {};
+
+                        if (
+                            obj instanceof fabric.Text ||
+                            obj instanceof fabric.IText
+                        ) {
+                            additionalInfo = {
+                                data: obj.text || obj.getText(),
+                            };
+                        }
+
+                        if (obj instanceof fabric.Image) {
+                            const objBackgroundColor = obj.backgroundColor;
+
+                            obj.backgroundColor = 'rgba(0,0,0,0)';
+
+                            additionalInfo = {
+                                data: obj.toDataURL({
+                                    format: 'png',
+                                    multiplier: 1,
+                                }),
+                            };
+
+                            obj.backgroundColor = objBackgroundColor;
+                        }
+
+                        console.log('Object Info:', {
+                            ...additionalInfo,
+                            on_page: canvasEdition.page_index + 1,
+                            eleType: obj.eleType,
+                            left: obj.left,
+                            top: obj.top,
+                            scale_x: obj.scale_x,
+                            scale_y: obj.scale_y,
+                            width: obj.width,
+                            height: obj.height,
+                        });
+                    });
+                });
             };
 
-            $(() => {});
+            $(() => {
+                $(document).on('signers-save', function (e, obj) {
+                    $(document).trigger('loader:show');
+                });
+            });
         </script>
     @endpushonce
 </x-esign::layout>

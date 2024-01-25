@@ -17,10 +17,10 @@ class SigningMiddleware
 
         $loadedModel = $request->signer()->loadMissing('document');
 
-        abort_if(
-            $loadedModel->document->status !== DocumentStatus::ACTIVE || $signer->signing_status !== SigningStatus::NOT_SIGNED,
-            404,
-        );
+        //        abort_if(
+        //            $loadedModel->document->status !== DocumentStatus::ACTIVE || $signer->signing_status !== SigningStatus::NOT_SIGNED,
+        //            404,
+        //        );
 
         abort_if(
             $request->expectsJson() && ! $request->headers->contains('X-ESign'),

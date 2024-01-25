@@ -15,7 +15,10 @@
     "require": {
         "php": ">=8.2",
         "illuminate/contracts": "^10.0",
-        "illuminate/support": "^10.0"
+        "illuminate/support": "^10.0",
+        "setasign/fpdf": "^1.8",
+        "setasign/fpdi": "^2.6",
+        "tecnickcom/tcpdf": "^6.6"
     },
     "require-dev": {
         "laravel/pint": "^1.13"

@@ -18,7 +18,7 @@ class DocumentSignerElement extends Model
     protected $fillable = [
         'id', 'signer_id', 'document_id',
         'type', 'label',
-        'on_page', 'offset_x', 'offset_y',
+        'on_page', 'left', 'top', 'scale_x', 'scale_y',
         'width', 'height', 'position',
     ];
 

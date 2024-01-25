@@ -83,8 +83,10 @@ return new class extends Migration
             $table->enum('type', ElementType::values());
             $table->string('label');
             $table->integer('on_page');
-            $table->integer('offset_x');
-            $table->integer('offset_y');
+            $table->double('left');
+            $table->double('top');
+            $table->double('scale_x')->nullable();
+            $table->double('scale_y')->nullable();
             $table->integer('width');
             $table->integer('height');
             $table->integer('position')->default(0);

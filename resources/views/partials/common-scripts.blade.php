@@ -214,10 +214,12 @@
                     uuid: obj.uuid,
                     on_page: obj.on_page,
                     eleType: obj.eleType,
-                    offset_x: obj.left,
-                    offset_y: obj.top,
+                    left: obj.left,
+                    top: obj.top,
                     width: obj.width,
                     height: obj.height,
+                    scale_x: obj.scale_x,
+                    scale_y: obj.scale_y,
                     is_required: obj.is_required,
                     signer_uuid: obj.signer_uuid,
                 });
@@ -246,10 +248,12 @@
                         .merge(
                             obj.from !== 'sidebar'
                                 ? {
-                                      offset_x: obj.left,
-                                      offset_y: obj.top,
-                                      width: obj.width,
-                                      height: obj.height,
+                                      left: obj.left,
+                                      top: obj.top,
+                                      width: obj.width * obj.scaleX,
+                                      height: obj.height * obj.scaleY,
+                                      scale_x: obj.scaleX,
+                                      scale_y: obj.scaleY,
                                   }
                                 : {
                                       is_required: obj.is_required ?? true,

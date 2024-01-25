@@ -122,11 +122,11 @@
                                 function (e) {
                                     e.preventDefault();
 
-                                    const offset_x =
+                                    const left =
                                         e.layerX ||
                                         e.originalEvent.layerX ||
                                         e.originalEvent.offsetX;
-                                    const offset_y =
+                                    const top =
                                         e.layerY ||
                                         e.originalEvent.layerY ||
                                         e.originalEvent.offsetY;
@@ -147,8 +147,8 @@
                                         text,
                                         height,
                                         width,
-                                        offset_x,
-                                        offset_y,
+                                        left,
+                                        top,
                                         fontSize,
                                     });
 
@@ -246,40 +246,21 @@
                                 .on('object:modified', function (e) {
                                     if (e.target) {
                                         const obj = e.target;
-                                        const canvas = obj.canvas;
 
-                                        if (obj.left < 0) {
-                                            obj.set({ left: 0 });
-                                        }
+                                        const width = obj.width * obj.scaleX;
+                                        const height = obj.height * obj.scaleY;
 
-                                        if (obj.top < 0) {
-                                            obj.set({ top: 0 });
-                                        }
-
-                                        if (
-                                            obj.left + obj.width >
-                                            canvas.width
-                                        ) {
-                                            obj.set({
-                                                left: canvas.width - obj.width,
-                                            });
-                                        }
-
-                                        if (
-                                            obj.top + obj.height >
-                                            canvas.height
-                                        ) {
-                                            obj.set({
-                                                top: canvas.height - obj.height,
-                                            });
-                                        }
-
-                                        canvas.renderAll();
+                                        const left = obj.left;
+                                        const top = obj.top;
 
                                         $(document).trigger(
                                             'signer:element:updated',
                                             {
                                                 ...obj,
+                                                width,
+                                                height,
+                                                left,
+                                                top,
                                                 from: 'canvas',
                                             },
                                         );
@@ -660,11 +641,13 @@
             let fabricObject;
 
             const commonStyles = {
-                left: data.offset_x,
-                top: data.offset_y,
+                left: data.left,
+                top: data.top,
                 width: data.width,
                 height: data.height,
                 fontSize: data.fontSize || data.height,
+                scaleX: data.scale_x ?? 1,
+                scaleY: data.scale_y ?? 1,
                 padding: 5,
                 fill: '#333333',
                 color: '#333333',
@@ -677,8 +660,6 @@
                 case 'signature_pad':
                     fabricObject = new fabric.IText(text, {
                         ...commonStyles,
-                        scaleX: 1,
-                        scaleY: 1,
                     });
                     break;
                 default:
