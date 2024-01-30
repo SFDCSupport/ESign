@@ -120,8 +120,9 @@
                                         __LABEL
                                     </label>
                                     <input
-                                        data-rule-required="true"
                                         data-rule-email="true"
+                                        data-rule-required="true"
+                                        data-rule-unique-signers-email="true"
                                         name="signer[__UUID][email]"
                                         class="form-control required"
                                         id="formControlInput__INDEX"
@@ -131,6 +132,23 @@
 
     $(() => {
         const signersForm = signersSendModal.find('form');
+
+        $.validator.addMethod(
+            'unique-signers-email',
+            function (v, e) {
+                let vals = $(e)
+                    .closest('div.signersHolder')
+                    .find('input[name$="[email]"]')
+                    .not(e)
+                    .map(function () {
+                        return $(this).val();
+                    })
+                    .get();
+
+                return !vals.includes(v);
+            },
+            '{{ __('esign::validations.unique_signers_email') }}',
+        );
 
         signersForm.validate({
             debug: false,
@@ -164,7 +182,10 @@
             .on('click', '#signersSaveBtn', () => {
                 if (!signersForm.valid()) {
                     console.log(signersForm.validate().errorList);
-                    toast('error', 'Validation error!');
+                    toast(
+                        'error',
+                        '{{ __('esign::validations.required_elements') }}',
+                    );
                     return;
                 }
 
@@ -172,6 +193,7 @@
                     const _t = $(this);
 
                     $(document).trigger('signer:updated', {
+                        from: 'signersModal',
                         uuid: _t.attr('data-signer-uuid'),
                         label: _t.attr('data-signer-label'),
                         email: _t.find('input[name$="[email]"]').val(),
