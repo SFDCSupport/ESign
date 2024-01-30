@@ -79,6 +79,7 @@
                     <input
                         class="form-check-input"
                         type="checkbox"
+                        name="notification_sequence"
                         id="preserve_order"
                     />
                     <label class="form-check-label" for="preserve_order">
@@ -166,7 +167,7 @@
                         .attr('data-target'),
                 ).addClass('d-none');
 
-                collect(loadedData || [])
+                collect(loadedData?.signers || [])
                     .sortBy('position')
                     .where('is_deleted', '!==', true)
                     .each((s, i) => {
@@ -199,6 +200,12 @@
                         email: _t.find('input[name$="[email]"]').val(),
                         position: _t.attr('data-signer-index'),
                     });
+
+                    const notification_sequence = signersForm
+                        .find('input[name="notification_sequence"]')
+                        .is(':checked')
+                        ? 'sync'
+                        : 'async';
                 });
             })
             .on('click', '#signersSendBtn', () => {});

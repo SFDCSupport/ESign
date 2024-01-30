@@ -131,12 +131,12 @@
         .on('signer:added', function (e, obj) {
             if (
                 obj.from === 'loadedData' ||
-                collect(loadedData).firstWhere('uuid', obj.uuid)
+                collect(loadedData.signers).firstWhere('uuid', obj.uuid)
             ) {
                 return;
             }
 
-            collect(loadedData).push({
+            collect(loadedData.signers).push({
                 uuid: obj.uuid,
                 label: obj.label,
                 position: obj.signer_index,
@@ -150,12 +150,12 @@
                 return;
             }
 
-            const index = collect(loadedData).search(
+            const index = collect(loadedData.signers).search(
                 (i) => i.uuid === obj.uuid,
             );
 
             if (index !== false) {
-                loadedData[index] = collect(loadedData[index])
+                loadedData.signers[index] = collect(loadedData.signers[index])
                     .merge({
                         label: obj.label,
                         position: obj.signer_index,
@@ -171,12 +171,12 @@
                 return;
             }
 
-            const index = collect(loadedData).search(
+            const index = collect(loadedData.signers).search(
                 (i) => i.uuid === obj.uuid,
             );
 
             if (index !== false) {
-                loadedData[index] = collect(loadedData[index])
+                loadedData.signers[index] = collect(loadedData.signers[index])
                     .merge({
                         is_deleted: true,
                     })
@@ -186,17 +186,19 @@
             console.log('signer:removed', loadedData);
         })
         .on('signer:reordered', function (e, obj) {
-            const signerA = collect(loadedData).firstWhere('uuid', obj.uuid);
-            const signerB = collect(loadedData).firstWhere(
-                'uuid',
-                obj.withUuid,
+            const indexA = collect(loadedData.signers).search(
+                (i) => i.uuid === obj.uuid,
+            );
+            const indexB = collect(loadedData.signers).search(
+                (i) => i.uuid === obj.withUuid,
             );
 
-            if (signerA && signerB) {
-                const tempPosition = signerA.position;
+            if (indexA !== false && indexB !== false) {
+                const tempPosition = loadedData.signers[indexA].position;
 
-                signerA.position = signerB.position;
-                signerB.position = tempPosition;
+                loadedData.signers[indexA].position =
+                    loadedData.signers[indexB].position;
+                loadedData.signers[indexB].position = tempPosition;
             }
 
             console.log('signer:reordered', loadedData);
@@ -206,12 +208,12 @@
                 return;
             }
 
-            const signerIndex = collect(loadedData).search(
+            const signerIndex = collect(loadedData.signers).search(
                 (i) => i.uuid === obj.signer_uuid,
             );
 
             if (signerIndex !== false) {
-                loadedData[signerIndex].elements.push({
+                loadedData.signers[signerIndex].elements.push({
                     uuid: obj.uuid,
                     on_page: obj.on_page,
                     eleType: obj.eleType,
@@ -233,34 +235,37 @@
                 return;
             }
 
-            const signerIndex = collect(loadedData).search(
+            const signerIndex = collect(loadedData.signers).search(
                 (i) => i.uuid === obj.signer_uuid,
             );
 
             if (signerIndex !== false) {
                 const elementIndex = collect(
-                    loadedData[signerIndex].elements,
+                    loadedData.signers[signerIndex].elements,
                 ).search((e) => e.uuid === obj.uuid);
 
                 if (elementIndex !== false) {
-                    loadedData[signerIndex].elements[elementIndex] = collect(
-                        loadedData[signerIndex].elements[elementIndex],
-                    )
-                        .merge(
-                            obj.from !== 'sidebar'
-                                ? {
-                                      left: obj.left,
-                                      top: obj.top,
-                                      width: obj.width * obj.scaleX,
-                                      height: obj.height * obj.scaleY,
-                                      scale_x: obj.scaleX,
-                                      scale_y: obj.scaleY,
-                                  }
-                                : {
-                                      is_required: obj.is_required ?? true,
-                                  },
+                    loadedData.signers[signerIndex].elements[elementIndex] =
+                        collect(
+                            loadedData.signers[signerIndex].elements[
+                                elementIndex
+                            ],
                         )
-                        .all();
+                            .merge(
+                                obj.from !== 'sidebar'
+                                    ? {
+                                          left: obj.left,
+                                          top: obj.top,
+                                          width: obj.width * obj.scaleX,
+                                          height: obj.height * obj.scaleY,
+                                          scale_x: obj.scaleX,
+                                          scale_y: obj.scaleY,
+                                      }
+                                    : {
+                                          is_required: obj.is_required ?? true,
+                                      },
+                            )
+                            .all();
                 }
             }
 
@@ -271,46 +276,53 @@
                 return;
             }
 
-            const signerIndex = collect(loadedData).search(
+            const signerIndex = collect(loadedData.signers).search(
                 (i) => i.uuid === obj.signer_uuid,
             );
 
             if (signerIndex !== false) {
                 const elementIndex = collect(
-                    loadedData[signerIndex].elements,
+                    loadedData.signers[signerIndex].elements,
                 ).search((e) => e.uuid === obj.uuid);
 
                 if (elementIndex !== false) {
-                    loadedData[signerIndex].elements[elementIndex] = collect(
-                        loadedData[signerIndex].elements[elementIndex],
-                    )
-                        .merge({
-                            is_deleted: true,
-                        })
-                        .all();
+                    loadedData.signers[signerIndex].elements[elementIndex] =
+                        collect(
+                            loadedData.signers[signerIndex].elements[
+                                elementIndex
+                            ],
+                        )
+                            .merge({
+                                is_deleted: true,
+                            })
+                            .all();
                 }
             }
 
             console.log('signer:element:removed', loadedData);
         })
         .on('process-ids', function (e, obj) {
-            const loadedDataCollection = collect(loadedData);
+            const loadedDataCollection = collect(loadedData.signers);
 
             collect(obj).each((newData, uuid) => {
-                const item = loadedDataCollection.firstWhere('uuid', uuid);
+                const itemIndex = loadedDataCollection.search(
+                    (i) => i.uuid === uuid,
+                );
 
-                if (item) {
-                    item.id = newData.id;
+                if (itemIndex !== false) {
+                    loadedData.signers[itemIndex].id = newData.id;
 
                     if (newData.elements) {
                         collect(newData.elements).each(
                             (newElementId, newElementUuid) => {
-                                const element = collect(
-                                    item.elements,
-                                ).firstWhere('uuid', newElementUuid);
+                                const elementIndex = collect(
+                                    loadedData.signers[itemIndex].elements,
+                                ).search((i) => i.uuid === newElementUuid);
 
-                                if (element) {
-                                    element.id = newElementId;
+                                if (elementIndex !== false) {
+                                    loadedData.signers[itemIndex].elements[
+                                        elementIndex
+                                    ].id = newElementId;
                                 }
                             },
                         );

@@ -33,13 +33,16 @@ class SignerController extends Controller
             ], [
                 'label' => $signer['label'] ?? __('esign::label.nth_signer', ['nth' => ordinal($i)]),
                 'position' => $signer['position'] ?? ($i + 1),
-                'deleted_at' => $isSignerDeleted ? now() : null,
                 'deleted_by' => $isSignerDeleted ? $request->user()->id : null,
             ]);
 
+            if ($isSignerDeleted) {
+                $signerModel->delete();
+            }
+
             $response[$signer['uuid']]['id'] = $signerModel->id;
 
-            foreach ($signer['elements'] ?? [] as $index => $element) {
+            foreach (($signer['elements'] ?? []) as $index => $element) {
                 $isElementDeleted = $element['is_deleted'] ?? false;
 
                 /** @var DocumentSignerElement $elementModel */
@@ -55,12 +58,15 @@ class SignerController extends Controller
                     'height' => $element['height'],
                     'left' => $element['left'],
                     'top' => $element['top'],
-                    'scale_x' => $element['scale_x'],
-                    'scale_y' => $element['scale_y'],
+                    'scale_x' => $element['scale_x'] ?? null,
+                    'scale_y' => $element['scale_y'] ?? null,
                     'position' => $element['position'] ?? ($index + 1),
-                    'deleted_at' => $isElementDeleted ? now() : null,
                     'deleted_by' => $isElementDeleted ? $request->user()->id : null,
                 ]);
+
+                if ($isElementDeleted) {
+                    $elementModel->delete();
+                }
 
                 $response[$signer['uuid']]['elements'][$element['uuid']] = $elementModel->id;
             }

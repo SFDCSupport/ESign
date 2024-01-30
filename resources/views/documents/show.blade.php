@@ -472,27 +472,27 @@
                         $("#recipientsContainer span.selectedSigner").text(_t.text())
                             .attr("data-active-signer", uuid);
                     }).on("signers-save", function(e) {
-                    e.preventDefault();
+                        e.preventDefault();
 
-                    setTimeout(() => $(document).trigger("loader:show"), 0);
+                        setTimeout(() => $(document).trigger("loader:show"), 0);
 
-                    $.post('{{ route('esign.documents.signers.store', $document) }}', $.extend({}, { signers: loadedData }, {
-                        _token: '{{ csrf_token() }}',
-                        document_id: '{{ $document->id }}',
-                        mode: "create"
-                    })).done((r) => {
-                        if (r.data) {
-                            $(document).trigger("process-ids", r.data);
-                        }
+                        $.post('{{ route('esign.documents.signers.store', $document) }}', $.extend({}, loadedData, {
+                            _token: '{{ csrf_token() }}',
+                            document_id: '{{ $document->id }}',
+                            mode: "create"
+                        })).done((r) => {
+                            if (r.data) {
+                                $(document).trigger("process-ids", r.data);
+                            }
 
-                        $(document).trigger("loader:hide");
-                    }).fail((x) => {
-                        toast("error", x.responseText);
-                        $(document).trigger("loader:hide");
+                            $(document).trigger("loader:hide");
+                        }).fail((x) => {
+                            toast("error", x.responseText);
+                            $(document).trigger("loader:hide");
+                        });
+                    }).on("click", ".dropdown_click .selecteddropdown", function(e) {
+                        $(".dropdown_click .drop-content").slideToggle();
                     });
-                }).on("click", ".dropdown_click .selecteddropdown", function(e) {
-                    $(".dropdown_click .drop-content").slideToggle();
-                });
 
                 signerUpdate();
             });

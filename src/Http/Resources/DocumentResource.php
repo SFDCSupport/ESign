@@ -19,6 +19,8 @@ class DocumentResource extends JsonResource
             'signers' => SignerResource::collection(
                 $this->whenLoaded('signers'),
             ),
+            'status' => $this->status,
+            'notification_sequence' => $this->notification_sequence,
         ];
     }
 }

@@ -830,7 +830,9 @@
                     container: pdfViewer[0],
                 });
 
-                loadedData = collect(@json(count($formattedData ?? 0) > 0 ? $formattedData : [['label' => '1st Signer', 'position' => 1, 'elements' => []]]))
+                loadedData = @json(count($formattedData ?? 0) > 0 ? $formattedData : ['signers' => [['label' => '1st Signer', 'position' => 1, 'elements' => []]]]);
+                loadedData.signers = collect(loadedData.signers)
+                    .sortBy('position')
                     .map((item, i) => {
                         const signerUuid = generateUniqueId('s_');
 
@@ -861,12 +863,13 @@
                     .all();
 
                 $(document).on('canvas:ready', () => {
-                    if (collect(loadedData).isNotEmpty()) {
+                    if (collect(loadedData.signers).isNotEmpty()) {
                         canvasEditions.forEach((canvasEdition) => {
                             canvasEdition.clear();
 
-                            collect(loadedData)
+                            collect(loadedData.signers)
                                 .pluck('elements')
+                                .sortBy('position')
                                 .flatten(1)
                                 .each((objInfo, i) => {
                                     const objPage = objInfo?.on_page;

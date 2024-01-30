@@ -46,7 +46,11 @@ class DocumentController extends Controller
 
         $loadedRelations = $document->loadMissing('document', 'signers.elements');
 
-        $formattedData = SignerResource::collection($loadedRelations->signers);
+        $formattedData = [
+            'status' => $document->status,
+            'notification_sequence' => $document->notification_sequence,
+            'signers' => SignerResource::collection($loadedRelations->signers),
+        ];
 
         return view('esign::documents.show', compact(
             'document',
