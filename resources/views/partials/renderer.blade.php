@@ -561,7 +561,7 @@
             mouseUpHandler: deleteObject,
             render: renderIcon(fabricDeleteImg),
             cornerSize: 18,
-            visible: isSigning,
+            visible: !isSigning,
         });
 
         fabric.Object.prototype.controls.cloneControl = new fabric.Control({
@@ -573,7 +573,7 @@
             mouseUpHandler: cloneObject,
             render: renderIcon(fabricCloneImg),
             cornerSize: 18,
-            visible: isSigning,
+            visible: !isSigning,
         });
 
         fabric.Canvas.prototype.getAbsoluteCoords = function (object) {
