@@ -21,7 +21,7 @@
                             type="button"
                             class="btn btn-outline-dark"
                             data-bs-toggle="modal"
-                            data-bs-target="#send_recipient_modal"
+                            data-bs-target="#signers_send_modal"
                         >
                             <i class="fas fa-user-plus"></i>
                             {{ __('esign::label.send') }}
@@ -87,7 +87,7 @@
                         data-url="{{ $document->document->url }}"
                     ></div>
 
-                    @include('esign::documents.modals.send-mail-to-recipient', compact('document'))
+                    @include('esign::documents.modals.signers-send', compact('document'))
                 @endif
 
                 @php($dropZoneID = \Illuminate\Support\Str::random(12))

@@ -90,5 +90,5 @@
         </section>
     @endif
 
-    @include('esign::documents.modals.send-mail-to-recipient', compact('document'))
+    @include('esign::documents.modals.signers-send', compact('document'))
 </x-esign::layout>

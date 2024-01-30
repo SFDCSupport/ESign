@@ -159,6 +159,7 @@
                     .merge({
                         label: obj.label,
                         position: obj.signer_index,
+                        email: obj.email || null,
                     })
                     .all();
             }

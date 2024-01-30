@@ -1,5 +1,5 @@
 <x-esign::modal
-    id="send_recipient"
+    id="signers_send"
     backdrop="static"
     :title="__('esign::label.signers_detail')"
 >
@@ -90,8 +90,21 @@
     </x-slot>
 
     <x-slot name="footer">
-        <div class="Submissions-btns-grp w-100">
-            <button type="button" class="btn btn-sm btn-dark add-part-btn">
+        <div class="col">
+            <button
+                type="button"
+                class="btn btn-sm btn-primary w-100"
+                id="signersSaveBtn"
+            >
+                {{ __('esign::label.save') }}
+            </button>
+        </div>
+        <div class="col-8">
+            <button
+                type="button"
+                class="btn btn-sm btn-dark w-100"
+                id="signersSendBtn"
+            >
                 {{ __('esign::label.send') }}
             </button>
         </div>
@@ -99,42 +112,73 @@
 </x-esign::modal>
 
 <script>
+    const signersSendModal = $('#signers_send_modal');
     const _signerEmailTemplate = `<div class="dark-bg-card p-2 py-3 rounded mb-3 signerEmail"
-                                    data-signer-index="__INDEX" data-signer-uuid="__UUID">
+                                    data-signer-index="__INDEX" data-signer-uuid="__UUID"
+                                    data-signer-label="__LABEL">
                                     <label for="formControlInput__INDEX" class="col-form-label pt-1 pb-1">
                                         __LABEL
                                     </label>
                                     <input
-                                        name="email"
-                                        class="form-control"
+                                        data-rule-required="true"
+                                        data-rule-email="true"
+                                        name="signer[__UUID][email]"
+                                        class="form-control required"
                                         id="formControlInput__INDEX"
-                                        value="__EMAIL"
+                                        value="__EMAIL" type="email"
                                         placeholder="{{ __('esign::label.type_email_here') }}" />
                                   </div>`;
 
     $(() => {
-        $(document).on('shown.bs.modal', '#send_recipient_modal', function (e) {
-            const signersHolderEle = $('#send_recipient_modal .signersHolder');
+        const signersForm = signersSendModal.find('form');
 
-            signersHolderEle.html('');
-            $(
-                $('#send_recipient_modal .editmessage-link').attr(
-                    'data-target',
-                ),
-            ).addClass('d-none');
-
-            collect(loadedData || [])
-                .sortBy('position')
-                .where('is_deleted', '!==', true)
-                .each((s, i) => {
-                    signersHolderEle.append(
-                        $.trim(_signerEmailTemplate)
-                            .replace(/__UUID/gi, s.uuid)
-                            .replace(/__LABEL/gi, s.label)
-                            .replace(/__EMAIL/gi, s.email ?? '')
-                            .replace(/__INDEX/gi, s.position ?? i + 1),
-                    );
-                });
+        signersForm.validate({
+            debug: false,
         });
+
+        $(document)
+            .on('shown.bs.modal', '#signers_send_modal', () => {
+                const signersHolderEle =
+                    signersSendModal.find('.signersHolder');
+
+                signersHolderEle.html('');
+                $(
+                    signersSendModal
+                        .find('.editmessage-link')
+                        .attr('data-target'),
+                ).addClass('d-none');
+
+                collect(loadedData || [])
+                    .sortBy('position')
+                    .where('is_deleted', '!==', true)
+                    .each((s, i) => {
+                        signersHolderEle.append(
+                            $.trim(_signerEmailTemplate)
+                                .replace(/__UUID/gi, s.uuid)
+                                .replace(/__LABEL/gi, s.label)
+                                .replace(/__EMAIL/gi, s.email ?? '')
+                                .replace(/__INDEX/gi, s.position ?? i + 1),
+                        );
+                    });
+            })
+            .on('click', '#signersSaveBtn', () => {
+                if (!signersForm.valid()) {
+                    console.log(signersForm.validate().errorList);
+                    toast('error', 'Validation error!');
+                    return;
+                }
+
+                signersForm.find('div[data-signer-uuid]').each(function () {
+                    const _t = $(this);
+
+                    $(document).trigger('signer:updated', {
+                        uuid: _t.attr('data-signer-uuid'),
+                        label: _t.attr('data-signer-label'),
+                        email: _t.find('input[name$="[email]"]').val(),
+                        position: _t.attr('data-signer-index'),
+                    });
+                });
+            })
+            .on('click', '#signersSendBtn', () => {});
     });
 </script>

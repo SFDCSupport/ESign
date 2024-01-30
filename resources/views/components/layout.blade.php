@@ -70,6 +70,11 @@
         <script src="{{ url('vendor/esign/js/bootstrap.min.js') }}"></script>
         <script src="{{ url('vendor/esign/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ url('vendor/esign/js/jquery.validate.js') }}"></script>
+        <script>
+            $.validator.addClassRules('required', {
+                required: true,
+            });
+        </script>
         @stack('footJs')
         <x-esign::bootbox />
         <x-esign::notify />
