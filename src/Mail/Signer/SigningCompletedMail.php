@@ -6,12 +6,12 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use NIIT\ESign\Mail\Mailable;
 use NIIT\ESign\Models\Document;
-use NIIT\ESign\Models\DocumentSigner;
+use NIIT\ESign\Models\Signer;
 use Symfony\Component\Mime\Email;
 
 class SigningCompletedMail extends Mailable
 {
-    public function __construct(public Document $document, public DocumentSigner $signer)
+    public function __construct(public Document $document, public Signer $signer)
     {
     }
 

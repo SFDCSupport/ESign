@@ -4,8 +4,8 @@ namespace NIIT\ESign\Http\Controllers;
 
 use NIIT\ESign\Http\Requests\SignerRequest;
 use NIIT\ESign\Models\Document;
-use NIIT\ESign\Models\DocumentSigner;
-use NIIT\ESign\Models\DocumentSignerElement;
+use NIIT\ESign\Models\Signer;
+use NIIT\ESign\Models\SignerElement;
 
 class SignerController extends Controller
 {
@@ -26,15 +26,21 @@ class SignerController extends Controller
             $documentId = $request->document_id;
             $isSignerDeleted = $signer['is_deleted'] ?? false;
 
-            /** @var DocumentSigner $signerModel */
-            $signerModel = $document->signers()->updateOrCreate([
-                'id' => $signer['id'] ?? null,
-                'document_id' => $documentId,
-            ], [
+            $update = [
                 'label' => $signer['label'] ?? __('esign::label.nth_signer', ['nth' => ordinal($i)]),
                 'position' => $signer['position'] ?? ($i + 1),
                 'deleted_by' => $isSignerDeleted ? $request->user()->id : null,
-            ]);
+            ];
+
+            if (isset($signer['email'])) {
+                $update['email'] = $signer['email'];
+            }
+
+            /** @var Signer $signerModel */
+            $signerModel = $document->signers()->updateOrCreate([
+                'id' => $signer['id'] ?? null,
+                'document_id' => $documentId,
+            ], $update);
 
             if ($isSignerDeleted) {
                 $signerModel->delete();
@@ -45,7 +51,7 @@ class SignerController extends Controller
             foreach (($signer['elements'] ?? []) as $index => $element) {
                 $isElementDeleted = $element['is_deleted'] ?? false;
 
-                /** @var DocumentSignerElement $elementModel */
+                /** @var SignerElement $elementModel */
                 $elementModel = $signerModel->elements()->updateOrCreate([
                     'id' => $element['id'] ?? null,
                     'signer_id' => $signerModel->id,
@@ -78,7 +84,7 @@ class SignerController extends Controller
         ])->notify('Success');
     }
 
-    public function destroy(SignerRequest $request, Document $document, DocumentSigner $signer)
+    public function destroy(SignerRequest $request, Document $document, Signer $signer)
     {
     }
 

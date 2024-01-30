@@ -10,10 +10,10 @@ use NIIT\ESign\Enum\ReadStatus;
 use NIIT\ESign\Enum\SendStatus;
 use NIIT\ESign\Enum\SigningStatus;
 
-class DocumentSigner extends Model
+class Signer extends Model
 {
     /** @var string */
-    protected $table = 'e_document_signers';
+    protected $table = 'e_signers';
 
     /**
      * @var array<int,string>
@@ -35,7 +35,7 @@ class DocumentSigner extends Model
     ];
 
     /**
-     * @return BelongsTo<Document, DocumentSigner>
+     * @return BelongsTo<Document, Signer>
      */
     public function document()
     {
@@ -46,23 +46,23 @@ class DocumentSigner extends Model
     }
 
     /**
-     * @return HasMany<DocumentSignerElement>
+     * @return HasMany<SignerElement>
      */
     public function elements()
     {
         return $this->hasMany(
-            related: DocumentSignerElement::class,
+            related: SignerElement::class,
             foreignKey: 'signer_id'
         );
     }
 
     /**
-     * @return HasMany<DocumentSubmission>
+     * @return HasMany<Submission>
      */
     public function submissions()
     {
         return $this->hasMany(
-            related: DocumentSubmission::class,
+            related: Submission::class,
             foreignKey: 'signer_id'
         );
     }
@@ -86,7 +86,7 @@ class DocumentSigner extends Model
                     return 1;
                 }
 
-                $maxPriority = DocumentSigner::where('document_id', $attributes['document_id'])
+                $maxPriority = Signer::where('document_id', $attributes['document_id'])
                     ->max('position') ?? 0;
 
                 return $maxPriority + 1;

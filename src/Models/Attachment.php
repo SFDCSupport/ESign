@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use NIIT\ESign\Enum\AttachmentType;
 
-class DocumentAttachment extends Model
+class Attachment extends Model
 {
     /** @var string */
-    protected $table = 'e_document_attachments';
+    protected $table = 'e_attachments';
 
     /**
      * @var array<int,string>

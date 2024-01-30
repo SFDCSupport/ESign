@@ -18,10 +18,10 @@ return new class extends Migration
         Schema::disableForeignKeyConstraints();
         $this->dropIfTableExists('e_templates');
         $this->dropIfTableExists('e_documents');
-        $this->dropIfTableExists('e_document_attachments');
-        $this->dropIfTableExists('e_document_signers');
-        $this->dropIfTableExists('e_document_signer_elements');
-        $this->dropIfTableExists('e_document_submissions');
+        $this->dropIfTableExists('e_attachments');
+        $this->dropIfTableExists('e_signers');
+        $this->dropIfTableExists('e_signer_elements');
+        $this->dropIfTableExists('e_submissions');
         $this->dropIfTableExists('e_audits');
         Schema::enableForeignKeyConstraints();
 
@@ -46,7 +46,7 @@ return new class extends Migration
             $table->eSignUserStamps();
         });
 
-        Schema::create('e_document_attachments', function (Blueprint $table) {
+        Schema::create('e_attachments', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuidMorphs('model');
             $table->enum('type', AttachmentType::values())->default(AttachmentType::DOCUMENT);
@@ -61,7 +61,7 @@ return new class extends Migration
             $table->eSignUserStamps();
         });
 
-        Schema::create('e_document_signers', function (Blueprint $table) {
+        Schema::create('e_signers', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('document_id')->constrained('e_documents');
             $table->uuid('url')->unique();
@@ -76,10 +76,10 @@ return new class extends Migration
             $table->eSignUserStamps();
         });
 
-        Schema::create('e_document_signer_elements', function (Blueprint $table) {
+        Schema::create('e_signer_elements', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('document_id')->constrained('e_documents');
-            $table->foreignUuid('signer_id')->constrained('e_document_signers');
+            $table->foreignUuid('signer_id')->constrained('e_signers');
             $table->enum('type', ElementType::values());
             $table->string('label');
             $table->integer('on_page');
@@ -95,11 +95,11 @@ return new class extends Migration
             $table->eSignUserStamps();
         });
 
-        Schema::create('e_document_submissions', function (Blueprint $table) {
+        Schema::create('e_submissions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('document_id')->constrained('e_documents');
-            $table->foreignUuid('signer_id')->constrained('e_document_signers');
-            $table->foreignUuid('signer_element_id')->constrained('e_document_signer_elements');
+            $table->foreignUuid('signer_id')->constrained('e_signers');
+            $table->foreignUuid('signer_element_id')->constrained('e_signer_elements');
             $table->longText('data');
             $table->timestamps();
             $table->softDeletes();
@@ -109,27 +109,24 @@ return new class extends Migration
         Schema::create('e_audits', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('document_id')->constrained('e_documents');
-            $table->foreignUuid('signer_id')->nullable()->constrained('e_document_signers');
+            $table->foreignUuid('signer_id')->nullable()->constrained('e_signers');
             $table->string('event');
             $table->json('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->eSignUserStamps('restored_at');
         });
-
-        \Illuminate\Support\Facades\DB::table('migrations')
-            ->where('migration', '=', 'esign_migrations')
-            ->delete();
     }
 
     public function down(): void
     {
         Schema::drop('e_audits');
-        Schema::drop('e_document_submissions');
-        Schema::drop('e_document_signer_elements');
-        Schema::drop('e_document_signers');
+        Schema::drop('e_submissions');
+        Schema::drop('e_signer_elements');
+        Schema::drop('e_signers');
         Schema::drop('e_documents');
         Schema::drop('e_templates');
+        Schema::drop('e_attachments');
     }
 
     protected function dropIfTableExists(string $table): void

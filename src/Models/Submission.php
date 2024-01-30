@@ -4,10 +4,10 @@ namespace NIIT\ESign\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class DocumentSubmission extends Model
+class Submission extends Model
 {
     /** @var string */
-    protected $table = 'e_document_submissions';
+    protected $table = 'e_submissions';
 
     /**
      * @var array<int,string>
@@ -23,7 +23,7 @@ class DocumentSubmission extends Model
     protected $casts = [];
 
     /**
-     * @return BelongsTo<Document, DocumentSubmission>
+     * @return BelongsTo<Document, Submission>
      */
     public function document()
     {
@@ -34,23 +34,23 @@ class DocumentSubmission extends Model
     }
 
     /**
-     * @return BelongsTo<DocumentSigner, DocumentSubmission>
+     * @return BelongsTo<Signer, Submission>
      */
     public function signer()
     {
         return $this->belongsTo(
-            related: DocumentSigner::class,
+            related: Signer::class,
             foreignKey: 'signer_id'
         );
     }
 
     /**
-     * @return BelongsTo<DocumentSignerElement, DocumentSubmission>
+     * @return BelongsTo<SignerElement, Submission>
      */
     public function signerElement()
     {
         return $this->belongsTo(
-            related: DocumentSignerElement::class,
+            related: SignerElement::class,
             foreignKey: 'signer_element_id'
         );
     }

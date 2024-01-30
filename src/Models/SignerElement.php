@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use NIIT\ESign\Enum\ElementType;
 
-class DocumentSignerElement extends Model
+class SignerElement extends Model
 {
     /** @var string */
-    protected $table = 'e_document_signer_elements';
+    protected $table = 'e_signer_elements';
 
     /**
      * @var array<int,string>
@@ -30,7 +30,7 @@ class DocumentSignerElement extends Model
     ];
 
     /**
-     * @return BelongsTo<Document, DocumentSignerElement>
+     * @return BelongsTo<Document, SignerElement>
      */
     public function document()
     {
@@ -41,23 +41,23 @@ class DocumentSignerElement extends Model
     }
 
     /**
-     * @return BelongsTo<DocumentSigner, DocumentSignerElement>
+     * @return BelongsTo<Signer, SignerElement>
      */
     public function signer()
     {
         return $this->belongsTo(
-            related: DocumentSigner::class,
+            related: Signer::class,
             foreignKey: 'signer_id',
         );
     }
 
     /**
-     * @return HasOne<DocumentSubmission>
+     * @return HasOne<Submission>
      */
     public function submission()
     {
         return $this->hasOne(
-            related: DocumentSubmission::class,
+            related: Submission::class,
             foreignKey: 'signer_element_id'
         );
     }
@@ -74,7 +74,7 @@ class DocumentSignerElement extends Model
                     return 1;
                 }
 
-                $maxPriority = DocumentSignerElement::where([
+                $maxPriority = SignerElement::where([
                     'signer_id' => $attributes['signer_id'],
                     'document_id' => $attributes['document_id'],
                 ])->max('position') ?? 0;

@@ -5,11 +5,11 @@ namespace NIIT\ESign\Concerns;
 use App\Models\User;
 use NIIT\ESign\Models\Audit;
 use NIIT\ESign\Models\Document;
-use NIIT\ESign\Models\DocumentSigner;
+use NIIT\ESign\Models\Signer;
 
 trait Auditable
 {
-    public function logAuditTrait(Document $document, string $event, ?DocumentSigner $signer = null, ?array $metadata = null): Audit
+    public function logAuditTrait(Document $document, string $event, ?Signer $signer = null, ?array $metadata = null): Audit
     {
         $model = new Audit;
 

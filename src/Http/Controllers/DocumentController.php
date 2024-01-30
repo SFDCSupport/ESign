@@ -49,7 +49,11 @@ class DocumentController extends Controller
         $formattedData = [
             'status' => $document->status,
             'notification_sequence' => $document->notification_sequence,
-            'signers' => SignerResource::collection($loadedRelations->signers),
+            'signers' => $this->mergeWhen(
+                $loadedRelations->signers->count() > 0,
+                SignerResource::collection($loadedRelations->signers),
+                [['label' => '1st Signer', 'position' => 1, 'elements' => []]]
+            )->data,
         ];
 
         return view('esign::documents.show', compact(

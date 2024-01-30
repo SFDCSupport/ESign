@@ -6,7 +6,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use NIIT\ESign\Models\Document;
-use NIIT\ESign\Models\DocumentSigner;
+use NIIT\ESign\Models\Signer;
 
 class SigningProcessCompleted
 {
@@ -14,7 +14,7 @@ class SigningProcessCompleted
 
     public function __construct(
         public Document $document,
-        public DocumentSigner $signer
+        public Signer $signer
     ) {
     }
 }

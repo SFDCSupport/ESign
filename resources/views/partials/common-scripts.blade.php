@@ -158,7 +158,7 @@
                 loadedData.signers[index] = collect(loadedData.signers[index])
                     .merge({
                         label: obj.label,
-                        position: obj.signer_index,
+                        position: obj.position ?? obj.signer_index,
                         email: obj.email || null,
                     })
                     .all();

@@ -8,9 +8,9 @@
 namespace NIIT\ESign\Observers;
 
 use Illuminate\Support\Str;
-use NIIT\ESign\Models\DocumentSigner as Signer;
+use NIIT\ESign\Models\Signer;
 
-class DocumentSignerObserver
+class SignerObserver
 {
     public function creating(Signer $signer): void
     {

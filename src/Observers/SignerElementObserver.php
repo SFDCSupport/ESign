@@ -2,9 +2,9 @@
 
 namespace NIIT\ESign\Observers;
 
-use NIIT\ESign\Models\DocumentSignerElement as Element;
+use NIIT\ESign\Models\SignerElement as Element;
 
-class DocumentSignerElementObserver
+class SignerElementObserver
 {
     public function creating(Element $element): void
     {

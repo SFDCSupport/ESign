@@ -3,13 +3,13 @@
 namespace NIIT\ESign\Support;
 
 use Illuminate\Support\Str;
-use NIIT\ESign\Models\DocumentSigner;
+use NIIT\ESign\Models\Signer;
 
 class MailTracker
 {
     protected ?string $documentId;
 
-    public function injectTrackingPixel(DocumentSigner $signer, $html)
+    public function injectTrackingPixel(Signer $signer, $html)
     {
         $tracking_pixel = '<img border=0 width=1 alt="" height=1 src="'.route('esign.signing.mail-pixel', $signer).'" />';
 

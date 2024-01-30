@@ -48,12 +48,12 @@ class Document extends Model implements Attachable, HasLocalePreference
     ];
 
     /**
-     * @return HasMany<DocumentSigner>
+     * @return HasMany<Signer>
      */
     public function signers()
     {
         return $this->hasMany(
-            related: DocumentSigner::class,
+            related: Signer::class,
             foreignKey: 'document_id'
         );
     }

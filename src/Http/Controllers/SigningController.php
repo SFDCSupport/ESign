@@ -12,13 +12,13 @@ use NIIT\ESign\Events\SigningProcessStarted;
 use NIIT\ESign\Events\SigningStatusChanged;
 use NIIT\ESign\Http\Requests\SigningRequest;
 use NIIT\ESign\Http\Resources\SignerResource;
-use NIIT\ESign\Models\DocumentSigner;
+use NIIT\ESign\Models\Signer;
 use setasign\Fpdi\Fpdi;
 use setasign\Fpdi\PdfParser\StreamReader;
 
 class SigningController extends Controller
 {
-    public function index(DocumentSigner $signer)
+    public function index(Signer $signer)
     {
         SigningProcessStarted::dispatch($signer);
 
@@ -32,7 +32,7 @@ class SigningController extends Controller
         ));
     }
 
-    public function store(SigningRequest $request, DocumentSigner $signer)
+    public function store(SigningRequest $request, Signer $signer)
     {
         $storage = FilepondAction::getDisk();
         $disk = FilepondAction::getDisk(true);
@@ -146,7 +146,7 @@ class SigningController extends Controller
         ])->notify(__('esign::label.signing_success_message'));
     }
 
-    public function mailTrackingPixel(DocumentSigner $signer)
+    public function mailTrackingPixel(Signer $signer)
     {
         $pixel = sprintf('%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c', 71, 73, 70, 56, 57, 97, 1, 0, 1, 0, 128, 255, 0, 192, 192, 192, 0, 0, 0, 33, 249, 4, 1, 0, 0, 0, 0, 44, 0, 0, 0, 0, 1, 0, 1, 0, 0, 2, 2, 68, 1, 0, 59);
 

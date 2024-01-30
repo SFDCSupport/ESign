@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use NIIT\ESign\Models\Attachment;
 use NIIT\ESign\Models\Document;
-use NIIT\ESign\Models\DocumentAttachment;
-use NIIT\ESign\Models\DocumentSigner;
+use NIIT\ESign\Models\Signer;
 
 class ESignServiceProvider extends ServiceProvider
 {
@@ -36,7 +36,7 @@ class ESignServiceProvider extends ServiceProvider
         (new ESign($this->app))->addMacros()->proceed();
 
         Route::bind('signing_url', function (string $value) {
-            $signer = DocumentSigner::where('url', $value)->firstOrFail();
+            $signer = Signer::where('url', $value)->firstOrFail();
 
             Request::macro('signer', fn () => $signer);
 
@@ -111,8 +111,8 @@ class ESignServiceProvider extends ServiceProvider
 
         foreach ([
             'document' => Document::class,
-            'signer' => DocumentSigner::class,
-            'attachment' => DocumentAttachment::class,
+            'signer' => Signer::class,
+            'attachment' => Attachment::class,
         ] as $binding => $class) {
             Route::bind($binding, function (string $value) use ($class, $uuidExpressions) {
                 if (preg_match($uuidExpressions, $value) !== 1) {

@@ -37,6 +37,7 @@ class SignerRequest extends FormRequest
                 'signers.*.id' => 'sometimes|uuid',
                 'signers.*.uuid' => 'required',
                 'signers.*.label' => 'required',
+                'signers.*.email' => 'sometimes|email',
                 'signers.*.is_deleted' => 'sometimes',
                 'signers.*.position' => 'required|integer',
                 'signers.*.elements.*.id' => 'sometimes|uuid',
@@ -61,7 +62,7 @@ class SignerRequest extends FormRequest
         if ($mode === 'bulkDestroy') {
             return [
                 'ids' => 'required|array',
-                'ids.*' => Rule::exists('e_document_signers', 'id'),
+                'ids.*' => Rule::exists('e_signers', 'id'),
             ];
         }
 

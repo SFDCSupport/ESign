@@ -830,7 +830,7 @@
                     container: pdfViewer[0],
                 });
 
-                loadedData = @json(count($formattedData ?? 0) > 0 ? $formattedData : ['signers' => [['label' => '1st Signer', 'position' => 1, 'elements' => []]]]);
+                loadedData = @json($formattedData);
                 loadedData.signers = collect(loadedData.signers)
                     .sortBy('position')
                     .map((item, i) => {
