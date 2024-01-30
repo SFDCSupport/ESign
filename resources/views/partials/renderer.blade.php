@@ -8,7 +8,6 @@
         const pdfPages = [];
         const canvasEditions = [];
         const currentTextScale = 1;
-        let currentScale = null;
         let selectedObject = null;
         let resizeTimeout = null;
         let isUpdatingSelection = false;
@@ -654,8 +653,8 @@
                 width: data.width,
                 height: data.height,
                 fontSize: data.fontSize || data.height,
-                scaleX: currentScale ?? data.scale_x ?? 1,
-                scaleY: currentScale ?? data.scale_y ?? 1,
+                scaleX: data.scale_x ?? 1,
+                scaleY: data.scale_y ?? 1,
                 padding: 5,
                 fill: '#333333',
                 color: '#333333',
@@ -862,9 +861,9 @@
 
                 $(document).on('canvas:ready', () => {
                     if (collect(loadedData).isNotEmpty()) {
-                        canvasEditions.forEach((canvasEdition, i) => {
+                        canvasEditions.forEach((canvasEdition) => {
                             canvasEdition.clear();
-                            if (i === 0) console.log(canvasEdition);
+
                             collect(loadedData)
                                 .pluck('elements')
                                 .flatten(1)
