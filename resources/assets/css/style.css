@@ -557,8 +557,14 @@ body{
 }
 
 label.error{
-  color: #f00;
+  color: #e90101;
   font-size: .8rem;
+}
+
+.form-control.required,
+.form-select.required,
+textarea.required{
+  border-left: 3px solid #e90101;
 }
 
 .header-bottom-section{
