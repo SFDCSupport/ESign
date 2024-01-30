@@ -57,4 +57,5 @@ return [
     'type_email_here' => 'Type email here...',
     'subject' => 'Subject',
     'body' => 'Body',
+    'signers_detail' => 'Signers Details',
 ];

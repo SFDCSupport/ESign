@@ -1,7 +1,7 @@
 <x-esign::modal
     id="send_recipient"
     backdrop="static"
-    :title="__('esign::label.add_signers')"
+    :title="__('esign::label.signers_detail')"
 >
     <x-slot name="body">
         <form
@@ -14,30 +14,19 @@
                 name="documentId"
                 value="{{ $document->id }}"
             />
-            <div class="dark-bg-card p-2 py-3 rounded mb-3">
-                <label for="formControlInput1" class="col-form-label pt-1 pb-1">
-                    {{ __('esign::label.nth_signer', ['nth' => ordinal(1)]) }}
-                </label>
-                <input
-                    class="form-control"
-                    id="formControlInput1"
-                    placeholder="{{ __('esign::label.type_email_here') }}"
-                />
-            </div>
+            <div class="col-12 signersHolder"></div>
             <div class="col-sm-12 mt-3 d-flex justify-content-between">
                 <div class="col">
                     <div class="form-check mb-2">
                         <input
                             class="form-check-input"
                             type="checkbox"
-                            value=""
                             id="flexCheckDefault"
                         />
                         <label class="form-check-label" for="flexCheckDefault">
                             {{ __('esign::label.send_emails') }}
                         </label>
                     </div>
-                    
                 </div>
                 <div class="col text-end">
                     <div class="form-check">
@@ -85,13 +74,11 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-sm-12">
                 <div class="form-check mb-2">
                     <input
                         class="form-check-input"
                         type="checkbox"
-                        value=""
                         id="preserve_order"
                     />
                     <label class="form-check-label" for="preserve_order">
@@ -112,11 +99,42 @@
 </x-esign::modal>
 
 <script>
+    const _signerEmailTemplate = `<div class="dark-bg-card p-2 py-3 rounded mb-3 signerEmail"
+                                    data-signer-index="__INDEX" data-signer-uuid="__UUID">
+                                    <label for="formControlInput__INDEX" class="col-form-label pt-1 pb-1">
+                                        __LABEL
+                                    </label>
+                                    <input
+                                        name="email"
+                                        class="form-control"
+                                        id="formControlInput__INDEX"
+                                        value="__EMAIL"
+                                        placeholder="{{ __('esign::label.type_email_here') }}" />
+                                  </div>`;
+
     $(() => {
-        $(document).on(
-            'shown.bs.modal',
-            '#send_recipient_modal',
-            function (e) {},
-        );
+        $(document).on('shown.bs.modal', '#send_recipient_modal', function (e) {
+            const signersHolderEle = $('#send_recipient_modal .signersHolder');
+
+            signersHolderEle.html('');
+            $(
+                $('#send_recipient_modal .editmessage-link').attr(
+                    'data-target',
+                ),
+            ).addClass('d-none');
+
+            collect(loadedData || [])
+                .sortBy('position')
+                .where('is_deleted', '!==', true)
+                .each((s, i) => {
+                    signersHolderEle.append(
+                        $.trim(_signerEmailTemplate)
+                            .replace(/__UUID/gi, s.uuid)
+                            .replace(/__LABEL/gi, s.label)
+                            .replace(/__EMAIL/gi, s.email ?? '')
+                            .replace(/__INDEX/gi, s.position ?? i + 1),
+                    );
+                });
+        });
     });
 </script>

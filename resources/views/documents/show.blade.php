@@ -333,7 +333,7 @@
                 });
 
                 $(document).trigger("signer:removed", {
-                    ...uuid,
+                    uuid: uuid,
                     from: "sidebar"
                 });
 
