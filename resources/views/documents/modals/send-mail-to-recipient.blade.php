@@ -9,7 +9,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="sendRecipientModalLabel">
-                    Add New Recipients
+                    {{ __('esign::label.add_signers') }}
                 </h1>
                 <button
                     type="button"
@@ -30,26 +30,44 @@
                         value="{{ $document->id }}"
                     />
                     <div class="mb-3">
-                        <label for="recipient-name" class="col-form-label">
-                            Add Emails
+                        <label for="formControlInput1" class="col-form-label">
+                            {{ __('esign::label.nth_signer', ['nth' => ordinal(1)]) }}
                         </label>
-                        <textarea
-                            class="form-control"
-                            id="exampleFormControlTextarea1"
-                            rows="3"
-                            placeholder="Type Emails Here..."
-                        ></textarea>
-                    </div>
-                    <div class="form-check mb-2">
                         <input
-                            class="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
+                            class="form-control"
+                            id="formControlInput1"
+                            placeholder="{{ __('esign::label.type_email_here') }}"
                         />
-                        <label class="form-check-label" for="flexCheckDefault">
-                            Send Emails
-                        </label>
+                    </div>
+                    <div>
+                        <div class="form-check mb-2">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="flexCheckDefault"
+                            />
+                            <label
+                                class="form-check-label"
+                                for="flexCheckDefault"
+                            >
+                                {{ __('esign::label.send_emails') }}
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="flexCheckDefault"
+                            />
+                            <label
+                                class="form-check-label"
+                                for="flexCheckDefault"
+                            >
+                                {{ __('esign::label.preserve_order') }}
+                            </label>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -59,7 +77,7 @@
                         type="button"
                         class="btn btn-sm btn-dark add-part-btn"
                     >
-                        Add Participant
+                        {{ __('esign::label.send') }}
                     </button>
                 </div>
             </div>

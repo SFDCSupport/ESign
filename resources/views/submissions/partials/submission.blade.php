@@ -6,10 +6,10 @@
             >
                 <div class="btn-toolbar align-items-center">
                     <a href="#" class="btn btn-sm btn-success me-2">
-                        {{ $signer->status }}
+                        {{ $signer->signing_status }}
                     </a>
                     <span class="text-lg break-all flex items-center">
-                        {{ $signer->email }}
+                        {{ $signer->email ?? $signer->label }}
                     </span>
                 </div>
                 <div class="btn-toolbar mb-2 mb-md-0">

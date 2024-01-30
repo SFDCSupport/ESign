@@ -52,4 +52,7 @@ return [
     'th' => 'th',
     'js_disabled_message' => 'Site not functional without JavaScript enabled.',
     'type_query' => 'Type query...',
+    'add_signers' => 'Add Signers',
+    'preserve_order' => 'Preserve Order',
+    'type_email_here' => 'Type email here...',
 ];
