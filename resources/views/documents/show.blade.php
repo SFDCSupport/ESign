@@ -458,7 +458,7 @@
                         const _li = _t.closest("li.signerLi");
                         const uuid = _li.attr("data-signer-uuid");
 
-                        $(".dropdown_click .drop-content ul").slideUp(100);
+                        $(".dropdown_click .drop-content").slideUp(100);
                         $(`#recipientsContainer .addedElement[data-element-signer-uuid!="${uuid}"]`).addClass("d-none");
                         $(`#recipientsContainer .addedElement[data-element-signer-uuid="${uuid}"]`).removeClass("d-none");
 
@@ -491,7 +491,7 @@
                         $(document).trigger("loader:hide");
                     });
                 }).on("click", ".dropdown_click .selecteddropdown", function(e) {
-                    $(".dropdown_click .drop-content ul").slideToggle();
+                    $(".dropdown_click .drop-content").slideToggle();
                 });
 
                 signerUpdate();

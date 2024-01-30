@@ -637,13 +637,9 @@ textarea.required{
   }
 
    .drop-content{
-    position:relative;
-  }
-
-   .drop-content ul{
-    position: absolute;
+    position:absolute;
     left: 0px;
-    top: -3px;
+    top: 42px;
     display: none;
     list-style: none;
     width: 100%;
@@ -653,6 +649,10 @@ textarea.required{
     border: 1px solid #ddd;
     padding: 5px !important;
     box-shadow: 0 1px 5px rgba(33,51,67,.12);
+  }
+
+  .drop-content ul{
+    padding-left: 0px;
   }
 
   .drop-content ul li{
