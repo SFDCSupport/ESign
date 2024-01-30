@@ -8,6 +8,7 @@
         const pdfPages = [];
         const canvasEditions = [];
         const currentTextScale = 1;
+        let currentScale = null;
         let selectedObject = null;
         let resizeTimeout = null;
         let isUpdatingSelection = false;
