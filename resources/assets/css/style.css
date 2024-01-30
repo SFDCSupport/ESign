@@ -289,6 +289,7 @@ body{
   justify-items: left;
   border-left: 3px solid #0d6efd;
   padding-left: 20px;
+  background-color: rgb(242, 246, 255) !important;
 }
 
 .draggable-left-icon{
@@ -441,7 +442,8 @@ body{
 .edit-docs-file .previewerContainer{
   border: 1px solid #e8e8e8;
   border-radius: 2px;
-  margin: 12px 7px 12px 1px;
+  max-width: 152px;
+  margin: 9px auto;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
 }
 
@@ -551,7 +553,12 @@ body{
     bottom: 10px;
 }
 .pdfviewer-numbers.canvasPdfNumber{
-    top: 10px;
+    top: 20px;
+}
+
+label.error{
+  color: #f00;
+  font-size: .8rem;
 }
 
 .header-bottom-section{

@@ -93,16 +93,16 @@
         <div class="col">
             <button
                 type="button"
-                class="btn btn-sm btn-primary w-100"
+                class="btn btn-primary w-100"
                 id="signersSaveBtn"
             >
                 {{ __('esign::label.save') }}
             </button>
         </div>
-        <div class="col-8">
+        <div class="col">
             <button
                 type="button"
-                class="btn btn-sm btn-dark w-100"
+                class="btn btn-dark w-100"
                 id="signersSendBtn"
             >
                 {{ __('esign::label.send') }}
