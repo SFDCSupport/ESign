@@ -23,7 +23,7 @@ class SigningController extends Controller
         SigningProcessStarted::dispatch($signer);
 
         $document = $signer->loadMissing('document.document', 'elements')->document;
-        $formattedData = [json_decode((new SignerResource($signer))->toJson(), true)];
+        $formattedData = ['signers' => [json_decode((new SignerResource($signer))->toJson(), true)]];
 
         return view('esign::index', compact(
             'signer',

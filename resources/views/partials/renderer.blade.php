@@ -541,6 +541,41 @@
             }
         };
 
+        const fabricDeleteIcon = svgToDataUrl(`@include('esign::partials.icons.x', ['stroke' => 'red'])`);
+        const fabricCloneIcon = svgToDataUrl(`@include('esign::partials.icons.copy', ['stroke' => 'blue'])`);
+
+        const fabricDeleteImg = document.createElement('img');
+        fabricDeleteImg.classList.add('icon-delete');
+        fabricDeleteImg.src = fabricDeleteIcon;
+
+        const fabricCloneImg = document.createElement('img');
+        fabricCloneImg.classList.add('icon-clone');
+        fabricCloneImg.src = fabricCloneIcon;
+
+        fabric.Object.prototype.controls.deleteControl = new fabric.Control({
+            x: 0.5,
+            y: -0.4,
+            offsetY: -16,
+            offsetX: 0,
+            cursorStyle: 'pointer',
+            mouseUpHandler: deleteObject,
+            render: renderIcon(fabricDeleteImg),
+            cornerSize: 18,
+            visible: isSigning,
+        });
+
+        fabric.Object.prototype.controls.cloneControl = new fabric.Control({
+            x: 0.5,
+            y: -0.4,
+            offsetY: -16,
+            offsetX: -20,
+            cursorStyle: 'pointer',
+            mouseUpHandler: cloneObject,
+            render: renderIcon(fabricCloneImg),
+            cornerSize: 18,
+            visible: isSigning,
+        });
+
         fabric.Canvas.prototype.getAbsoluteCoords = function (object) {
             return {
                 left: object.left + this._offset.left,
@@ -673,43 +708,6 @@
                 default:
                     fabricObject = new fabric.Text(text, commonStyles);
                     break;
-            }
-
-            if (!isSigning) {
-                const deleteIcon = svgToDataUrl(`@include('esign::partials.icons.x', ['stroke' => 'red'])`);
-                const cloneIcon = svgToDataUrl(`@include('esign::partials.icons.copy', ['stroke' => 'blue'])`);
-
-                const deleteImg = document.createElement('img');
-                deleteImg.classList.add('icon-delete');
-                deleteImg.src = deleteIcon;
-
-                const cloneImg = document.createElement('img');
-                deleteImg.classList.add('icon-clone');
-                cloneImg.src = cloneIcon;
-
-                fabric.Object.prototype.controls.deleteControl =
-                    new fabric.Control({
-                        x: 0.5,
-                        y: -0.4,
-                        offsetY: -16,
-                        offsetX: 0,
-                        cursorStyle: 'pointer',
-                        mouseUpHandler: deleteObject,
-                        render: renderIcon(deleteImg),
-                        cornerSize: 18,
-                    });
-
-                fabric.Object.prototype.controls.cloneControl =
-                    new fabric.Control({
-                        x: 0.5,
-                        y: -0.4,
-                        offsetY: -16,
-                        offsetX: -20,
-                        cursorStyle: 'pointer',
-                        mouseUpHandler: cloneObject,
-                        render: renderIcon(cloneImg),
-                        cornerSize: 18,
-                    });
             }
 
             fabricObject.id = data.id ?? undefined;
