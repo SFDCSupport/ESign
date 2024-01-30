@@ -21,7 +21,7 @@
                             type="button"
                             class="btn btn-outline-dark"
                             data-bs-toggle="modal"
-                            data-bs-target="#sendRecipientModal"
+                            data-bs-target="#send_recipient_modal"
                         >
                             <i class="fas fa-user-plus"></i>
                             {{ __('esign::label.send') }}

@@ -55,4 +55,6 @@ return [
     'add_signers' => 'Add Signers',
     'preserve_order' => 'Preserve Order',
     'type_email_here' => 'Type email here...',
+    'subject' => 'Subject',
+    'body' => 'Body',
 ];
