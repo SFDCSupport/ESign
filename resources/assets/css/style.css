@@ -757,7 +757,10 @@ body{
   }
 
   .dark-bg-card {
-    background: #eeeeee !important;
+    background: #f5f9ff !important;
+    box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px;
+    border: 1px solid #daebf5;
+    background: linear-gradient(97.03deg,#f5f9ff -.58%,#eff9fe 92.09%);
 }
 
 .bodysubject{
