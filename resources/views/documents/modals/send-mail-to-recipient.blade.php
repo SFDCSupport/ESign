@@ -37,17 +37,7 @@
                             {{ __('esign::label.send_emails') }}
                         </label>
                     </div>
-                    <div class="form-check mb-2">
-                        <input
-                            class="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="preserve_order"
-                        />
-                        <label class="form-check-label" for="preserve_order">
-                            {{ __('esign::label.preserve_order') }}
-                        </label>
-                    </div>
+                    
                 </div>
                 <div class="col text-end">
                     <div class="form-check">
@@ -93,6 +83,20 @@
                             ></textarea>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <div class="form-check mb-2">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value=""
+                        id="preserve_order"
+                    />
+                    <label class="form-check-label" for="preserve_order">
+                        {{ __('esign::label.preserve_order') }}
+                    </label>
                 </div>
             </div>
         </form>
