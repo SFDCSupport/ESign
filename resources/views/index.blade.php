@@ -80,8 +80,8 @@
                     </div>
                     <button
                         type="button"
-                        class="btn btn-dark expand_form_button"
-                        id="expand-form-button"
+                        class="btn btn-dark expand_form_button expand"
+                        id="submitSigningFormBtn"
                     >
                         {{ __('esign::label.submit') }}
                         <i class="fas fa-expand-alt"></i>
@@ -96,7 +96,7 @@
     @pushonce('js')
         <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?4.1.7"></script>
         <script>
-            const signerElements = @json($signer->elements);
+            const signerData = @json($signer->elements);
             let signaturePad = null;
             let signingData = null;
 
@@ -229,9 +229,11 @@
             $(() => {
                 const signingContainer = $('#signingContainer');
                 const minimizeSigningContainerBtn = $('#minimize-form-button');
-                const maximizeSigningContainerBtn = $('#expand-form-button');
+                const maximizeSigningContainerBtn = $(
+                    '#submitSigningFormBtn.expand',
+                );
 
-                collect(signerElements ?? []).each((element, i) => {
+                collect(signerData ?? []).each((element, i) => {
                     const isFirst = i === 0;
                     const id = 'id-' + element.id;
 
@@ -257,12 +259,17 @@
                     })
                     .on(
                         'click',
-                        `#${maximizeSigningContainerBtn.attr('id')}`,
-                        () => {
-                            signingContainer.removeClass('d-none');
-                            $(this).addClass('d-none');
+                        '#submitSigningFormBtn:not(.expand)',
+                        function (e) {
+                            e.preventDefault();
+
+                            $(document).trigger('signers-save');
                         },
                     )
+                    .on('click', '#submitSigningFormBtn.expand', () => {
+                        signingContainer.removeClass('d-none');
+                        $(this).addClass('d-none');
+                    })
                     .on(
                         'click',
                         `#${minimizeSigningContainerBtn.attr('id')}`,
@@ -306,6 +313,17 @@
                             .then(() => {
                                 $(document).trigger('signing-modal:show', data);
                             });
+                    })
+                    .on('signing:updated', function (e, obj) {
+                        const elementIndex = collect(signerData).search(
+                            (e) => e.id === obj.id,
+                        );
+
+                        if (elementIndex !== false) {
+                            signerData[elementIndex].response = obj.response;
+                        }
+
+                        console.log('signing:updated', signerData);
                     });
 
                 signaturePad = new SignaturePad($('.signaturePad')[0], {
