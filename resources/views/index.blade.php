@@ -111,15 +111,15 @@
                 }
 
                 if (type === 'signature_pad') {
-                    return `<small title="{{ __('esign::label.clear_signature') }}"
+                    return `<div class="pos_rel"><small title="{{ __('esign::label.clear_signature') }}"
                         class="text-muted opacity-75 position-absolute clearSignaturePad"
                         style="right: 25px; bottom: 25px; cursor: pointer">
                         <i class="fa-solid fa-trash"></i>
                     </small>
                     <canvas id="id-${id}-element"
                         class="border bg-light signaturePad"
-                        width="462" height="200"
-                    ></canvas>`;
+                        width="608" height="200" style="display:block;"
+                    ></canvas></div>`;
                 }
 
                 return `<p><input type="text" id="id-${id}-element"
@@ -252,7 +252,8 @@
                         data-bs-target="#${id}-panel"
                         aria-controls="${id}-panel"
                         aria-selected="${isFirst ? 'true' : 'false'}"
-                        type="button" role="tab">
+                        type="button" role="tab"> 
+                        <span></span>
                     </button>`).appendTo('#elementTabs');
                 });
 
