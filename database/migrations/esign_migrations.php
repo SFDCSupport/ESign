@@ -37,6 +37,7 @@ return new class extends Migration
         Schema::create('e_documents', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('title');
+            $table->foreignUuid('parent_id')->nullable()->constrained('e_documents');
             $table->foreignUuid('template_id')->nullable()->constrained('e_templates');
             $table->enum('status', DocumentStatus::values())->default(DocumentStatus::DRAFT);
             $table->enum('notification_sequence', NotificationSequence::values())->default(NotificationSequence::ASYNC);

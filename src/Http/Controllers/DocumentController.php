@@ -92,6 +92,8 @@ class DocumentController extends Controller
     public function copy(Document $document)
     {
         $replica = $document->replicate();
+        $replica->parent_id = $document->id;
+        $replica->title = $document->title.' ('.__('esign::label.copy').')';
         $replica->push();
 
         $document->relations = [];

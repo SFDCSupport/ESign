@@ -30,6 +30,7 @@ class Document extends Model implements Attachable, HasLocalePreference
         'status',
         'notification_sequence',
         'link_sent_to_all',
+        'parent_id',
     ];
 
     /**
@@ -66,6 +67,28 @@ class Document extends Model implements Attachable, HasLocalePreference
         return $this->belongsTo(
             related: Template::class,
             foreignKey: 'template_id',
+        );
+    }
+
+    /**
+     * @return BelongsTo<Document, Document>
+     */
+    public function parent()
+    {
+        return $this->belongsTo(
+            related: __CLASS__,
+            foreignKey: 'parent_id',
+        );
+    }
+
+    /**
+     * @return HasMany<Document, Document>
+     */
+    public function children()
+    {
+        return $this->hasMany(
+            related: __CLASS__,
+            foreignKey: 'parent_id',
         );
     }
 
