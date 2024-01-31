@@ -111,7 +111,7 @@
                 }
 
                 if (type === 'signature_pad') {
-                    return `<div class="pos_rel"><small title="{{ __('esign::label.clear_signature') }}"
+                    return `<div class="pos_rel digital-sign-pad"><small title="{{ __('esign::label.clear_signature') }}"
                         class="text-muted opacity-75 position-absolute clearSignaturePad"
                         style="right: 25px; bottom: 25px; cursor: pointer">
                         <i class="fa-solid fa-trash"></i>

@@ -1042,3 +1042,8 @@ padding: 3px;
   position: relative;
 }
 
+.digital-sign-pad small.clearSignaturePad{
+  right: 10px;
+  bottom: 10px;
+}
+

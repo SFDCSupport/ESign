@@ -8,13 +8,7 @@
                     >
                         <h4 class="h4 mb-0">{{ $document->title }}</h4>
                         <div class="btn-toolbar mb-2 mb-md-0">
-                            <div class="btn-group me-2">
-                                <x-esign::partials.button
-                                    :value="__('esign::label.copy_link')"
-                                    icon="link"
-                                    class="btn-sm btn-outline-secondary"
-                                />
-                            </div>
+                            
                             <x-esign::partials.button
                                 :value="__('esign::label.archive')"
                                 icon="archive"
@@ -47,16 +41,11 @@
                                     <div class="btn-group me-2">
                                         <x-esign::partials.button
                                             :value="__('esign::label.export')"
+                                            class="btn-secondary text-white"
                                             icon="download"
                                         />
                                     </div>
-                                    <x-esign::partials.button
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#sendRecipientModal"
-                                        :value="__('esign::label.add_recipient')"
-                                        class="btn-secondary text-white"
-                                        icon="plus"
-                                    />
+                                   
                                 </div>
                             </div>
                         </div>
