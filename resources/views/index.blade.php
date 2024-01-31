@@ -110,31 +110,36 @@
                 submit: '{{ __('esign::label.submit') }}',
             };
             let signaturePad = null;
-            let signingData = null;
 
             const getSigningElementByType = (id, type, label = null) => {
                 if (type === 'textarea') {
-                    return `<p><textarea class="form-control"
-                        id="id-${id}-element" rows="3"
-                    ></textarea></p>`;
+                    return `<p>
+                      <textarea class="form-control signingElement"
+                        id="id-${id}-element" rows="3" data-type="${type}"
+                      ></textarea>
+                    </p>`;
                 }
 
                 if (type === 'signature_pad') {
-                    return `<div class="pos_rel digital-sign-pad"><small title="{{ __('esign::label.clear_signature') }}"
-                        class="text-muted opacity-75 position-absolute clearSignaturePad"
-                        style="right: 25px; bottom: 25px; cursor: pointer">
-                        <i class="fa-solid fa-trash"></i>
-                    </small>
-                    <canvas id="id-${id}-element"
-                        class="border bg-light signaturePad"
-                        width="608" height="200" style="display:block;"
-                    ></canvas></div>`;
+                    return `<div class="pos_rel digital-sign-pad">
+                        <small title="{{ __('esign::label.clear_signature') }}"
+                            class="text-muted opacity-75 position-absolute clearSignaturePad"
+                            style="right: 25px; bottom: 25px; cursor: pointer">
+                            <i class="fa-solid fa-trash"></i>
+                        </small>
+                        <canvas id="id-${id}-element"
+                            class="border bg-light signaturePad signingElement"
+                            width="608" height="200" style="display:block;"
+                        ></canvas>
+                    </div>`;
                 }
 
-                return `<p><input type="text" id="id-${id}-element"
-                    class="form-control form-control-lg"
-                    placeholder="${label ?? type}"
-                /></p>`;
+                return `<p>
+                  <input type="text" id="id-${id}-element"
+                    class="form-control form-control-lg signingElement"
+                    placeholder="${label ?? type}" data-type="${type}"
+                  />
+                </p>`;
             };
 
             const saveBtnAction = (status = 'save') => {
@@ -250,7 +255,7 @@
 
                 collect(signerData ?? []).each((element, i) => {
                     const isFirst = i === 0;
-                    const id = 'id-' + element.id;
+                    const id = generateUniqueId('e_');
                     let step = '';
 
                     if (isFirst) {
@@ -264,6 +269,8 @@
                     $(`<div class="tab-pane fade ${isFirst ? 'active show' : ''}"
                         id="${id}-panel" role="tabpanel"
                         aria-labelledby="${id}-tab"
+                        data-object-id="${element.id}"
+                        data-element-type="${element.type}"
                         ${step ? 'data-step="' + step + '"' : ''}>
                         <h2>${element.label ?? element.type}</h2>
                         ${getSigningElementByType(id, element.type, element.label)}
@@ -334,36 +341,46 @@
                     .on('signing-modal:clear:signature-pad', () => {
                         $('.clearSignaturePad').trigger('click');
                     })
-                    .on('signing-modal:show', function (e, data) {
-                        if (!data.eleType || !data.id) {
+                    .on('signing-modal:show', function (e, obj) {
+                        if (!obj.eleType || !obj.id) {
                             return;
                         }
 
-                        signingData = data;
-
-                        eles.signingContainer.attr(
-                            'data-ele-type',
-                            data.eleType,
-                        );
                         eles.maximizeSigningContainerBtn.trigger('click');
+
+                        const tabPane = $(
+                            `#elementPanels [data-element-type="${obj.eleType}"][data-object-id="${obj.id}"]`,
+                        );
+
+                        if (blank(tabPane)) {
+                            return;
+                        }
+
+                        if (obj.eleType !== 'signature_pad') {
+                            tabPane.find('.signingElement').val(obj.data);
+                        }
+
+                        $(
+                            `#elementTabs button[data-bs-target="#${tabPane.attr('id')}"]`,
+                        ).trigger('click');
                     })
                     .on('signing-modal:hide', () => {
                         eles.minimizeSigningContainerBtn.trigger('click');
                     })
-                    .on('fabric-to-pad', function (e, data) {
+                    .on('fabric-to-pad', function (e, obj) {
                         $.when(
                             $(document).trigger(
                                 'signing-modal:clear:signature-pad',
                             ),
                         )
                             .then(() => {
-                                signaturePad.fromDataURL(data.signature, {
+                                signaturePad.fromDataURL(obj.data, {
                                     width: 462,
                                     height: 200,
                                 });
                             })
                             .then(() => {
-                                $(document).trigger('signing-modal:show', data);
+                                $(document).trigger('signing-modal:show', obj);
                             });
                     })
                     .on('signing:updated', function (e, obj) {
@@ -376,12 +393,44 @@
                         }
 
                         console.log('signing:updated', signerData);
+                    })
+                    .on('keyup', '.signingElement', function (e) {
+                        e.preventDefault();
+
+                        const _t = $(this);
+
+                        $(document).trigger('signing-to-fabric', {
+                            eleType: _t.attr('data-type'),
+                            id: $('#elementPanels .tab-pane.active').attr(
+                                'data-object-id',
+                            ),
+                            data: _t.val(),
+                        });
                     });
 
                 signaturePad = new SignaturePad($('.signaturePad')[0], {
                     penColor: 'rgb(0, 0, 0)',
                     minWidth: 1,
                     maxWidth: 2,
+                });
+
+                signaturePad.addEventListener('endStroke', () => {
+                    $(document).trigger('signing-to-fabric', {
+                        eleType: 'signature_pad',
+                        id: $('#elementPanels .tab-pane.active').attr(
+                            'data-object-id',
+                        ),
+                        data: signaturePad.toDataURL(),
+                    });
+                });
+                signaturePad.addEventListener('beginStroke', () => {
+                    console.log('beginStroke');
+                });
+                signaturePad.addEventListener('beforeUpdateStroke', () => {
+                    console.log('beforeUpdateStroke');
+                });
+                signaturePad.addEventListener('afterUpdateStroke', () => {
+                    console.log('afterUpdateStroke');
                 });
             });
         </script>

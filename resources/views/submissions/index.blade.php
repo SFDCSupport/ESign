@@ -8,7 +8,6 @@
                     >
                         <h4 class="h4 mb-0">{{ $document->title }}</h4>
                         <div class="btn-toolbar mb-2 mb-md-0">
-                            
                             <x-esign::partials.button
                                 :value="__('esign::label.archive')"
                                 icon="archive"
@@ -45,7 +44,6 @@
                                             icon="download"
                                         />
                                     </div>
-                                   
                                 </div>
                             </div>
                         </div>

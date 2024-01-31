@@ -202,28 +202,24 @@
 
                                     if (isSigning && target) {
                                         const eleType = target.eleType;
-                                        const on_page = target.on_page;
                                         const id = target.id;
                                         const obj = target;
+
+                                        let data = {
+                                            eleType,
+                                            id,
+                                        };
 
                                         switch (eleType) {
                                             case 'signature_pad':
                                                 const isSignatureObj = !blank(
-                                                    obj.signature,
+                                                    obj.data,
                                                 );
-
-                                                let data = {
-                                                    eleType,
-                                                    on_page,
-                                                    obj,
-                                                    id,
-                                                };
 
                                                 if (isSignatureObj) {
                                                     data = {
                                                         ...data,
-                                                        signature:
-                                                            obj.signature,
+                                                        data: obj.data,
                                                     };
                                                 }
 
@@ -235,9 +231,14 @@
                                                 );
                                                 break;
                                             case 'text':
-                                                obj.set({
-                                                    selectable: true,
-                                                });
+                                            case 'textarea':
+                                                $(document).trigger(
+                                                    'signing-modal:show',
+                                                    {
+                                                        ...data,
+                                                        data: obj.text,
+                                                    },
+                                                );
 
                                                 break;
                                             default:
@@ -784,14 +785,35 @@
                     }
                     loadPDF(obj.url, obj.container);
                 })
-                .on('pad-to-fabric', function (e, obj) {
-                    const oldObj = obj.obj;
-                    const canvas = oldObj.canvas;
+                .on('signing-to-fabric', function (e, obj) {
+                    const getObjectByIdInCanvasEditions = (id) => {
+                        for (const canvas of canvasEditions) {
+                            const object = canvas
+                                .getObjects()
+                                .find((obj) => obj.id === id);
+                            if (object) {
+                                return [object, canvas];
+                            }
+                        }
+                        return [null, null];
+                    };
 
-                    if (obj.eleType === 'signature_pad' && obj.signature) {
+                    const [oldObj, canvas] = getObjectByIdInCanvasEditions(
+                        obj.id,
+                    );
+
+                    if (blank(oldObj)) {
+                        return;
+                    }
+
+                    if (obj.eleType === 'signature_pad') {
+                        if (blank(obj.data)) {
+                            return;
+                        }
+
                         canvas.remove(oldObj);
 
-                        fabric.Image.fromURL(obj.signature, (newImg) => {
+                        fabric.Image.fromURL(obj.data, (newImg) => {
                             newImg.set({
                                 left: oldObj.left,
                                 top: oldObj.top,
@@ -813,12 +835,15 @@
                             setFabricControl(newImg);
 
                             newImg.id = obj.id;
-                            newImg.on_page = obj.on_page;
-                            newImg.eleType = obj.eleType;
-                            newImg.signature = obj.signature;
+                            newImg.on_page = oldObj.on_page;
+                            newImg.eleType = oldObj.eleType;
+                            newImg.data = obj.data;
 
                             canvas.add(newImg);
                         });
+                    } else if (['text', 'textarea'].includes(obj.eleType)) {
+                        oldObj.set('text', obj.data || obj.eleType);
+                        canvas.renderAll();
                     }
                 });
 
