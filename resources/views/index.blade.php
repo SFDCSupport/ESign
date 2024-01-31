@@ -60,6 +60,43 @@
                     id="pdfViewer"
                     data-url="{{ $document->document->url }}"
                 ></div>
+
+                <div class="expand-section-bottom">
+                    <div class="d-none form_container" id="form-container">
+                        <button type="button" class="btn btn-light minimize_form_button" id="minimize-form-button">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        
+                       
+                        <div class="tab-content p-3" id="nav-tabContent">
+                          <div class="tab-pane fade active show" id="digsign-tab" role="tabpanel" aria-labelledby="digsign-tab-tab">
+                            <h2>Signature</h2>
+                            <p>Section 1</p>
+                          </div>
+                          <div class="tab-pane fade" id="signtype-tab" role="tabpanel" aria-labelledby="signtype-tab-tab">
+                            <p>Section 2</p>
+                          </div>
+
+                          <div class="tab-pane fade" id="signtextarea-tab" role="tabpanel" aria-labelledby="signtextarea-tab-tab">
+                            <p>Section 3</p>
+                          </div>
+                        </div>
+                  
+                        <nav class="sign-type-nav">
+                          <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
+                            <button class="nav-link active" id="digsign-tab-tab" data-bs-toggle="tab" data-bs-target="#digsign-tab" type="button" role="tab" aria-controls="digsign-tab" aria-selected="true"><span></span></button>
+                            <button class="nav-link" id="signtype-tab-tab" data-bs-toggle="tab" data-bs-target="#signtype-tab" type="button" role="tab" aria-controls="signtype-tab" aria-selected="false"><span></span></button>
+                            <button class="nav-link" id="signtextarea-tab-tab" data-bs-toggle="tab" data-bs-target="#signtextarea-tab" type="button" role="tab" aria-controls="signtextarea-tab" aria-selected="false"><span></span></button>
+                          </div>
+                        </nav>
+                  
+                    </div>
+                    <button type="button" class="btn btn-dark expand_form_button" id="expand-form-button">
+                        Submit Form
+                        <i class="fas fa-expand-alt"></i>
+                    </button>
+                  </div>  
+
             </main>
         </div>
     </div>
