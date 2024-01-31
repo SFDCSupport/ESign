@@ -70,6 +70,9 @@
                             <i class="fas fa-times"></i>
                         </button>
                         <div class="tab-content p-3" id="elementPanels"></div>
+                        <button type="button" class="btn btn-secondary w-100">
+                            {{ __('esign::label.next') }}
+                        </button>
                         <nav class="sign-type-nav">
                             <div
                                 class="nav nav-tabs mb-3"
@@ -239,7 +242,7 @@
 
                     $(`<div class="tab-pane fade ${isFirst ? 'active show' : ''}"
                         id="${id}-panel" role="tabpanel"
-                        aria-labelledby="${id}-panel">
+                        aria-labelledby="${id}-tab">
                         <h2>${element.label ?? element.type}</h2>
                         ${getSigningElementByType(id, element.type, element.label)}
                     </div>`).appendTo('#elementPanels');

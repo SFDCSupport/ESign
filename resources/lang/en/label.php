@@ -59,4 +59,5 @@ return [
     'body' => 'Body',
     'signers_detail' => 'Signers Details',
     'documents_not_exists' => 'No documents created yet!',
+    'next' => 'Next',
 ];
