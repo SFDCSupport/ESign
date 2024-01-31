@@ -71,14 +71,43 @@
                         <div class="tab-content p-3" id="nav-tabContent">
                           <div class="tab-pane fade active show" id="digsign-tab" role="tabpanel" aria-labelledby="digsign-tab-tab">
                             <h2>Signature</h2>
-                            <p>Section 1</p>
+                            
+                            <small
+                                id="signature-pad-reset"
+                                class="text-muted opacity-75 position-absolute"
+                                style="right: 25px; bottom: 25px; cursor: pointer"
+                                title="{{ __('esign::label.clear_signature') }}"
+                            >
+                                <i class="fa-solid fa-trash"></i>
+                                </small>
+                                <canvas
+                                    id="signature-pad"
+                                    class="border bg-light"
+                                    width="462"
+                                    height="200"
+                                ></canvas>
+
+                            <button type="button" class="btn btn-secondary w-100" id="">
+                                <i class="fa fa-check-circle"></i>
+                                Next
+                            </button>
                           </div>
                           <div class="tab-pane fade" id="signtype-tab" role="tabpanel" aria-labelledby="signtype-tab-tab">
-                            <p>Section 2</p>
+                            <p>
+                                <input
+                                    type="text"
+                                    id="typedSignature"
+                                    class="form-control form-control-lg"
+                                    placeholder="{{ __('esign::label.my_signature') }}"
+                                />
+                                
+                            </p>
                           </div>
 
                           <div class="tab-pane fade" id="signtextarea-tab" role="tabpanel" aria-labelledby="signtextarea-tab-tab">
-                            <p>Section 3</p>
+                            <p>
+                                <textarea class="form-control" id="signtextarea1" rows="3"></textarea>
+                            </p>
                           </div>
                         </div>
                   

@@ -894,14 +894,14 @@ padding: 3px;
 .form_container{
   position: fixed;
   padding: 20px;
-  padding-top: 60px;
+  padding-top: 30px;
   bottom: 0px;
   border-radius: 7px;
   width: 100%;
   background: #fff;
   min-height: 100px;
   z-index: 1;
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .minimize_form_button {
@@ -911,7 +911,7 @@ padding: 3px;
 }
 
 .sign-type-nav{
-  margin-top: 15px;
+  margin-top: 5px;
 }
 
 .sign-type-nav .nav-tabs{
