@@ -2,6 +2,7 @@
 
 namespace NIIT\ESign\Http\Controllers;
 
+use NIIT\ESign\Enum\NotificationSequence;
 use NIIT\ESign\Http\Requests\SignerRequest;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
@@ -21,8 +22,16 @@ class SignerController extends Controller
     public function store(SignerRequest $request, Document $document)
     {
         $response = [];
+        $validatedData = $request->validated();
+        $notificationSequence = $validatedData['notification_sequence'] ?? NotificationSequence::ASYNC;
 
-        foreach ($request->validated()['signers'] as $i => $signer) {
+        if ($document->notification_sequence !== $notificationSequence) {
+            $document->update([
+                'notification_sequence' => $notificationSequence,
+            ]);
+        }
+
+        foreach ($validatedData['signers'] as $i => $signer) {
             $documentId = $request->document_id;
             $isSignerDeleted = $signer['is_deleted'] ?? false;
 

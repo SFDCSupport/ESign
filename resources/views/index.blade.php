@@ -63,22 +63,34 @@
 
                 <div class="expand-section-bottom">
                     <div class="d-none form_container" id="form-container">
-                        <button type="button" class="btn btn-light minimize_form_button" id="minimize-form-button">
+                        <button
+                            type="button"
+                            class="btn btn-light minimize_form_button"
+                            id="minimize-form-button"
+                        >
                             <i class="fas fa-times"></i>
                         </button>
-                        
-                       
+
                         <div class="tab-content p-3" id="nav-tabContent">
-                          <div class="tab-pane fade active show" id="digsign-tab" role="tabpanel" aria-labelledby="digsign-tab-tab">
-                            <h2>Signature</h2>
-                            
-                            <small
-                                id="signature-pad-reset"
-                                class="text-muted opacity-75 position-absolute"
-                                style="right: 25px; bottom: 25px; cursor: pointer"
-                                title="{{ __('esign::label.clear_signature') }}"
+                            <div
+                                class="tab-pane fade active show"
+                                id="digsign-tab"
+                                role="tabpanel"
+                                aria-labelledby="digsign-tab-tab"
                             >
-                                <i class="fa-solid fa-trash"></i>
+                                <h2>Signature</h2>
+
+                                <small
+                                    id="signature-pad-reset"
+                                    class="text-muted opacity-75 position-absolute"
+                                    style="
+                                        right: 25px;
+                                        bottom: 25px;
+                                        cursor: pointer;
+                                    "
+                                    title="{{ __('esign::label.clear_signature') }}"
+                                >
+                                    <i class="fa-solid fa-trash"></i>
                                 </small>
                                 <canvas
                                     id="signature-pad"
@@ -87,45 +99,101 @@
                                     height="200"
                                 ></canvas>
 
-                            <button type="button" class="btn btn-secondary w-100" id="">
-                                <i class="fa fa-check-circle"></i>
-                                Next
-                            </button>
-                          </div>
-                          <div class="tab-pane fade" id="signtype-tab" role="tabpanel" aria-labelledby="signtype-tab-tab">
-                            <p>
-                                <input
-                                    type="text"
-                                    id="typedSignature"
-                                    class="form-control form-control-lg"
-                                    placeholder="{{ __('esign::label.my_signature') }}"
-                                />
-                                
-                            </p>
-                          </div>
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary w-100"
+                                    id=""
+                                >
+                                    <i class="fa fa-check-circle"></i>
+                                    Next
+                                </button>
+                            </div>
+                            <div
+                                class="tab-pane fade"
+                                id="signtype-tab"
+                                role="tabpanel"
+                                aria-labelledby="signtype-tab-tab"
+                            >
+                                <p>
+                                    <input
+                                        type="text"
+                                        id="typedSignature"
+                                        class="form-control form-control-lg"
+                                        placeholder="{{ __('esign::label.my_signature') }}"
+                                    />
+                                </p>
+                            </div>
 
-                          <div class="tab-pane fade" id="signtextarea-tab" role="tabpanel" aria-labelledby="signtextarea-tab-tab">
-                            <p>
-                                <textarea class="form-control" id="signtextarea1" rows="3"></textarea>
-                            </p>
-                          </div>
+                            <div
+                                class="tab-pane fade"
+                                id="signtextarea-tab"
+                                role="tabpanel"
+                                aria-labelledby="signtextarea-tab-tab"
+                            >
+                                <p>
+                                    <textarea
+                                        class="form-control"
+                                        id="signtextarea1"
+                                        rows="3"
+                                    ></textarea>
+                                </p>
+                            </div>
                         </div>
-                  
+
                         <nav class="sign-type-nav">
-                          <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
-                            <button class="nav-link active" id="digsign-tab-tab" data-bs-toggle="tab" data-bs-target="#digsign-tab" type="button" role="tab" aria-controls="digsign-tab" aria-selected="true"><span></span></button>
-                            <button class="nav-link" id="signtype-tab-tab" data-bs-toggle="tab" data-bs-target="#signtype-tab" type="button" role="tab" aria-controls="signtype-tab" aria-selected="false"><span></span></button>
-                            <button class="nav-link" id="signtextarea-tab-tab" data-bs-toggle="tab" data-bs-target="#signtextarea-tab" type="button" role="tab" aria-controls="signtextarea-tab" aria-selected="false"><span></span></button>
-                          </div>
+                            <div
+                                class="nav nav-tabs mb-3"
+                                id="nav-tab"
+                                role="tablist"
+                            >
+                                <button
+                                    class="nav-link active"
+                                    id="digsign-tab-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#digsign-tab"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="digsign-tab"
+                                    aria-selected="true"
+                                >
+                                    <span></span>
+                                </button>
+                                <button
+                                    class="nav-link"
+                                    id="signtype-tab-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#signtype-tab"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="signtype-tab"
+                                    aria-selected="false"
+                                >
+                                    <span></span>
+                                </button>
+                                <button
+                                    class="nav-link"
+                                    id="signtextarea-tab-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#signtextarea-tab"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="signtextarea-tab"
+                                    aria-selected="false"
+                                >
+                                    <span></span>
+                                </button>
+                            </div>
                         </nav>
-                  
                     </div>
-                    <button type="button" class="btn btn-dark expand_form_button" id="expand-form-button">
+                    <button
+                        type="button"
+                        class="btn btn-dark expand_form_button"
+                        id="expand-form-button"
+                    >
                         Submit Form
                         <i class="fas fa-expand-alt"></i>
                     </button>
-                  </div>  
-
+                </div>
             </main>
         </div>
     </div>

@@ -21,9 +21,10 @@
                         <input
                             class="form-check-input"
                             type="checkbox"
-                            id="flexCheckDefault"
+                            name="send_mail"
+                            id="send_mail"
                         />
-                        <label class="form-check-label" for="flexCheckDefault">
+                        <label class="form-check-label" for="send_mail">
                             {{ __('esign::label.send_emails') }}
                         </label>
                     </div>
@@ -201,11 +202,27 @@
                         position: _t.attr('data-signer-index'),
                     });
 
+                    const send_mail = signersForm
+                        .find('input[name="send_mail"]')
+                        .is(':checked');
+
                     const notification_sequence = signersForm
                         .find('input[name="notification_sequence"]')
                         .is(':checked')
                         ? 'sync'
                         : 'async';
+
+                    $(document).trigger('document:updated', {
+                        from: 'signersSend',
+                        send_mail: send_mail,
+                        notification_sequence: notification_sequence,
+                    });
+
+                    signersSendModal
+                        .find('[data-bs-dismiss="modal"]')
+                        .trigger('click');
+
+                    saveBtnAction();
                 });
             })
             .on('click', '#signersSendBtn', () => {});

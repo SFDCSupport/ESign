@@ -329,5 +329,18 @@
                     }
                 }
             });
+        })
+        .on('document:updated', function (e, obj) {
+            if (obj.from === 'loadedData') {
+                return;
+            }
+
+            delete obj.from;
+
+            collect(obj).each((v, k) => {
+                loadedData[k] = v;
+            });
+
+            console.log('document:updated', loadedData);
         });
 </script>

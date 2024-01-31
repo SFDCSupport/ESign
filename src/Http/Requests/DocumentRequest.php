@@ -4,6 +4,9 @@ namespace NIIT\ESign\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
+use NIIT\ESign\Enum\DocumentStatus;
+use NIIT\ESign\Enum\NotificationSequence;
 
 class DocumentRequest extends FormRequest
 {
@@ -17,7 +20,16 @@ class DocumentRequest extends FormRequest
      */
     public function rules(): array
     {
-        $defaultRules = [
+        $additionalRules = [];
+        $mode = $this->request->get('mode');
+
+        if ($mode === 'bulkDestroy') {
+            $additionalRules = ['ids' => 'required|array',
+                'ids.*' => Rule::exists('e_documents', 'id'),
+            ];
+        }
+
+        return array_merge([
             'mode' => [
                 'required',
                 Rule::in([
@@ -25,17 +37,14 @@ class DocumentRequest extends FormRequest
                 ]),
             ],
             'title' => 'required|string|min:3',
-        ];
-
-        $mode = $this->request->get('mode');
-
-        if ($mode === 'bulkDestroy') {
-            return [
-                'ids' => 'required|array',
-                'ids.*' => Rule::exists('e_documents', 'id'),
-            ];
-        }
-
-        return $defaultRules;
+            'notification_sequence' => [
+                'sometimes',
+                new Enum(NotificationSequence::class),
+            ],
+            'status' => [
+                'sometimes',
+                new Enum(DocumentStatus::class),
+            ],
+        ], $additionalRules);
     }
 }

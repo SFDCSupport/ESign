@@ -4,6 +4,8 @@ namespace NIIT\ESign\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
+use NIIT\ESign\Enum\NotificationSequence;
 
 class SignerRequest extends FormRequest
 {
@@ -17,23 +19,11 @@ class SignerRequest extends FormRequest
      */
     public function rules(): array
     {
-        $defaultRules = [
-            'document_id' => [
-                'required',
-                Rule::exists('e_documents', 'id'),
-            ],
-            'mode' => [
-                'required',
-                Rule::in([
-                    'create', 'update', 'bulkDestroy',
-                ]),
-            ],
-        ];
-
+        $additionalRules = [];
         $mode = $this->request->get('mode');
 
         if ($mode === 'create') {
-            return [
+            $additionalRules = [
                 'signers.*.id' => 'sometimes|uuid',
                 'signers.*.uuid' => 'required',
                 'signers.*.label' => 'required',
@@ -60,12 +50,27 @@ class SignerRequest extends FormRequest
         }
 
         if ($mode === 'bulkDestroy') {
-            return [
+            $additionalRules = [
                 'ids' => 'required|array',
                 'ids.*' => Rule::exists('e_signers', 'id'),
             ];
         }
 
-        return $defaultRules;
+        return array_merge([
+            'document_id' => [
+                'required',
+                Rule::exists('e_documents', 'id'),
+            ],
+            'mode' => [
+                'required',
+                Rule::in([
+                    'create', 'update', 'bulkDestroy',
+                ]),
+            ],
+            'notification_sequence' => [
+                'sometimes',
+                new Enum(NotificationSequence::class),
+            ],
+        ], $additionalRules);
     }
 }

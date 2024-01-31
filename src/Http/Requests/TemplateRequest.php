@@ -18,15 +18,7 @@ class TemplateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $defaultRules = [
-            'mode' => [
-                'required',
-                Rule::in([
-                    'create', 'update', 'bulkDestroy',
-                ]),
-            ],
-        ];
-
+        $additionalRules = [];
         $mode = $this->request->get('mode');
 
         if ($mode === 'create') {
@@ -38,12 +30,19 @@ class TemplateRequest extends FormRequest
         }
 
         if ($mode === 'bulkDestroy') {
-            return [
+            $additionalRules = [
                 'ids' => 'required|array',
                 'ids.*' => Rule::exists('e_templates', 'id'),
             ];
         }
 
-        return $defaultRules;
+        return array_merge([
+            'mode' => [
+                'required',
+                Rule::in([
+                    'create', 'update', 'bulkDestroy',
+                ]),
+            ],
+        ], $additionalRules);
     }
 }
