@@ -222,7 +222,11 @@
                         .find('[data-bs-dismiss="modal"]')
                         .trigger('click');
 
-                    saveBtnAction();
+                    try {
+                        saveBtnAction();
+                    } catch (e) {
+                        toast('error', e);
+                    }
                 });
             })
             .on('click', '#signersSendBtn', () => {});

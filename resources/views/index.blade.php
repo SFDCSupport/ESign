@@ -60,9 +60,8 @@
                     id="pdfViewer"
                     data-url="{{ $document->document->url }}"
                 ></div>
-
                 <div class="expand-section-bottom">
-                    <div class="d-none form_container" id="form-container">
+                    <div class="d-none form_container" id="signingContainer">
                         <button
                             type="button"
                             class="btn btn-light minimize_form_button"
@@ -70,119 +69,13 @@
                         >
                             <i class="fas fa-times"></i>
                         </button>
-
-                        <div class="tab-content p-3" id="nav-tabContent">
-                            <div
-                                class="tab-pane fade active show"
-                                id="digsign-tab"
-                                role="tabpanel"
-                                aria-labelledby="digsign-tab-tab"
-                            >
-                                <h2>Signature</h2>
-
-                                <small
-                                    id="signature-pad-reset"
-                                    class="text-muted opacity-75 position-absolute"
-                                    style="
-                                        right: 25px;
-                                        bottom: 25px;
-                                        cursor: pointer;
-                                    "
-                                    title="{{ __('esign::label.clear_signature') }}"
-                                >
-                                    <i class="fa-solid fa-trash"></i>
-                                </small>
-                                <canvas
-                                    id="signature-pad"
-                                    class="border bg-light"
-                                    width="462"
-                                    height="200"
-                                ></canvas>
-
-                                <button
-                                    type="button"
-                                    class="btn btn-secondary w-100"
-                                    id=""
-                                >
-                                    <i class="fa fa-check-circle"></i>
-                                    Next
-                                </button>
-                            </div>
-                            <div
-                                class="tab-pane fade"
-                                id="signtype-tab"
-                                role="tabpanel"
-                                aria-labelledby="signtype-tab-tab"
-                            >
-                                <p>
-                                    <input
-                                        type="text"
-                                        id="typedSignature"
-                                        class="form-control form-control-lg"
-                                        placeholder="{{ __('esign::label.my_signature') }}"
-                                    />
-                                </p>
-                            </div>
-
-                            <div
-                                class="tab-pane fade"
-                                id="signtextarea-tab"
-                                role="tabpanel"
-                                aria-labelledby="signtextarea-tab-tab"
-                            >
-                                <p>
-                                    <textarea
-                                        class="form-control"
-                                        id="signtextarea1"
-                                        rows="3"
-                                    ></textarea>
-                                </p>
-                            </div>
-                        </div>
-
+                        <div class="tab-content p-3" id="elementPanels"></div>
                         <nav class="sign-type-nav">
                             <div
                                 class="nav nav-tabs mb-3"
-                                id="nav-tab"
+                                id="elementTabs"
                                 role="tablist"
-                            >
-                                <button
-                                    class="nav-link active"
-                                    id="digsign-tab-tab"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#digsign-tab"
-                                    type="button"
-                                    role="tab"
-                                    aria-controls="digsign-tab"
-                                    aria-selected="true"
-                                >
-                                    <span></span>
-                                </button>
-                                <button
-                                    class="nav-link"
-                                    id="signtype-tab-tab"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#signtype-tab"
-                                    type="button"
-                                    role="tab"
-                                    aria-controls="signtype-tab"
-                                    aria-selected="false"
-                                >
-                                    <span></span>
-                                </button>
-                                <button
-                                    class="nav-link"
-                                    id="signtextarea-tab-tab"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#signtextarea-tab"
-                                    type="button"
-                                    role="tab"
-                                    aria-controls="signtextarea-tab"
-                                    aria-selected="false"
-                                >
-                                    <span></span>
-                                </button>
-                            </div>
+                            ></div>
                         </nav>
                     </div>
                     <button
@@ -190,7 +83,7 @@
                         class="btn btn-dark expand_form_button"
                         id="expand-form-button"
                     >
-                        Submit Form
+                        {{ __('esign::label.submit') }}
                         <i class="fas fa-expand-alt"></i>
                     </button>
                 </div>
@@ -201,7 +94,37 @@
     @include('esign::partials.renderer')
 
     @pushonce('js')
+        <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?4.1.7"></script>
         <script>
+            const signerElements = @json($signer->elements);
+            let signaturePad = null;
+            let signingData = null;
+
+            const getSigningElementByType = (id, type, label = null) => {
+                if (type === 'textarea') {
+                    return `<p><textarea class="form-control"
+                        id="id-${id}-element" rows="3"
+                    ></textarea></p>`;
+                }
+
+                if (type === 'signature_pad') {
+                    return `<small title="{{ __('esign::label.clear_signature') }}"
+                        class="text-muted opacity-75 position-absolute clearSignaturePad"
+                        style="right: 25px; bottom: 25px; cursor: pointer">
+                        <i class="fa-solid fa-trash"></i>
+                    </small>
+                    <canvas id="id-${id}-element"
+                        class="border bg-light signaturePad"
+                        width="462" height="200"
+                    ></canvas>`;
+                }
+
+                return `<p><input type="text" id="id-${id}-element"
+                    class="form-control form-control-lg"
+                    placeholder="${label ?? type}"
+                /></p>`;
+            };
+
             const saveBtnAction = (status = 'save') => {
                 if (undefined === canvasEditions) {
                     toast('error', 'Something went wrong!');
@@ -304,8 +227,91 @@
             };
 
             $(() => {
-                $(document).on('signers-save', function (e, obj) {
-                    $(document).trigger('loader:show');
+                const signingContainer = $('#signingContainer');
+                const minimizeSigningContainerBtn = $('#minimize-form-button');
+                const maximizeSigningContainerBtn = $('#expand-form-button');
+
+                collect(signerElements ?? []).each((element, i) => {
+                    const isFirst = i === 0;
+                    const id = 'id-' + element.id;
+
+                    $(`<div class="tab-pane fade ${isFirst ? 'active show' : ''}"
+                        id="${id}-panel" role="tabpanel"
+                        aria-labelledby="${id}-panel">
+                        <h2>${element.label ?? element.type}</h2>
+                        ${getSigningElementByType(id, element.type, element.label)}
+                    </div>`).appendTo('#elementPanels');
+
+                    $(`<button class="nav-link ${isFirst ? 'active' : ''}"
+                        id="${id}-tab" data-bs-toggle="tab"
+                        data-bs-target="#${id}-panel"
+                        aria-controls="${id}-panel"
+                        aria-selected="${isFirst ? 'true' : 'false'}"
+                        type="button" role="tab">
+                    </button>`).appendTo('#elementTabs');
+                });
+
+                $(document)
+                    .on('signers-save', function (e, obj) {
+                        $(document).trigger('loader:show');
+                    })
+                    .on(
+                        'click',
+                        `#${maximizeSigningContainerBtn.attr('id')}`,
+                        () => {
+                            signingContainer.removeClass('d-none');
+                            $(this).addClass('d-none');
+                        },
+                    )
+                    .on(
+                        'click',
+                        `#${minimizeSigningContainerBtn.attr('id')}`,
+                        () => {
+                            signingContainer.addClass('d-none');
+                            $('#expand-form-button').removeClass('d-none');
+                        },
+                    )
+                    .on('click', '.clearSignaturePad', function (e) {
+                        signaturePad.clear();
+                        e.preventDefault();
+                    })
+                    .on('signing-modal:clear:signature-pad', () => {
+                        $('.clearSignaturePad').trigger('click');
+                    })
+                    .on('signing-modal:show', function (e, data) {
+                        if (!data.eleType || !data.id) {
+                            return;
+                        }
+
+                        signingData = data;
+
+                        signingContainer.attr('data-ele-type', data.eleType);
+                        maximizeSigningContainerBtn.trigger('click');
+                    })
+                    .on('signing-modal:hide', () => {
+                        minimizeSigningContainerBtn.trigger('click');
+                    })
+                    .on('fabric-to-pad', function (e, data) {
+                        $.when(
+                            $(document).trigger(
+                                'signing-modal:clear:signature-pad',
+                            ),
+                        )
+                            .then(() => {
+                                signaturePad.fromDataURL(data.signature, {
+                                    width: 462,
+                                    height: 200,
+                                });
+                            })
+                            .then(() => {
+                                $(document).trigger('signing-modal:show', data);
+                            });
+                    });
+
+                signaturePad = new SignaturePad($('.signaturePad')[0], {
+                    penColor: 'rgb(0, 0, 0)',
+                    minWidth: 1,
+                    maxWidth: 2,
                 });
             });
         </script>

@@ -226,7 +226,7 @@
                                                             obj.signature,
                                                     };
                                                 }
-                                                console.log(target);
+
                                                 $(document).trigger(
                                                     isSignatureObj
                                                         ? 'fabric-to-pad'
@@ -952,5 +952,3 @@
         });
     </script>
 @endpushonce
-
-@include('esign::documents.modals.signing-modal')
