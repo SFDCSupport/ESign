@@ -101,7 +101,7 @@
             </div>
             <div class="container">
                 <div class="row documentsContainer" id="documentsContainer">
-                    @each('esign::documents.partials.document', $documents, 'document')
+                    @each('esign::documents.partials.document', $documents, 'document', 'esign::documents.partials.no-documents')
                 </div>
             </div>
         </section>
