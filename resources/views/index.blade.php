@@ -70,7 +70,11 @@
                             <i class="fas fa-times"></i>
                         </button>
                         <div class="tab-content p-3" id="elementPanels"></div>
-                        <button type="button" class="btn btn-secondary w-100">
+                        <button
+                            type="button"
+                            id="nextSigningBtn"
+                            class="btn btn-secondary w-100"
+                        >
                             {{ __('esign::label.next') }}
                         </button>
                         <nav class="sign-type-nav">
@@ -100,6 +104,11 @@
         <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?4.1.7"></script>
         <script>
             const signerData = @json($signer->elements);
+            const labels = {
+                next: '{{ __('esign::label.next') }}',
+                previous: '{{ __('esign::label.previous') }}',
+                submit: '{{ __('esign::label.submit') }}',
+            };
             let signaturePad = null;
             let signingData = null;
 
@@ -230,34 +239,64 @@
             };
 
             $(() => {
-                const signingContainer = $('#signingContainer');
-                const minimizeSigningContainerBtn = $('#minimize-form-button');
-                const maximizeSigningContainerBtn = $(
-                    '#submitSigningFormBtn.expand',
-                );
+                const eles = {
+                    signingContainer: $('#signingContainer'),
+                    minimizeSigningContainerBtn: $('#minimize-form-button'),
+                    maximizeSigningContainerBtn: $(
+                        '#submitSigningFormBtn.expand',
+                    ),
+                    nextBtn: $('#nextSigningBtn'),
+                };
 
                 collect(signerData ?? []).each((element, i) => {
                     const isFirst = i === 0;
                     const id = 'id-' + element.id;
+                    let step = '';
+
+                    if (isFirst) {
+                        step = 'first';
+                    }
+
+                    if (i + 1 === collect(signerData ?? []).count()) {
+                        step = 'last';
+                    }
 
                     $(`<div class="tab-pane fade ${isFirst ? 'active show' : ''}"
                         id="${id}-panel" role="tabpanel"
-                        aria-labelledby="${id}-tab">
+                        aria-labelledby="${id}-tab"
+                        ${step ? 'data-step="' + step + '"' : ''}>
                         <h2>${element.label ?? element.type}</h2>
                         ${getSigningElementByType(id, element.type, element.label)}
                     </div>`).appendTo('#elementPanels');
 
-                    $(`<button class="nav-link ${isFirst ? 'active' : ''}"
+                    $(`<button class="nav-link ${isFirst ? 'active' : ''} "
                         id="${id}-tab" data-bs-toggle="tab"
                         data-bs-target="#${id}-panel"
                         aria-controls="${id}-panel"
                         aria-selected="${isFirst ? 'true' : 'false'}"
-                        type="button" role="tab"> 
+                        type="button" role="tab"
+                        ${step ? 'data-step="' + step + '"' : ''}>
                         <span></span>
                     </button>`).appendTo('#elementTabs');
                 });
 
                 $(document)
+                    .on(
+                        'show.bs.tab',
+                        'button[data-bs-toggle="tab"]',
+                        function (e) {
+                            const currentBtn = $(e.relatedTarget);
+                            const nextBtn = $(e.target);
+
+                            eles.nextBtn.text(
+                                labels[
+                                    nextBtn.attr('data-step') === 'last'
+                                        ? 'submit'
+                                        : 'next'
+                                ],
+                            );
+                        },
+                    )
                     .on('signers-save', function (e, obj) {
                         $(document).trigger('loader:show');
                     })
@@ -271,14 +310,20 @@
                         },
                     )
                     .on('click', '#submitSigningFormBtn.expand', () => {
-                        signingContainer.removeClass('d-none');
+                        eles.signingContainer.removeClass('d-none');
                         $(this).addClass('d-none');
+                    })
+                    .on('click', `#${eles.nextBtn.attr('id')}`, () => {
+                        $('#elementTabs button.nav-link.active')
+                            .next('button')
+                            .trigger('click');
                     })
                     .on(
                         'click',
-                        `#${minimizeSigningContainerBtn.attr('id')}`,
+                        `#${eles.minimizeSigningContainerBtn.attr('id')}`,
+                        `#${eles.minimizeSigningContainerBtn.attr('id')}`,
                         () => {
-                            signingContainer.addClass('d-none');
+                            eles.signingContainer.addClass('d-none');
                             $('#expand-form-button').removeClass('d-none');
                         },
                     )
@@ -296,11 +341,14 @@
 
                         signingData = data;
 
-                        signingContainer.attr('data-ele-type', data.eleType);
-                        maximizeSigningContainerBtn.trigger('click');
+                        eles.signingContainer.attr(
+                            'data-ele-type',
+                            data.eleType,
+                        );
+                        eles.maximizeSigningContainerBtn.trigger('click');
                     })
                     .on('signing-modal:hide', () => {
-                        minimizeSigningContainerBtn.trigger('click');
+                        eles.minimizeSigningContainerBtn.trigger('click');
                     })
                     .on('fabric-to-pad', function (e, data) {
                         $.when(
