@@ -9,34 +9,14 @@
 
     <section class="header-bottom-section">
         <div class="container-fluid">
+            
             <div
-                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
+                class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
             >
+            <a href="#" class="btn btn-sm btn-outline-secondary back-btn-head"><span class="fa fa-arrow-left"></span> &nbsp; Back</a>
                 <h4 class="h4">{{ $document->title }}</h4>
-                <div
-                    class="btn-toolbar mb-2 mb-md-0 @if(!$documentExists) d-none @endif"
-                >
-                    <div class="btn-group me-2">
-                        <button
-                            type="button"
-                            class="btn btn-outline-dark"
-                            data-bs-toggle="modal"
-                            data-bs-target="#signers_send_modal"
-                        >
-                            <i class="fas fa-user-plus"></i>
-                            {{ __('esign::label.send') }}
-                        </button>
-                    </div>
-                    <button
-                        id="saveBtn"
-                        type="button"
-                        onclick="saveBtnAction()"
-                        class="btn btn-primary d-flex align-items-center gap-1"
-                    >
-                        <i class="fas fa-save"></i>
-                        {{ __('esign::label.save') }}
-                    </button>
-                </div>
+                <a href="#" class="edit_title_link"><span class="fa fa-pen"></span></a>
+                
             </div>
         </div>
     </section>

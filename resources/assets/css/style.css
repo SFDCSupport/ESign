@@ -856,6 +856,9 @@ padding: 3px;
   font-size: .8rem;
   display: inline-block;
   width: auto;
+}
+
+.contenteditable-content.active{
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1045,5 +1048,16 @@ padding: 3px;
 .digital-sign-pad small.clearSignaturePad{
   right: 10px;
   bottom: 10px;
+}
+
+.edit_title_link{
+  display: inline-block;
+  padding: 5px 9px;
+  color: #131313;
+}
+
+.back-btn-head{
+  position: absolute;
+  left: 15px;
 }
 
