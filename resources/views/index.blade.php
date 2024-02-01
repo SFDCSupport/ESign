@@ -14,28 +14,6 @@
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
             >
                 <h4 class="h4">{{ $document->title }}</h4>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <div class="btn-group me-2">
-                        <button
-                            id="draftBtn"
-                            type="button"
-                            onclick="saveBtnAction('draft')"
-                            class="btn btn-outline-dark"
-                        >
-                            <i class="fas fa-plane"></i>
-                            {{ __('esign::label.draft') }}
-                        </button>
-                    </div>
-                    <button
-                        id="saveBtn"
-                        type="button"
-                        onclick="saveBtnAction()"
-                        class="btn btn-primary d-flex align-items-center gap-1"
-                    >
-                        <i class="fas fa-save"></i>
-                        {{ __('esign::label.save') }}
-                    </button>
-                </div>
             </div>
         </div>
     </section>
@@ -300,14 +278,14 @@
                             const highlightId = $(
                                 nextBtn.attr('data-bs-target'),
                             ).attr('data-object-id');
-
                             const [oldObj, oldCanvas] =
                                 getObjectById(unhighlightId);
                             unhighlightObject(oldObj, oldCanvas);
-
                             const [newObj, newCanvas] =
                                 getObjectById(highlightId);
                             highlightObject(newObj, newCanvas);
+
+                            saveBtnAction('draft');
 
                             eles.nextBtn.text(
                                 labels[
@@ -327,6 +305,7 @@
                         function (e) {
                             e.preventDefault();
 
+                            saveBtnAction();
                             $(document).trigger('signers-save');
                         },
                     )

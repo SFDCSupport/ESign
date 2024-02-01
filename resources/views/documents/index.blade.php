@@ -1,16 +1,19 @@
 <x-esign::layout :title="__('esign::label.dashboard')">
     @pushonce('css')
         <style>
-            .navbar-header{
+            .navbar-header {
                 background-color: rgb(242, 246, 255) !important;
-                background-image: linear-gradient(79deg,#eaf7ff 5%,#f6fbff 122%);
+                background-image: linear-gradient(
+                    79deg,
+                    #eaf7ff 5%,
+                    #f6fbff 122%
+                );
                 border-bottom: 1px solid #cdebff;
             }
 
-            .navbar-header.shadow{
+            .navbar-header.shadow {
                 box-shadow: none !important;
             }
-
         </style>
     @endpushonce
 

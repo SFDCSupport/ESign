@@ -3,10 +3,9 @@
 return [
     'document_filters' => [
         'all' => 'All',
-        'active' => 'Active',
         'draft' => 'Draft',
-        'in_active' => 'In Active',
-        'pending' => 'Pending',
+        'in_progress' => 'In Progress',
+        'completed' => 'Completed',
         'archived' => 'Archived',
     ],
 ];

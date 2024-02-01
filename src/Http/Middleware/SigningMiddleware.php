@@ -18,7 +18,7 @@ class SigningMiddleware
         $loadedModel = $request->signer()->loadMissing('document');
 
         //        abort_if(
-        //            $loadedModel->document->status !== DocumentStatus::ACTIVE || $signer->signing_status !== SigningStatus::NOT_SIGNED,
+        //            $loadedModel->document->status !== DocumentStatus::IN_PROGRESS || $signer->signing_status !== SigningStatus::NOT_SIGNED,
         //            404,
         //        );
 

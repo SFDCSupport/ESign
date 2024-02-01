@@ -33,7 +33,7 @@ class DocumentController extends Controller
 
     public function show(Document $document)
     {
-        if ($document->status === DocumentStatus::PENDING) {
+        if ($document->status !== DocumentStatus::DRAFT) {
             return redirect()->route('esign.documents.submissions.index', $document);
         }
 
@@ -73,7 +73,7 @@ class DocumentController extends Controller
     {
         $replica = $document->replicate();
         $replica->parent_id = $document->id;
-        $replica->title = $document->title.' ('.__('esign::label.copy').')';
+        $replica->title = $document->title.' ('.$this->getNextCloneSuffix($document).')';
         $replica->push();
 
         $document->relations = [];
@@ -89,5 +89,23 @@ class DocumentController extends Controller
     public function send(Document $document)
     {
         return redirect()->route('esign.documents.show', $document);
+    }
+
+    protected function getNextCloneSuffix(Document $document)
+    {
+        $latestClone = $document->children()
+            ->where('title', 'LIKE', $document->title.' (%')
+            ->whereNull('deleted_at')
+            ->latest('title')
+            ->first();
+
+        if ($latestClone) {
+            $matches = [];
+            if (preg_match('/\((\d+)\)/', $latestClone->title, $matches)) {
+                return (int) $matches[1] + 1;
+            }
+        }
+
+        return 1;
     }
 }

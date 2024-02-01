@@ -8,12 +8,7 @@
 >
     @if (! $isSigningRoute)
         <div class="container-fluid justify-content-center">
-            <a
-                class="navbar-brand"
-                href="#"
-            >
-                Company name
-            </a>
+            <a class="navbar-brand" href="#">Company name</a>
 
             <ul class="navbar-nav flex-row d-md-none">
                 <li class="nav-item text-nowrap">
