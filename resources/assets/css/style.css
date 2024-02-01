@@ -1088,9 +1088,9 @@ padding: 3px;
 
 [contenteditable="true"],
 [contenteditable="true"]:focus{
-  border: 1px solid #939393;
+  border: 1px solid #80bdff;
   padding: 1px 6px;
   border-radius: 2px;
   outline: none !important;
-  box-shadow: none !important;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
 }
