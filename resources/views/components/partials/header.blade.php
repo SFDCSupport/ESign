@@ -3,13 +3,13 @@
 ])
 
 <header
-    class="navbar sticky-top bg-white flex-md-nowrap p-0 shadow"
+    class="navbar sticky-top bg-white flex-md-nowrap p-0 shadow navbar-header"
     data-bs-theme="dark"
 >
     @if (! $isSigningRoute)
-        <div class="container-fluid">
+        <div class="container-fluid justify-content-center">
             <a
-                class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-dark"
+                class="navbar-brand"
                 href="#"
             >
                 Company name
@@ -52,30 +52,6 @@
                     aria-label="Search"
                 />
             </div>
-
-            <ul class="navbar-nav ms-auto user-dropdown">
-                <li class="nav-item dropdown">
-                    <button
-                        class="btn btn-secondary dropdown-toggle"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                    >
-                        <i class="fa fa-user"></i>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li>
-                            <a class="dropdown-item" href="#">Another action</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                Something else here
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
         </div>
     @else
         <div

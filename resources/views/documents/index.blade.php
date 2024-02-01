@@ -1,6 +1,17 @@
 <x-esign::layout :title="__('esign::label.dashboard')">
     @pushonce('css')
-        <style></style>
+        <style>
+            .navbar-header{
+                background-color: rgb(242, 246, 255) !important;
+                background-image: linear-gradient(79deg,#eaf7ff 5%,#f6fbff 122%);
+                border-bottom: 1px solid #cdebff;
+            }
+
+            .navbar-header.shadow{
+                box-shadow: none !important;
+            }
+
+        </style>
     @endpushonce
 
     <section class="grey-bg-section upload-bg-sec pb-1">
