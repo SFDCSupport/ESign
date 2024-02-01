@@ -62,4 +62,5 @@ return [
     'next' => 'Next',
     'back' => 'Back',
     'remove' => 'Remove',
+    'loading' => 'Loading...',
 ];

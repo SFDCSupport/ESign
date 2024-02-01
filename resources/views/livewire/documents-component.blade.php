@@ -23,7 +23,8 @@
                             <a
                                 href="javascript: void(0);"
                                 class="filter-link @if($filter === $key) active @endif"
-                                wire:model="filter"
+                                wire:click="setFilter('{{ $key }}')"
+                                wire:loading.attr="disabled"
                             >
                                 {{ $label }}
                             </a>
@@ -44,7 +45,18 @@
             </fieldset>
         </div>
         <div class="container">
-            <div class="row documentsContainer" id="documentsContainer">
+            <div wire:loading>
+                <div
+                    class="d-flex justify-content-center align-items-center text-center"
+                >
+                    {{ __('esign::label.loading') }}
+                </div>
+            </div>
+            <div
+                class="row documentsContainer"
+                id="documentsContainer"
+                wire:loading.remove
+            >
                 @forelse ($documents as $document)
                     @php($documentStatus = $document->status->value)
                     <div
