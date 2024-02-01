@@ -20,11 +20,6 @@ class DocumentController extends Controller
         return view('esign::documents.index', compact('documents'));
     }
 
-    public function create(Request $request)
-    {
-        return view('esign::documents.create');
-    }
-
     public function store(DocumentRequest $request)
     {
         $document = Document::create($request->all());
@@ -59,11 +54,6 @@ class DocumentController extends Controller
             'document',
             'formattedData',
         ));
-    }
-
-    public function edit(Document $document)
-    {
-        return redirect()->route('esign.documents.show', $document);
     }
 
     public function update(DocumentRequest $request, Document $document)

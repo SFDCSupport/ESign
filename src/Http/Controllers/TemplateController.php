@@ -16,11 +16,6 @@ class TemplateController extends Controller
         return view('esign::templates.index', compact('templates'));
     }
 
-    public function create(Request $request)
-    {
-        return view('esign::templates.create');
-    }
-
     public function store(TemplateRequest $request)
     {
         Template::create($request->all());
@@ -31,11 +26,6 @@ class TemplateController extends Controller
     public function show(Template $template)
     {
         return view('esign::templates.show', compact('template'));
-    }
-
-    public function edit(Template $template)
-    {
-        return view('esign::templates.create', compact('template'));
     }
 
     public function update(TemplateRequest $request, Template $template)
