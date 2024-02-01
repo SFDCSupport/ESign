@@ -544,6 +544,14 @@
                         em.removeClass("fa-pen").addClass("fa-check");
                         editable.attr("contenteditable", "true").get(0).focus();
                     }
+                }).on('focusout keypress', '[contenteditable="true"]', function(e) {
+                    const _t = $(this);
+                    const contentEditable = _t.parent().find('.contentEditable[data-content-editable]');
+                    const editableEle = contentEditable.attr('data-content-editable');
+
+                    if(e.keyCode === 13 || editableEle.toUpperCase() === _t.prop('nodeName')) {
+                        contentEditable.trigger('click');
+                    }
                 });
 
                 signerUpdate();
