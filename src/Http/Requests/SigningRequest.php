@@ -17,6 +17,8 @@ class SigningRequest extends FormRequest
      */
     public function rules(): array
     {
+        $mode = $this->request->get('mode');
+
         return [
             'mode' => [
                 'required',

@@ -3,7 +3,6 @@
 namespace NIIT\ESign\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Http\Requests\DocumentRequest;
 use NIIT\ESign\Http\Resources\SignerResource;
@@ -68,15 +67,6 @@ class DocumentController extends Controller
         $document->delete();
 
         return back() ?? redirect()->route('esign.documents.index');
-    }
-
-    public function bulkDestroy(DocumentRequest $request)
-    {
-        foreach (Document::find($request->get('ids')) as $document) {
-            $document->delete();
-        }
-
-        return response(null, Response::HTTP_NO_CONTENT);
     }
 
     public function copy(Document $document)

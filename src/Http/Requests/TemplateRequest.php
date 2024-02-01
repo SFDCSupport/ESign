@@ -29,18 +29,11 @@ class TemplateRequest extends FormRequest
 
         }
 
-        if ($mode === 'bulkDestroy') {
-            $additionalRules = [
-                'ids' => 'required|array',
-                'ids.*' => Rule::exists('e_templates', 'id'),
-            ];
-        }
-
         return array_merge([
             'mode' => [
                 'required',
                 Rule::in([
-                    'create', 'update', 'bulkDestroy',
+                    'create', 'update',
                 ]),
             ],
         ], $additionalRules);

@@ -96,8 +96,4 @@ class SignerController extends Controller
     public function destroy(SignerRequest $request, Document $document, Signer $signer)
     {
     }
-
-    public function bulkDestroy(SignerRequest $request, Document $document)
-    {
-    }
 }

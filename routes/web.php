@@ -20,21 +20,15 @@ Route::prefix('attachment')
 // ADMIN ROUTES
 Route::middleware('auth')
     ->group(function () {
-        Route::delete('templates/destroy', [DocumentController::class, 'bulkDestroy'])
-            ->name('templates.bulk-destroy');
         Route::resource('templates', TemplateController::class)
             ->except(['edit', 'create']);
 
-        Route::delete('documents/{document}/signers/destroy', [SignerController::class, 'bulkDestroy'])
-            ->name('documents.signers.bulk-destroy');
         Route::resource('documents.signers', SignerController::class)
             ->except(['create', 'edit', 'show']);
 
         Route::resource('documents.submissions', SubmissionController::class)
             ->only(['index', 'show', 'destroy']);
 
-        Route::delete('documents/destroy', [DocumentController::class, 'bulkDestroy'])
-            ->name('documents.bulk-destroy');
         Route::get('documents/{document}/copy', [DocumentController::class, 'copy'])
             ->name('documents.copy');
         Route::get('documents/{document}/send', [DocumentController::class, 'send'])

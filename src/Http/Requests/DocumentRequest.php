@@ -23,17 +23,19 @@ class DocumentRequest extends FormRequest
         $additionalRules = [];
         $mode = $this->request->get('mode');
 
-        if ($mode === 'bulkDestroy') {
-            $additionalRules = ['ids' => 'required|array',
-                'ids.*' => Rule::exists('e_documents', 'id'),
-            ];
+        if ($mode === 'create') {
+
+        }
+
+        if ($mode === 'update') {
+
         }
 
         return array_merge([
             'mode' => [
                 'required',
                 Rule::in([
-                    'create', 'update', 'bulkDestroy',
+                    'create', 'update',
                 ]),
             ],
             'title' => 'required|string|min:3',

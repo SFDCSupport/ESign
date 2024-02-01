@@ -49,13 +49,6 @@ class SignerRequest extends FormRequest
 
         }
 
-        if ($mode === 'bulkDestroy') {
-            $additionalRules = [
-                'ids' => 'required|array',
-                'ids.*' => Rule::exists('e_signers', 'id'),
-            ];
-        }
-
         return array_merge([
             'document_id' => [
                 'required',
@@ -64,7 +57,7 @@ class SignerRequest extends FormRequest
             'mode' => [
                 'required',
                 Rule::in([
-                    'create', 'update', 'bulkDestroy',
+                    'create', 'update',
                 ]),
             ],
             'notification_sequence' => [
