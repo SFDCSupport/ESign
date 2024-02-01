@@ -22,6 +22,12 @@
             return `${prefix}${timestamp}-${counter++}`;
         };
     })();
+    const convertToTitleString = (string) =>
+        string
+            .replace(/_/g, ' ')
+            .replace(/^\s*/, '')
+            .replace(/([a-z])([A-Z])/g, '$1 $2')
+            .replace(/(?:^|(?<=\s))\S/g, (char) => char.toUpperCase());
     const getCSRFToken = () =>
         $('meta[name="csrf-token"]').attr('content') || null;
     const getDocumentId = () =>

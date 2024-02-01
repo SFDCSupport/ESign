@@ -6,12 +6,10 @@
         data-uuid="__UUID"
     >
         <i class="__ICON type_icons"></i>
-        <div
-            class="group/contenteditable relative overflow-visible d-flex align-items-center"
-        >
+        <div class="relative overflow-visible d-flex align-items-center">
             <span
                 dir="auto"
-                contenteditable="false"
+                contenteditable="true"
                 class="inline peer contenteditable-content outline-none focus:block"
                 style="min-width: 2px"
             >

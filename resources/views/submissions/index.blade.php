@@ -21,7 +21,7 @@
                             />
                             <x-esign::partials.button
                                 :value="__('esign::label.edit')"
-                                :redirectUrl="route('esign.documents.edit', $document)"
+                                :redirectUrl="route('esign.documents.show', $document)"
                                 icon="edit"
                                 class="btn-sm btn-outline-secondary"
                             />

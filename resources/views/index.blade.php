@@ -272,7 +272,7 @@
                         data-object-id="${element.id}"
                         data-element-type="${element.type}"
                         ${step ? 'data-step="' + step + '"' : ''}>
-                        <h2>${element.label ?? element.type}</h2>
+                        <h2>${convertToTitleString(element.label ?? element.type)}</h2>
                         ${getSigningElementByType(id, element.type, element.label)}
                     </div>`).appendTo('#elementPanels');
 
@@ -294,6 +294,20 @@
                         function (e) {
                             const currentBtn = $(e.relatedTarget);
                             const nextBtn = $(e.target);
+                            const unhighlightId = $(
+                                currentBtn.attr('data-bs-target'),
+                            ).attr('data-object-id');
+                            const highlightId = $(
+                                nextBtn.attr('data-bs-target'),
+                            ).attr('data-object-id');
+
+                            const [oldObj, oldCanvas] =
+                                getObjectById(unhighlightId);
+                            unhighlightObject(oldObj, oldCanvas);
+
+                            const [newObj, newCanvas] =
+                                getObjectById(highlightId);
+                            highlightObject(newObj, newCanvas);
 
                             eles.nextBtn.text(
                                 labels[
@@ -317,6 +331,14 @@
                         },
                     )
                     .on('click', '#submitSigningFormBtn.expand', () => {
+                        const highlightId = $(
+                            $(
+                                '#elementTabs button[data-bs-target].active',
+                            ).attr('data-bs-target'),
+                        ).attr('data-object-id');
+                        const [obj, canvas] = getObjectById(highlightId);
+
+                        highlightObject(obj, canvas);
                         eles.signingContainer.removeClass('d-none');
                         $(this).addClass('d-none');
                     })
@@ -328,8 +350,15 @@
                     .on(
                         'click',
                         `#${eles.minimizeSigningContainerBtn.attr('id')}`,
-                        `#${eles.minimizeSigningContainerBtn.attr('id')}`,
                         () => {
+                            const unhighlightId = $(
+                                $(
+                                    '#elementTabs button[data-bs-target].active',
+                                ).attr('data-bs-target'),
+                            ).attr('data-object-id');
+                            const [obj, canvas] = getObjectById(unhighlightId);
+
+                            unhighlightObject(obj, canvas);
                             eles.signingContainer.addClass('d-none');
                             $('#expand-form-button').removeClass('d-none');
                         },
@@ -345,6 +374,10 @@
                         if (!obj.eleType || !obj.id) {
                             return;
                         }
+
+                        const [oldObj, canvas] = getObjectById(obj.id);
+
+                        highlightObject(oldObj, canvas);
 
                         eles.maximizeSigningContainerBtn.trigger('click');
 
@@ -368,6 +401,10 @@
                         eles.minimizeSigningContainerBtn.trigger('click');
                     })
                     .on('fabric-to-pad', function (e, obj) {
+                        const [oldObj, canvas] = getObjectById(obj.id);
+
+                        highlightObject(oldObj, canvas);
+
                         $.when(
                             $(document).trigger(
                                 'signing-modal:clear:signature-pad',

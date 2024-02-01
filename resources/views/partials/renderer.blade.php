@@ -16,6 +16,8 @@
         const pdfPreviewer = document.getElementById('previewViewer');
         const pdfViewer = $('#pdfViewer');
         const url = pdfViewer.attr('data-url');
+        const objectBgColor = `rgb(255, 177, 171, 0.5)`;
+        const objectHBgColor = `rgb(255, 177, 171, 1)`;
 
         const loadPDF = (url, viewer) => {
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
@@ -674,7 +676,7 @@
                     originX: 'center',
                     originY: 'center',
                     textAlign: 'center',
-                    backgroundColor: `rgb(255, 177, 171, 0.5)`,
+                    backgroundColor: objectBgColor,
                 });
 
             return fabricObject;
@@ -702,9 +704,12 @@
             switch (data.eleType) {
                 case 'text':
                 case 'signature_pad':
-                    fabricObject = new fabric.IText(text, {
-                        ...commonStyles,
-                    });
+                    fabricObject = new fabric.IText(
+                        convertToTitleString(text),
+                        {
+                            ...commonStyles,
+                        },
+                    );
                     break;
                 default:
                     fabricObject = new fabric.Text(text, commonStyles);
@@ -722,6 +727,32 @@
             fabricObject = setFabricControl(fabricObject);
 
             return fabricObject;
+        };
+
+        const highlightObject = (obj, canvas = null) => {
+            obj.set({
+                backgroundColor: objectHBgColor,
+            });
+
+            (canvas ?? obj.canvas).renderAll();
+        };
+
+        const unhighlightObject = (obj, canvas = null) => {
+            obj.set({
+                backgroundColor: objectBgColor,
+            });
+
+            (canvas ?? obj.canvas).renderAll();
+        };
+
+        const getObjectById = (id) => {
+            for (const canvas of canvasEditions) {
+                const object = canvas.getObjects().find((obj) => obj.id === id);
+                if (object) {
+                    return [object, canvas];
+                }
+            }
+            return [null, null];
         };
 
         $(() => {
@@ -786,21 +817,7 @@
                     loadPDF(obj.url, obj.container);
                 })
                 .on('signing-to-fabric', function (e, obj) {
-                    const getObjectByIdInCanvasEditions = (id) => {
-                        for (const canvas of canvasEditions) {
-                            const object = canvas
-                                .getObjects()
-                                .find((obj) => obj.id === id);
-                            if (object) {
-                                return [object, canvas];
-                            }
-                        }
-                        return [null, null];
-                    };
-
-                    const [oldObj, canvas] = getObjectByIdInCanvasEditions(
-                        obj.id,
-                    );
+                    const [oldObj, canvas] = getObjectById(obj.id);
 
                     if (blank(oldObj)) {
                         return;
