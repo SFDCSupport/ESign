@@ -1,5 +1,5 @@
 <div>
-    <section class="mb-2">
+    <section class="mb-2" id="documentsSection">
         <div class="container">
             <div
                 class="align-items-center pt-4 pb-1 mb-4 border-bottom text-center"
@@ -35,7 +35,7 @@
                         <input
                             type="search"
                             id="documentsSearch"
-                            wire:model="search"
+                            wire:model.live.debounce.250ms="search"
                             class="form-control form-control-sm"
                             placeholder="{{ __('esign::label.type_query') }}"
                             aria-label="{{ __('esign::label.search') }}"
@@ -142,6 +142,10 @@
                         {!! __('esign::label.documents_not_exists') !!}
                     </div>
                 @endforelse
+
+                @if (! blank($documents ?? []))
+                    {{ $documents->links(data: ['scrollTo' => '#documentsSection']) }}
+                @endif
             </div>
         </div>
     </section>

@@ -4,14 +4,19 @@ namespace NIIT\ESign\Livewire;
 
 use Livewire\Attributes\Lazy;
 use Livewire\Component;
+use Livewire\WithPagination;
 use NIIT\ESign\Models\Document;
 
 #[Lazy(isolate: false)]
 class DocumentComponent extends Component
 {
-    public ?string $search = '';
+    use WithPagination;
+
+    public string $search = '';
 
     public string $filter = 'all';
+
+    protected $paginationTheme = 'bootstrap';
 
     public function setFilter($filter): void
     {
@@ -36,7 +41,7 @@ class DocumentComponent extends Component
                         fn ($q) => $q->where('title', 'LIKE', "%{$this->search}%")
                     )->when($this->filter !== 'all',
                         fn ($q) => $q->where('status', $this->filter)
-                    )->get(),
+                    )->paginate(2),
             ]);
     }
 }
