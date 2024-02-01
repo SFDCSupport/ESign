@@ -8,7 +8,9 @@
 >
     @if (! $isSigningRoute)
         <div class="container-fluid justify-content-center">
-            <a class="navbar-brand" href="#">Company name</a>
+            <a href="/" class="navbar-brand">
+                <img src="{{url(rsc('/img/shell-logo.png'))}}" class="header-logo"/>
+            </a>
 
             <ul class="navbar-nav flex-row d-md-none">
                 <li class="nav-item text-nowrap">
@@ -53,7 +55,9 @@
             class="container-fluid pt-2 mb-2 text-center"
             style="display: block"
         >
-            COMPANY NAME
+            <a href="/">
+                <img src="{{url(rsc('/img/shell-logo.png'))}}" class="header-logo"/>
+            </a>
         </div>
     @endif
 </header>

@@ -10,7 +10,7 @@
     <section class="header-bottom-section">
         <div class="container-fluid">
             <div
-                class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
             >
                 <a
                     href="{{ url()->previous() }}"
@@ -19,7 +19,7 @@
                     <span class="fa fa-arrow-left"></span>
                     {{ __('esign::label.back') }}
                 </a>
-                <div>
+                <div class="d-flex">
                     <h4 contenteditable="false" class="h4">
                         {{ $document->title }}
                     </h4>
