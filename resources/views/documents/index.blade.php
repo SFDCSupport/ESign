@@ -2,17 +2,7 @@
     @pushonce('css')
         <style>
             .navbar-header {
-                background-color: rgb(242, 246, 255) !important;
-                background-image: linear-gradient(
-                    79deg,
-                    #eaf7ff 5%,
-                    #f6fbff 122%
-                );
                 border-bottom: 1px solid #cdebff;
-            }
-
-            .navbar-header.shadow {
-                box-shadow: none !important;
             }
         </style>
     @endpushonce
@@ -29,7 +19,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
-                    <div class="text-center pt-2 pb-2 mb-2">
+                    <div class="text-center pt-2 pb-2 mb-2 text-light">
                         <h1 class="h2">Sign your document</h1>
                         <p class="mb-0">
                             Lorem Ipsum is simply dummy text of the printing and
