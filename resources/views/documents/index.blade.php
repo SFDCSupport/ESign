@@ -59,7 +59,7 @@
         </div>
     </section>
 
-    <section class="bg-white">
+    <section class="temp-section">
         <section class="mb-2">
             <div class="container">
                 <div
