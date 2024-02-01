@@ -65,3 +65,17 @@ if (! function_exists('ordinal')) {
         return $number.$suffix;
     }
 }
+
+if (! function_exists('goBack')) {
+    function goBack(?string $url): string
+    {
+        $previousUrl = url()->previous();
+        $currentUrl = url()->current();
+
+        if (trim($previousUrl) !== trim($currentUrl)) {
+            return $previousUrl;
+        }
+
+        return $url ?? $currentUrl;
+    }
+}

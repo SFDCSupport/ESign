@@ -74,7 +74,7 @@ class DocumentController extends Controller
     {
         $replica = $document->replicate();
         $replica->parent_id = $document->id;
-        $replica->title = $document->title.' ('.$this->getNextCloneSuffix($document).')';
+        $replica->title = '('.$this->getNextCloneSuffix($document).')'.$document->title;
         $replica->push();
 
         $document->relations = [];

@@ -47,7 +47,7 @@
                             href="{{ route('esign.documents.destroy', $document) }}"
                             class="text-secondary"
                             title="{{ __('esign::label.delete') }}"
-                            onclick="event.preventDefault();this.closest('form').submit();"
+                            onclick="event.preventDefault();$(document).trigger('loader:show');this.closest('form').submit();"
                         >
                             <i class="fa fa-trash"></i>
                         </a>

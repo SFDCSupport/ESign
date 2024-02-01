@@ -13,7 +13,7 @@
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
             >
                 <a
-                    href="{{ url()->previous() }}"
+                    href="{{ goBack(route('esign.documents.index')) }}"
                     class="btn btn-sm btn-outline-secondary back-btn-head"
                 >
                     <span class="fa fa-arrow-left"></span>
@@ -520,7 +520,7 @@
                         const key = _t.attr("data-content-editable-key");
                         const value = $.trim(editable.text());
 
-                        if(key.startsWith('signers.elements.')) {
+                        if (key.startsWith('signers.elements.')) {
                             const _element = _t.closest("div.addedElement");
 
                             $(document).trigger("signer:element:updated", {
@@ -529,7 +529,7 @@
                                 signer_uuid: _element.attr("data-element-signer-uuid"),
                                 label: value,
                             });
-                        }else {
+                        } else {
                             const obj = {};
 
                             obj[key] = value;
