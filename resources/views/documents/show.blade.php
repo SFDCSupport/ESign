@@ -9,14 +9,53 @@
 
     <section class="header-bottom-section">
         <div class="container-fluid">
-            
             <div
                 class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
             >
-            <a href="#" class="btn btn-sm btn-outline-secondary back-btn-head"><span class="fa fa-arrow-left"></span> &nbsp; Back</a>
-                <h4 class="h4">{{ $document->title }}</h4>
-                <a href="#" class="edit_title_link"><span class="fa fa-pen"></span></a>
-                
+                <a
+                    href="{{ url()->previous() }}"
+                    class="btn btn-sm btn-outline-secondary back-btn-head"
+                >
+                    <span class="fa fa-arrow-left"></span>
+                    {{ __('esign::label.back') }}
+                </a>
+                <div>
+                    <h4 contenteditable="false" class="h4">
+                        {{ $document->title }}
+                    </h4>
+                    <a
+                        href="javascript: void(0);"
+                        class="edit_title_link contentEditable"
+                        data-content-editable="h4"
+                        data-content-editable-key="title"
+                    >
+                        <em class="fa-solid fa-pen"></em>
+                    </a>
+                </div>
+                <div
+                    class="btn-toolbar mb-2 mb-md-0 @if(!$documentExists) d-none @endif"
+                >
+                    <div class="btn-group me-2">
+                        <button
+                            type="button"
+                            class="btn btn-outline-dark"
+                            data-bs-toggle="modal"
+                            data-bs-target="#signers_send_modal"
+                        >
+                            <i class="fas fa-user-plus"></i>
+                            {{ __('esign::label.send') }}
+                        </button>
+                    </div>
+                    <button
+                        id="saveBtn"
+                        type="button"
+                        onclick="saveBtnAction()"
+                        class="btn btn-primary d-flex align-items-center gap-1"
+                    >
+                        <i class="fas fa-save"></i>
+                        {{ __('esign::label.save') }}
+                    </button>
+                </div>
             </div>
         </div>
     </section>
@@ -48,7 +87,7 @@
                             id="documentRemoveBtn"
                         >
                             <i class="fa fa-times"></i>
-                            Remove
+                            {{ __('esign::label.remove') }}
                         </a>
                     </div>
 
@@ -329,7 +368,7 @@
                     canvasEdition.forEachObject((obj) => {
                         let additionalInfo = {};
 
-                        console.log('Object Info:', {
+                        console.log("Object Info:", {
                             ...additionalInfo,
                             on_page: canvasEdition.page_index + 1,
                             eleType: obj.eleType,
@@ -338,12 +377,12 @@
                             scale_x: obj.scaleX,
                             scale_y: obj.scaleY,
                             width: obj.width * obj.scaleX,
-                            height: obj.height * obj.scaleY,
+                            height: obj.height * obj.scaleY
                         });
                     });
                 });
 
-                $(document).trigger('signers-save');
+                $(document).trigger("signers-save");
             };
 
             $(() => {
@@ -452,27 +491,60 @@
                         $("#recipientsContainer span.selectedSigner").text(_t.text())
                             .attr("data-active-signer", uuid);
                     }).on("signers-save", function(e) {
-                        e.preventDefault();
+                    e.preventDefault();
 
-                        setTimeout(() => $(document).trigger("loader:show"), 0);
+                    setTimeout(() => $(document).trigger("loader:show"), 0);
 
-                        $.post('{{ route('esign.documents.signers.store', $document) }}', $.extend({}, loadedData, {
-                            _token: '{{ csrf_token() }}',
-                            document_id: '{{ $document->id }}',
-                            mode: "create"
-                        })).done((r) => {
-                            if (r.data) {
-                                $(document).trigger("process-ids", r.data);
-                            }
+                    $.post('{{ route('esign.documents.signers.store', $document) }}', $.extend({}, loadedData, {
+                        _token: '{{ csrf_token() }}',
+                        document_id: '{{ $document->id }}',
+                        mode: "create"
+                    })).done((r) => {
+                        if (r.data) {
+                            $(document).trigger("process-ids", r.data);
+                        }
 
-                            $(document).trigger("loader:hide");
-                        }).fail((x) => {
-                            toast("error", x.responseText);
-                            $(document).trigger("loader:hide");
-                        });
-                    }).on("click", ".dropdown_click .selecteddropdown", function(e) {
-                        $(".dropdown_click .drop-content").slideToggle();
+                        $(document).trigger("loader:hide");
+                    }).fail((x) => {
+                        toast("error", x.responseText);
+                        $(document).trigger("loader:hide");
                     });
+                }).on("click", ".dropdown_click .selecteddropdown", function() {
+                    $(".dropdown_click .drop-content").slideToggle();
+                }).on("click", ".contentEditable[data-content-editable]", function() {
+                    const _t = $(this);
+                    const em = _t.find("em.fa-solid");
+                    const editable = _t.parent().find(_t.attr("data-content-editable") + ":first");
+
+                    if (em.hasClass("fa-check")) {
+                        const key = _t.attr("data-content-editable-key");
+                        const value = $.trim(editable.text());
+
+                        if(key.startsWith('signers.elements.')) {
+                            const _element = _t.closest("div.addedElement");
+
+                            $(document).trigger("signer:element:updated", {
+                                from: "sidebar",
+                                uuid: _element.attr("data-uuid"),
+                                signer_uuid: _element.attr("data-element-signer-uuid"),
+                                label: value,
+                            });
+                        }else {
+                            const obj = {};
+
+                            obj[key] = value;
+
+                            $(document).trigger("document:updated", obj);
+                        }
+
+                        editable.attr("contenteditable", "false");
+
+                        em.removeClass("fa-check").addClass("fa-pen");
+                    } else {
+                        em.removeClass("fa-pen").addClass("fa-check");
+                        editable.attr("contenteditable", "true").get(0).focus();
+                    }
+                });
 
                 signerUpdate();
             });

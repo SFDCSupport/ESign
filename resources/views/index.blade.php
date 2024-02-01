@@ -50,6 +50,7 @@
                         <div class="tab-content p-3" id="elementPanels"></div>
                         <button
                             type="button"
+                            data-action="next"
                             id="nextSigningBtn"
                             class="btn btn-secondary w-100"
                         >
@@ -231,7 +232,9 @@
                     nextBtn: $('#nextSigningBtn'),
                 };
 
-                collect(signerData ?? []).each((element, i) => {
+                const signerDataCollection = collect(signerData ?? []);
+
+                signerDataCollection.each((element, i) => {
                     const isFirst = i === 0;
                     const id = generateUniqueId('e_');
                     let step = '';
@@ -265,6 +268,12 @@
                     </button>`).appendTo('#elementTabs');
                 });
 
+                if (signerDataCollection.count() === 1) {
+                    eles.nextBtn
+                        .attr('data-action', 'submit')
+                        .text(labels.submit);
+                }
+
                 $(document)
                     .on(
                         'show.bs.tab',
@@ -280,20 +289,18 @@
                             ).attr('data-object-id');
                             const [oldObj, oldCanvas] =
                                 getObjectById(unhighlightId);
-                            unhighlightObject(oldObj, oldCanvas);
                             const [newObj, newCanvas] =
                                 getObjectById(highlightId);
+                            const isLast = nextBtn.attr('data-step') === 'last';
+
+                            unhighlightObject(oldObj, oldCanvas);
                             highlightObject(newObj, newCanvas);
 
                             saveBtnAction('draft');
 
-                            eles.nextBtn.text(
-                                labels[
-                                    nextBtn.attr('data-step') === 'last'
-                                        ? 'submit'
-                                        : 'next'
-                                ],
-                            );
+                            eles.nextBtn
+                                .attr('data-action', isLast ? 'submit' : 'next')
+                                .text(labels[isLast ? 'submit' : 'next']);
                         },
                     )
                     .on('signers-save', function (e, obj) {
@@ -321,11 +328,22 @@
                         eles.signingContainer.removeClass('d-none');
                         $(this).addClass('d-none');
                     })
-                    .on('click', `#${eles.nextBtn.attr('id')}`, () => {
-                        $('#elementTabs button.nav-link.active')
-                            .next('button')
-                            .trigger('click');
-                    })
+                    .on(
+                        'click',
+                        `#${eles.nextBtn.attr('id')}[data-action="next"]`,
+                        () => {
+                            $('#elementTabs button.nav-link.active')
+                                .next('button')
+                                .trigger('click');
+                        },
+                    )
+                    .on(
+                        'click',
+                        `#${eles.nextBtn.attr('id')}[data-action="submit"]`,
+                        () => {
+                            saveBtnAction();
+                        },
+                    )
                     .on(
                         'click',
                         `#${eles.minimizeSigningContainerBtn.attr('id')}`,

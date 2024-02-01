@@ -27,11 +27,12 @@ class SignerRequest extends FormRequest
                 'signers.*.id' => 'sometimes|uuid',
                 'signers.*.uuid' => 'required',
                 'signers.*.label' => 'required',
-                'signers.*.email' => 'sometimes|email',
+                'signers.*.email' => 'nullable|email',
                 'signers.*.is_deleted' => 'sometimes',
                 'signers.*.position' => 'required|integer',
                 'signers.*.elements.*.id' => 'sometimes|uuid',
                 'signers.*.elements.*.uuid' => 'required',
+                'signers.*.elements.*.label' => 'required',
                 'signers.*.elements.*.on_page' => 'required|integer',
                 'signers.*.elements.*.left' => 'required',
                 'signers.*.elements.*.top' => 'required',
@@ -63,6 +64,9 @@ class SignerRequest extends FormRequest
             'notification_sequence' => [
                 'sometimes',
                 new Enum(NotificationSequence::class),
+            ],
+            'title' => [
+                'nullable',
             ],
         ], $additionalRules);
     }

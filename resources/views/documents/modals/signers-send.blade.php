@@ -181,7 +181,9 @@
                         );
                     });
             })
-            .on('click', '#signersSaveBtn', () => {
+            .on('click', '#signersSaveBtn,#signersSendBtn', () => {
+                const _t = $(this);
+
                 if (!signersForm.valid()) {
                     console.log(signersForm.validate().errorList);
                     toast(
@@ -201,34 +203,39 @@
                         email: _t.find('input[name$="[email]"]').val(),
                         position: _t.attr('data-signer-index'),
                     });
-
-                    const send_mail = signersForm
-                        .find('input[name="send_mail"]')
-                        .is(':checked');
-
-                    const notification_sequence = signersForm
-                        .find('input[name="notification_sequence"]')
-                        .is(':checked')
-                        ? 'sync'
-                        : 'async';
-
-                    $(document).trigger('document:updated', {
-                        from: 'signersSend',
-                        send_mail: send_mail,
-                        notification_sequence: notification_sequence,
-                    });
-
-                    signersSendModal
-                        .find('[data-bs-dismiss="modal"]')
-                        .trigger('click');
-
-                    try {
-                        saveBtnAction();
-                    } catch (e) {
-                        toast('error', e);
-                    }
                 });
-            })
-            .on('click', '#signersSendBtn', () => {});
+
+                const send_mail = signersForm
+                    .find('input[name="send_mail"]')
+                    .is(':checked');
+
+                const notification_sequence = signersForm
+                    .find('input[name="notification_sequence"]')
+                    .is(':checked')
+                    ? 'sync'
+                    : 'async';
+
+                const obj = {
+                    from: 'signersSend',
+                    send_mail: send_mail,
+                    notification_sequence: notification_sequence,
+                };
+
+                if (_t.attr('id') === 'signersSendBtn') {
+                    obj.status = 'in_progress';
+                }
+
+                $(document).trigger('document:updated', obj);
+
+                signersSendModal
+                    .find('[data-bs-dismiss="modal"]')
+                    .trigger('click');
+
+                try {
+                    saveBtnAction();
+                } catch (e) {
+                    toast('error', e);
+                }
+            });
     });
 </script>

@@ -9,14 +9,18 @@
         <div class="relative overflow-visible d-flex align-items-center">
             <span
                 dir="auto"
-                contenteditable="true"
+                contenteditable="false"
                 class="inline peer contenteditable-content outline-none focus:block"
                 style="min-width: 2px"
             >
                 __LABEL
             </span>
-            <span class="edit-resizing-btn">
-                <i class="fa fa-pen"></i>
+            <span
+                class="edit-resizing-btn contentEditable"
+                data-content-editable="span"
+                data-content-editable-key="signers.elements.label"
+            >
+                <em class="fa-solid fa-pen"></em>
             </span>
         </div>
         <div

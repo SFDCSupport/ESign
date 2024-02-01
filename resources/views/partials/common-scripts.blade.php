@@ -271,6 +271,11 @@
                                           is_required: obj.is_required ?? true,
                                       },
                             )
+                            .when(!blank(obj.label), (c) =>
+                                c.merge({
+                                    label: obj.label,
+                                }),
+                            )
                             .all();
                 }
             }

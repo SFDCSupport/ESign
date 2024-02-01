@@ -40,6 +40,7 @@ class DocumentController extends Controller
         $loadedRelations = $document->loadMissing('document', 'signers.elements');
 
         $formattedData = [
+            'title' => $document->title,
             'status' => $document->status,
             'notification_sequence' => $document->notification_sequence,
             'signers' => $this->mergeWhen(

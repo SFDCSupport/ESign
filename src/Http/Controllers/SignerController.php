@@ -22,13 +22,21 @@ class SignerController extends Controller
     public function store(SignerRequest $request, Document $document)
     {
         $response = [];
+        $documentData = [];
         $validatedData = $request->validated();
+        $title = $validatedData['title'] ?? null;
         $notificationSequence = $validatedData['notification_sequence'] ?? NotificationSequence::ASYNC;
 
         if ($document->notification_sequence !== $notificationSequence) {
-            $document->update([
-                'notification_sequence' => $notificationSequence,
-            ]);
+            $documentData['notification_sequence'] = $notificationSequence;
+        }
+
+        if (! blank($title) && $document->title !== $title) {
+            $documentData['title'] = $title;
+        }
+
+        if (! blank($documentData)) {
+            $document->update($documentData);
         }
 
         foreach ($validatedData['signers'] as $i => $signer) {
