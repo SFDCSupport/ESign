@@ -872,12 +872,6 @@ padding: 3px;
   width: auto;
 }
 
-.contenteditable-content.active{
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .deleted-required-ele .form-check {
   min-height: 1.1rem;
 }
@@ -1093,4 +1087,10 @@ padding: 3px;
   border-radius: 2px;
   outline: none !important;
   box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.auto-resizing-content [contenteditable="false"]{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
