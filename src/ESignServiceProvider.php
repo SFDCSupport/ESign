@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
+use NIIT\ESign\Livewire\DocumentComponent;
 use NIIT\ESign\Models\Attachment;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
@@ -33,6 +35,8 @@ class ESignServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Livewire::component('esign-documents-component', DocumentComponent::class);
+
         (new ESign($this->app))->addMacros()->proceed();
 
         Route::bind('signing_url', function (string $value) {

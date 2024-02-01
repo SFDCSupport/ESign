@@ -12,11 +12,7 @@ class DocumentController extends Controller
 {
     public function index(Request $request)
     {
-        $documents = Document::with('creator', 'document')
-            ->where('created_by', $this->user($request)->id)
-            ->get();
-
-        return view('esign::documents.index', compact('documents'));
+        return view('esign::documents.index');
     }
 
     public function store(DocumentRequest $request)

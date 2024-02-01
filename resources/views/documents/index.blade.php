@@ -60,55 +60,7 @@
     </section>
 
     <section class="temp-section">
-        <section class="mb-2">
-            <div class="container">
-                <div
-                    class="align-items-center pt-4 pb-1 mb-4 border-bottom text-center"
-                >
-                    <h1 class="h2 mb-2">
-                        {{ __('esign::label.document_templates') }}
-                    </h1>
-
-                    <p class="mb-2">
-                        Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry.
-                        <br />
-                        Lorem Ipsum has been the industry's standard dummy text
-                        ever since the 1500s,
-                    </p>
-                </div>
-                <fieldset class="filter-wrapper">
-                    <div class="filter-wrapper-inner">
-                        <div class="filters-group">
-                            @foreach (__('esign::dropdown.document_filters') ?? [] as $key => $label)
-                                <a
-                                    href="javascript: void(0);"
-                                    class="filter-link @if($key === 'all') active @endif"
-                                    data-filter="{{ $key }}"
-                                >
-                                    {{ $label }}
-                                </a>
-                            @endforeach
-                        </div>
-
-                        <div class="form-outline filter-search-sec">
-                            <input
-                                type="search"
-                                id="documentsSearch"
-                                class="form-control form-control-sm"
-                                placeholder="{{ __('esign::label.type_query') }}"
-                                aria-label="{{ __('esign::label.search') }}"
-                            />
-                        </div>
-                    </div>
-                </fieldset>
-            </div>
-            <div class="container">
-                <div class="row documentsContainer" id="documentsContainer">
-                    @each('esign::documents.partials.document', $documents, 'document', 'esign::documents.partials.no-documents')
-                </div>
-            </div>
-        </section>
+        <livewire:esign-documents-component />
     </section>
 
     @include('esign::documents.modals.add-document')
@@ -129,51 +81,6 @@
                             },
                         });
                     });
-
-                const filterBtns = $('.filter-link[data-filter]').on(
-                    'click',
-                    function () {
-                        const _t = $(this);
-                        const status = _t.attr('data-filter');
-                        const selector = $('div.documentsContainer > div');
-
-                        if (status === 'all') {
-                            selector.fadeIn(450);
-                        } else {
-                            const _ele = $(
-                                `[data-document-status="${status}"]`,
-                            ).fadeIn(450);
-                            selector.not(_ele).hide();
-                        }
-
-                        filterBtns.removeClass('active');
-                        _t.addClass('active');
-                    },
-                );
-                const documentsSearch = $('#documentsSearch').on(
-                    'input',
-                    function () {
-                        const val = $.trim($(this).val());
-                        const matcher = new RegExp(val, 'gi');
-
-                        filterBtns.removeClass('active');
-
-                        $('div.documentsContainer > div')
-                            .show()
-                            .not(function () {
-                                return matcher.test(
-                                    $(this).find('.documentTitle').text(),
-                                );
-                            })
-                            .hide();
-
-                        if (blank(val)) {
-                            $('.filter-link[data-filter="all"]').trigger(
-                                'click',
-                            );
-                        }
-                    },
-                );
             });
         </script>
     @endpush
