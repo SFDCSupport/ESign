@@ -42,7 +42,7 @@
                         <x-esign::partials.button
                             :value="__('esign::label.create')"
                             icon="plus"
-                            class="btn-primary"
+                            class="btn-light"
                             id="createDocumentBtn"
                         />
                     </div>

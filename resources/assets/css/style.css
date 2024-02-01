@@ -1076,3 +1076,14 @@ padding: 3px;
   left: 15px;
 }
 
+.no_file_found_section{
+  font-size: 1.2rem;
+  padding: 1rem;
+}
+
+.no_file_found_icon{
+  max-width: 80px;
+  margin: 0px auto 14px;
+  display: block;
+}
+
