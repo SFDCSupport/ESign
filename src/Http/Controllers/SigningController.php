@@ -39,13 +39,6 @@ class SigningController extends Controller
         $storage = FilepondAction::getDisk();
         $disk = FilepondAction::getDisk(true);
         $loadedSigner = $signer->loadMissing('document.document');
-
-        config(['filesystems.disks.esign_temp' => [
-            'driver' => 'local',
-            'root' => storage_path('app/esign_temp/'.$loadedSigner->id),
-            'throw' => false,
-        ]]);
-
         $tempDisk = Storage::disk('esign_temp');
 
         $data = collect($request->validated()['element'])->map(function ($d) use ($loadedSigner, $disk) {
@@ -83,12 +76,14 @@ class SigningController extends Controller
                 'pageIndex' => $d['page_index'],
                 'pageWidth' => $d['page_width'],
                 'pageHeight' => $d['page_height'],
-                'x' => $d['top'],
-                'y' => $d['left'],
+                'top' => $d['top'],
+                'left' => $d['left'],
+                'scaleX' => $d['scale_x'],
+                'scaleY' => $d['scale_y'],
                 'bottom' => $d['bottom'],
-            ])->when($isSignaturePad, fn ($c) => $c->merge([
                 'width' => $d['width'],
                 'height' => $d['height'],
+            ])->when($isSignaturePad, fn ($c) => $c->merge([
                 'path' => $data,
                 'type' => 'image',
             ]), fn ($c) => $c->merge([
@@ -114,28 +109,32 @@ class SigningController extends Controller
         for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
             $templateId = $pdf->importPage($pageNumber);
             $pdf->addPage();
-            $pdf->useTemplate($templateId, 0, 0);
+            $pdf->useTemplate($templateId);
 
-            if ($data->where('page', $pageNumber)->isNotEmpty()) {
-                $data->where('page', $pageNumber)->where('type', 'image')->each(function ($d) use ($pdf) {
-                    $d['y'] = $pdf->GetPageHeight() - $d['y'];
+            if ($data->where('pageIndex', $pageNumber)->isNotEmpty()) {
+                [$pageWidth, $pageHeight] = $pdf->getTemplateSize($templateId);
+
+                $data->where('pageIndex', $pageNumber)->where('type', 'image')->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
+                    $pdfLeft = (($d['left'] / $d['pageWidth']) * $pageWidth) - 20;
+                    $pdfTop = ($d['top'] / $d['pageHeight']) * $pageHeight;
 
                     $pdf->Image(
                         $d['path'],
-                        $d['x'],
-                        $d['y'],
+                        $pdfTop,
+                        $pdfLeft,
                         $d['width'],
                         $d['height']
                     );
                 });
 
-                $data->where('page', $pageNumber)->where('type', 'text')->each(function ($d) use ($pdf) {
-                    $d['y'] = $pdf->GetPageHeight() - $d['y'];
-                    $bottom = $pdf->GetPageHeight() - $d['bottom'];
+                $data->where('pageIndex', $pageNumber)->where('type', 'text')->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
+                    $fontSize = min($d['width'] / $d['pageWidth'] * $pageWidth, $d['height'] / $d['pageHeight'] * $pageHeight);
+                    $pdfLeft = (($d['left'] / $d['pageWidth']) * $pageWidth) - 20;
+                    $pdfTop = ($d['top'] / $d['pageHeight']) * $pageHeight;
 
-                    $pdf->SetFont('Arial', '', $d['size']);
+                    $pdf->SetFont('Arial', '', $fontSize);
                     $pdf->SetTextColor($d['color']);
-                    $pdf->SetXY($d['x'], $bottom);
+                    $pdf->SetXY($pdfTop, $pdfLeft);
                     $pdf->Cell(0, 10, $d['content'], 0, 1);
                 });
             }

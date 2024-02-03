@@ -26,8 +26,13 @@ class DocumentComponent extends Component
     public function placeholder(): string
     {
         return <<<'HTML'
-        <div class="text-center no_file_found_section">
-            <i class="fa-solid fa-spinner"></i>
+        <div class="d-flex justify-content-center no_file_found_section">
+            <div class="bouncing-bar">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
         </div>
         HTML;
     }

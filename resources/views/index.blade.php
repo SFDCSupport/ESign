@@ -304,7 +304,7 @@
                             unhighlightObject(oldObj, oldCanvas);
                             highlightObject(newObj, newCanvas);
 
-                            saveBtnAction('draft');
+                            // saveBtnAction('draft');
 
                             eles.nextBtn
                                 .attr('data-action', isLast ? 'submit' : 'next')

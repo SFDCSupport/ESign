@@ -73,7 +73,7 @@
                                 >
                                     <p class="template_type">
                                         <span>
-                                            {{ __('esign::label.'.$documentStatus) }}
+                                            {{ __('esign::dropdown.document_filters')[$documentStatus] }}
                                         </span>
                                     </p>
                                     <h5 class="card-title documentTitle">

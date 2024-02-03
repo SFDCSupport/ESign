@@ -4,6 +4,7 @@ namespace NIIT\ESign\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\SigningStatus;
 
@@ -12,21 +13,31 @@ class SigningMiddleware
     public function handle(Request $request, Closure $next): mixed
     {
         $signer = $request->signer();
-
-        abort_if(! $signer, 404);
-
         $loadedModel = $request->signer()->loadMissing('document');
 
-        //        abort_if(
-        //            $loadedModel->document->status !== DocumentStatus::IN_PROGRESS || $signer->signing_status !== SigningStatus::NOT_SIGNED,
-        //            404,
-        //        );
+        abort_if(! $signer || $loadedModel->document->status !== DocumentStatus::IN_PROGRESS, 404);
 
         abort_if(
             $request->expectsJson() && ! $request->headers->has('X-ESign'),
             403,
             'Forbidden'
         );
+
+        config(['filesystems.disks.esign_temp' => [
+            'driver' => 'local',
+            'root' => storage_path('app/esign_temp/'.$signer->id),
+            'throw' => false,
+        ]]);
+
+        if ($signer->signing_status === SigningStatus::SIGNED) {
+            $disk = Storage::disk('esign_temp');
+
+            abort_if(! $disk->fileExists($file = $signer->document->id.'.pdf'), 500);
+
+            return $disk->download(
+                $file
+            );
+        }
 
         return $next($request);
     }

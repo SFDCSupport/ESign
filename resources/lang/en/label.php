@@ -40,7 +40,7 @@ return [
     'draft' => 'Draft',
     'pending' => 'Pending',
     'active' => 'Active',
-    'in_active' => 'In-Active',
+    'in_progress' => 'In Progress',
     'archived' => 'Archived',
     'signature' => 'Signature',
     'signer' => 'Signer',

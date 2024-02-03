@@ -8,5 +8,8 @@ class SigningStatusListener
 {
     public function handle(SigningStatusChanged $event): void
     {
+        $event->signer->update([
+            'signing_status' => $event->status,
+        ]);
     }
 }
