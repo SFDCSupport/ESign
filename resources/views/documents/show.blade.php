@@ -370,7 +370,9 @@
 
                         console.log("Object Info:", {
                             ...additionalInfo,
-                            on_page: canvasEdition.page_index + 1,
+                            page_index: canvasEdition.page_index + 1,
+                            page_width: canvasEdition.width,
+                            page_height: canvasEdition.height,
                             eleType: obj.eleType,
                             left: obj.left,
                             top: obj.top,

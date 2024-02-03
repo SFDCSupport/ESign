@@ -18,7 +18,8 @@ class SignerElement extends Model
     protected $fillable = [
         'id', 'signer_id', 'document_id',
         'type', 'label',
-        'on_page', 'left', 'top', 'scale_x', 'scale_y',
+        'page_index', 'page_width', 'page_height',
+        'left', 'top', 'scale_x', 'scale_y',
         'width', 'height', 'position',
     ];
 
@@ -27,6 +28,15 @@ class SignerElement extends Model
      */
     protected $casts = [
         'type' => ElementType::class,
+        'page_index' => 'integer',
+        'page_width' => 'double',
+        'page_height' => 'double',
+        'height' => 'double',
+        'width' => 'double',
+        'top' => 'double',
+        'left' => 'double',
+        'scale_x' => 'double',
+        'scale_y' => 'double',
     ];
 
     /**

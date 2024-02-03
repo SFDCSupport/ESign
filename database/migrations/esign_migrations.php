@@ -83,13 +83,15 @@ return new class extends Migration
             $table->foreignUuid('signer_id')->constrained('e_signers');
             $table->enum('type', ElementType::values());
             $table->string('label');
-            $table->integer('on_page');
+            $table->integer('page_index');
+            $table->double('page_width');
+            $table->double('page_height');
             $table->double('left');
             $table->double('top');
             $table->double('scale_x')->nullable();
             $table->double('scale_y')->nullable();
-            $table->integer('width');
-            $table->integer('height');
+            $table->double('width');
+            $table->double('height');
             $table->integer('position')->default(0);
             $table->timestamps();
             $table->softDeletes();

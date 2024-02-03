@@ -221,7 +221,9 @@
             if (signerIndex !== false) {
                 loadedData.signers[signerIndex].elements.push({
                     uuid: obj.uuid,
-                    on_page: obj.on_page,
+                    page_index: obj.page_index,
+                    page_width: obj.page_width,
+                    page_height: obj.page_height,
                     eleType: obj.eleType,
                     left: obj.left,
                     top: obj.top,

@@ -78,6 +78,8 @@
                             const context = canvasPdf.getContext('2d');
 
                             canvasPdf.page_index = pageIndex;
+                            canvasPdf.page_width = canvasPdf.width;
+                            canvasPdf.page_height = canvasPdf.height;
                             canvasPdf.height = viewport.height;
                             canvasPdf.width = viewport.width;
                             canvasEditionHTML.height = canvasPdf.height;
@@ -124,7 +126,7 @@
                                 'drop',
                                 function (e) {
                                     e.preventDefault();
-
+                                    console.log(e);
                                     const left =
                                         e.layerX ||
                                         e.originalEvent.layerX ||
@@ -161,7 +163,9 @@
                                         'signer:element:added',
                                         {
                                             ...obj,
-                                            on_page: pageIndex + 1,
+                                            page_index: pageIndex + 1,
+                                            page_width: canvasEdition.width,
+                                            page_height: canvasEdition.height,
                                             from: 'canvas',
                                         },
                                     );
@@ -255,6 +259,7 @@
                                 })
                                 .on('object:scaling', function (e) {})
                                 .on('object:modified', function (e) {
+                                    console.log(e);
                                     if (e.target) {
                                         const obj = e.target;
 
@@ -673,8 +678,8 @@
                     hasRotatingPoint: false,
                     cornerColor: 'blue',
                     cornerStyle: 'circle',
-                    originX: 'center',
-                    originY: 'center',
+                    originX: 'top',
+                    originY: 'left',
                     textAlign: 'center',
                     backgroundColor: objectBgColor,
                 });
@@ -718,7 +723,9 @@
 
             fabricObject.id = data.id ?? undefined;
             fabricObject.eleType = data.eleType;
-            fabricObject.on_page = data.on_page ?? undefined;
+            fabricObject.page_index = data.page_index ?? undefined;
+            fabricObject.page_width = data.page_width ?? undefined;
+            fabricObject.page_height = data.page_height ?? undefined;
             fabricObject.label = data.label ?? undefined;
             fabricObject.uuid = _uuid;
             fabricObject.signer_uuid =
@@ -852,7 +859,9 @@
                             setFabricControl(newImg);
 
                             newImg.id = obj.id;
-                            newImg.on_page = oldObj.on_page;
+                            newImg.page_index = oldObj.page_index;
+                            newImg.page_width = canvas.width;
+                            newImg.page_height = canvas.height;
                             newImg.eleType = oldObj.eleType;
                             newImg.data = obj.data;
 
@@ -912,7 +921,7 @@
                                 .sortBy('position')
                                 .flatten(1)
                                 .each((objInfo, i) => {
-                                    const objPage = objInfo?.on_page;
+                                    const objPage = objInfo?.page_index;
                                     const totalPages = canvasEditions.length;
 
                                     if (

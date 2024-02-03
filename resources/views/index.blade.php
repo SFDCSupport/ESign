@@ -167,8 +167,16 @@
                         formData.append(`element[${index}][left]`, obj.left);
                         formData.append(`element[${index}][type]`, obj.eleType);
                         formData.append(
-                            `element[${index}][on_page]`,
-                            obj.on_page,
+                            `element[${index}][page_index]`,
+                            obj.page_index,
+                        );
+                        formData.append(
+                            `element[${index}][page_width]`,
+                            obj.page_width,
+                        );
+                        formData.append(
+                            `element[${index}][page_height]`,
+                            obj.page_height,
                         );
                         formData.append(
                             `element[${index}][scale_x]`,

@@ -80,7 +80,9 @@ class SigningController extends Controller
             }
 
             return collect([
-                'page' => $d['on_page'],
+                'pageIndex' => $d['page_index'],
+                'pageWidth' => $d['page_width'],
+                'pageHeight' => $d['page_height'],
                 'x' => $d['top'],
                 'y' => $d['left'],
                 'bottom' => $d['bottom'],

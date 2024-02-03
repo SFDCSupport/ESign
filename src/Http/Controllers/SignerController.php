@@ -76,7 +76,9 @@ class SignerController extends Controller
                 ], [
                     'label' => $element['label'] ?? str($element['eleType'])->title()->value(),
                     'type' => $element['eleType'],
-                    'on_page' => $element['on_page'],
+                    'page_index' => $element['page_index'],
+                    'page_width' => $element['page_width'],
+                    'page_height' => $element['page_height'],
                     'width' => $element['width'],
                     'height' => $element['height'],
                     'left' => $element['left'],
