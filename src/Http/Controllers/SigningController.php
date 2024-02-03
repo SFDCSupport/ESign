@@ -117,25 +117,34 @@ class SigningController extends Controller
                 $data->where('pageIndex', $pageNumber)->where('type', 'image')->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
                     $pdfLeft = (($d['left'] / $d['pageWidth']) * $pageWidth) - 20;
                     $pdfTop = ($d['top'] / $d['pageHeight']) * $pageHeight;
+                    $width = ($d['width'] * $d['scaleX'] / $d['pageWidth']) * $pageWidth;
+                    $height = ($d['height'] * $d['scaleY'] / $d['pageHeight']) * $pageHeight;
 
                     $pdf->Image(
                         $d['path'],
                         $pdfTop,
                         $pdfLeft,
-                        $d['width'],
-                        $d['height']
+                        $width,
+                        $height
                     );
                 });
 
-                $data->where('pageIndex', $pageNumber)->where('type', 'text')->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
-                    $fontSize = min($d['width'] / $d['pageWidth'] * $pageWidth, $d['height'] / $d['pageHeight'] * $pageHeight);
+                $data->where('pageIndex', $pageNumber)->whereIn('type', ['text', 'textarea'])->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
+                    $width = ($d['width'] * $d['scaleX'] / $d['pageWidth']) * $pageWidth;
+                    $height = ($d['height'] * $d['scaleY'] / $d['pageHeight']) * $pageHeight;
                     $pdfLeft = (($d['left'] / $d['pageWidth']) * $pageWidth) - 20;
                     $pdfTop = ($d['top'] / $d['pageHeight']) * $pageHeight;
+                    $fontSize = min($width / $d['pageWidth'] * $pageWidth, $height / $d['pageHeight'] * $pageHeight);
 
                     $pdf->SetFont('Arial', '', $fontSize);
                     $pdf->SetTextColor($d['color']);
                     $pdf->SetXY($pdfTop, $pdfLeft);
-                    $pdf->Cell(0, 10, $d['content'], 0, 1);
+
+                    if ($d['type'] === 'textarea') {
+                        $pdf->MultiCell($width, $height, $d['content'], align: 'L');
+                    } else {
+                        $pdf->Cell($width, $height, $d['content'], ln: 1, align: 'L');
+                    }
                 });
             }
         }
