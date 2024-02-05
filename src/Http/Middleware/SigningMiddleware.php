@@ -29,12 +29,15 @@ class SigningMiddleware
             'throw' => false,
         ]]);
 
-        if ($signer->signing_status === SigningStatus::SIGNED) {
+        if (
+            $signer->signing_status === SigningStatus::SIGNED &&
+            ! $request->routeIs('esign.signing.show')
+        ) {
             $disk = Storage::disk('esign_temp');
 
             abort_if(! $disk->fileExists($file = $signer->document->id.'.pdf'), 500);
 
-            return redirect()->route('esign.signing.show');
+            return redirect()->route('esign.signing.show', ['signing_url' => $signer->url]);
             //            return $disk->download(
             //                $file
             //            );

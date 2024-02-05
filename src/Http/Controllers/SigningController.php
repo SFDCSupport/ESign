@@ -163,9 +163,14 @@ class SigningController extends Controller
 
     public function show(Signer $signer)
     {
-        $signer->loadMissing('document.document', 'elements');
+        $document = $signer->loadMissing('document.document', 'elements')->document;
+        $formattedData = [];
 
-        return view('esign::signing.show', compact('signer'));
+        return view('esign::signing.show', compact(
+            'signer',
+            'document',
+            'formattedData',
+        ));
     }
 
     public function mailTrackingPixel(Signer $signer)
