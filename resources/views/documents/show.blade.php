@@ -217,7 +217,7 @@
             const getSignerElementTemplate = (obj, position, icon) => $.trim($("#addedElementTemplate").html())
                 .replace(/__UUID/ig, obj.uuid)
                 .replace(/__POSITION/ig, position)
-                .replace(/__LABEL/ig, $.trim(obj.label))
+                .replace(/__LABEL/ig, $.trim(obj.text))
                 .replace(/__ICON/ig, icon)
                 .replace(/__CHECKED/ig, obj.is_required ? "checked" : "")
                 .replace(/__REQUIRED/ig, obj.is_required ? "required" : "")
@@ -236,7 +236,20 @@
 
                 signerElementUpdate();
             };
-            const signerElementUpdate = () => {
+            const signerElementUpdate = (obj) => {
+                if(blank(obj.uuid)) {
+                    return;
+                }
+
+                const element = $(`.addedElements .addedElement[data-uuid="${obj.uuid}"]`);
+
+                if(element.length <= 0) {
+                    return;
+                }
+
+                if(obj.text) {
+                    element.find('.contenteditable-content').text(obj.text);
+                }
             };
             const signerElementRemove = (element) => {
                 const _e = $(element);
@@ -323,7 +336,7 @@
                 const clonedLi = hasSigners ? $("li.signerLi:last").clone() : $($.trim($("#signerTemplate").html()));
                 const uuid = obj?.signer_uuid || obj?.uuid || generateUniqueId("s_");
 
-                const label = obj?.signer_label || obj?.label || ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}';
+                const label = obj?.signer_text || obj?.text || ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}';
                 clonedLi.removeClass("selectedSigner");
                 clonedLi.find("a.signerLabel").html(label);
                 clonedLi.attr("data-signer-index", _highestSigner);
@@ -370,16 +383,15 @@
 
                         console.log("Object Info:", {
                             ...additionalInfo,
+                            text: obj.text,
                             page_index: canvasEdition.page_index + 1,
                             page_width: canvasEdition.width,
                             page_height: canvasEdition.height,
                             eleType: obj.eleType,
                             left: obj.left,
                             top: obj.top,
-                            scale_x: obj.scaleX,
-                            scale_y: obj.scaleY,
-                            width: obj.width * obj.scaleX,
-                            height: obj.height * obj.scaleY
+                            width: obj.width,
+                            height: obj.height,
                         });
                     });
                 });
@@ -444,7 +456,7 @@
                             return;
                         }
 
-                        obj.label = obj.text || obj.eleType;
+                        obj.text = obj.text || obj.eleType;
 
                         if ((_li = $("#signerUl li.signerLi")).length === 1 && _li.attr("data-signer-uuid") === undefined) {
                             _li.attr("data-signer-uuid", obj.signer_uuid);
@@ -529,7 +541,7 @@
                                 from: "sidebar",
                                 uuid: _element.attr("data-uuid"),
                                 signer_uuid: _element.attr("data-element-signer-uuid"),
-                                label: value,
+                                text: value,
                             });
                         } else {
                             const obj = {};
@@ -551,7 +563,7 @@
                     const contentEditable = _t.parent().find('.contentEditable[data-content-editable]');
                     const editableEle = contentEditable.attr('data-content-editable');
 
-                    if(e.keyCode === 13 || editableEle.toUpperCase() === _t.prop('nodeName')) {
+                    if(e.keyCode === 13 || editableEle.toUpperCase() !== _t.prop('nodeName')) {
                         contentEditable.trigger('click');
                     }
                 });

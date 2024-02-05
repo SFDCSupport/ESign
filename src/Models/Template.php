@@ -14,7 +14,7 @@ class Template extends Model
      */
     protected $fillable = [
         'id',
-        'label',
+        'title',
         'body',
     ];
 

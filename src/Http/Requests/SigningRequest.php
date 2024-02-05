@@ -35,8 +35,6 @@ class SigningRequest extends FormRequest
             'element.*.height' => 'required',
             'element.*.left' => 'required',
             'element.*.top' => 'required',
-            'element.*.scale_x' => 'required',
-            'element.*.scale_y' => 'required',
             'element.*.page_index' => 'required',
             'element.*.page_width' => 'required',
             'element.*.page_height' => 'required',

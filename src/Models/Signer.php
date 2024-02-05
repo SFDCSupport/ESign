@@ -20,7 +20,7 @@ class Signer extends Model
      */
     protected $fillable = [
         'id', 'document_id',
-        'email', 'label', 'url',
+        'email', 'text', 'url',
         'signing_status', 'read_status', 'send_status',
         'position',
     ];

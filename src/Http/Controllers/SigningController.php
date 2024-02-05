@@ -78,8 +78,6 @@ class SigningController extends Controller
                 'pageHeight' => $d['page_height'],
                 'top' => $d['top'],
                 'left' => $d['left'],
-                'scaleX' => $d['scale_x'],
-                'scaleY' => $d['scale_y'],
                 'bottom' => $d['bottom'],
                 'width' => $d['width'],
                 'height' => $d['height'],
@@ -115,10 +113,12 @@ class SigningController extends Controller
                 [$pageWidth, $pageHeight] = $pdf->getTemplateSize($templateId);
 
                 $data->where('pageIndex', $pageNumber)->where('type', 'image')->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
-                    $pdfLeft = (($d['left'] / $d['pageWidth']) * $pageWidth) - 20;
-                    $pdfTop = ($d['top'] / $d['pageHeight']) * $pageHeight;
-                    $width = ($d['width'] * $d['scaleX'] / $d['pageWidth']) * $pageWidth;
-                    $height = ($d['height'] * $d['scaleY'] / $d['pageHeight']) * $pageHeight;
+                    $scaleX = $pageWidth / $d['page_width'];
+                    $scaleY = $pageHeight / $d['page_height'];
+                    $pdfLeft = $d['left'] * $scaleX;
+                    $pdfTop = $d['top'] * $scaleY;
+                    $width = $d['width'] * $scaleX;
+                    $height = $d['height'] * $scaleY;
 
                     $pdf->Image(
                         $d['path'],
@@ -130,10 +130,12 @@ class SigningController extends Controller
                 });
 
                 $data->where('pageIndex', $pageNumber)->whereIn('type', ['text', 'textarea'])->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
-                    $width = ($d['width'] * $d['scaleX'] / $d['pageWidth']) * $pageWidth;
-                    $height = ($d['height'] * $d['scaleY'] / $d['pageHeight']) * $pageHeight;
-                    $pdfLeft = (($d['left'] / $d['pageWidth']) * $pageWidth) - 20;
-                    $pdfTop = ($d['top'] / $d['pageHeight']) * $pageHeight;
+                    $scaleX = $pageWidth / $d['page_width'];
+                    $scaleY = $pageHeight / $d['page_height'];
+                    $width = $d['width'] * $scaleX;
+                    $height = $d['height'] * $scaleY;
+                    $pdfLeft = $d['left'] * $scaleX;
+                    $pdfTop = $d['top'] * $scaleY;
                     $fontSize = min($width / $d['pageWidth'] * $pageWidth, $height / $d['pageHeight'] * $pageHeight);
 
                     $pdf->SetFont('Arial', '', $fontSize);

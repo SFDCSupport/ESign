@@ -261,8 +261,8 @@
                         data-object-id="${element.id}"
                         data-element-type="${element.type}"
                         ${step ? 'data-step="' + step + '"' : ''}>
-                        <h2>${convertToTitleString(element.label ?? element.type)}</h2>
-                        ${getSigningElementByType(id, element.type, element.label)}
+                        <h2>${convertToTitleString(element.text ?? element.type)}</h2>
+                        ${getSigningElementByType(id, element.type, element.text)}
                     </div>`).appendTo('#elementPanels');
 
                     $(`<button class="nav-link ${isFirst ? 'active' : ''} "

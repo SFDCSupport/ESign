@@ -175,7 +175,7 @@
                         signersHolderEle.append(
                             $.trim(_signerEmailTemplate)
                                 .replace(/__UUID/gi, s.uuid)
-                                .replace(/__LABEL/gi, s.label)
+                                .replace(/__LABEL/gi, s.text)
                                 .replace(/__EMAIL/gi, s.email ?? '')
                                 .replace(/__INDEX/gi, s.position ?? i + 1),
                         );

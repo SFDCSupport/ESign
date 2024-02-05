@@ -44,7 +44,7 @@ class SignerController extends Controller
             $isSignerDeleted = $signer['is_deleted'] ?? false;
 
             $update = [
-                'label' => $signer['label'] ?? __('esign::label.nth_signer', ['nth' => ordinal($i)]),
+                'text' => $signer['text'] ?? __('esign::label.nth_signer', ['nth' => ordinal($i)]),
                 'position' => $signer['position'] ?? ($i + 1),
                 'deleted_by' => $isSignerDeleted ? $request->user()->id : null,
             ];
@@ -74,7 +74,7 @@ class SignerController extends Controller
                     'signer_id' => $signerModel->id,
                     'document_id' => $documentId,
                 ], [
-                    'label' => $element['label'] ?? str($element['eleType'])->title()->value(),
+                    'text' => $element['text'] ?? str($element['eleType'])->title()->value(),
                     'type' => $element['eleType'],
                     'page_index' => $element['page_index'],
                     'page_width' => $element['page_width'],
@@ -83,8 +83,6 @@ class SignerController extends Controller
                     'height' => $element['height'],
                     'left' => $element['left'],
                     'top' => $element['top'],
-                    'scale_x' => $element['scale_x'] ?? null,
-                    'scale_y' => $element['scale_y'] ?? null,
                     'position' => $element['position'] ?? ($index + 1),
                     'deleted_by' => $isElementDeleted ? $request->user()->id : null,
                 ]);

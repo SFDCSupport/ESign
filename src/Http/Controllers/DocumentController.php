@@ -42,7 +42,7 @@ class DocumentController extends Controller
             'signers' => $this->mergeWhen(
                 $loadedRelations->signers->count() > 0,
                 SignerResource::collection($loadedRelations->signers),
-                [['label' => '1st Signer', 'position' => 1, 'elements' => []]]
+                [['text' => '1st Signer', 'position' => 1, 'elements' => []]]
             )->data,
         ];
 
