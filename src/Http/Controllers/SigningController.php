@@ -82,11 +82,11 @@ class SigningController extends Controller
                 'width' => $d['width'],
                 'height' => $d['height'],
             ])->when($isSignaturePad, fn ($c) => $c->merge([
-                'path' => $data,
+                'data' => $data,
                 'type' => 'image',
             ]), fn ($c) => $c->merge([
                 'type' => 'text',
-                'content' => $data,
+                'data' => $d['data'],
                 'size' => $d['size'] ?? 16,
                 'color' => $d['color'] ?? '0',
             ]));
@@ -121,7 +121,7 @@ class SigningController extends Controller
                     $height = $d['height'] * $scaleY;
 
                     $pdf->Image(
-                        $d['path'],
+                        $d['data'],
                         $pdfTop,
                         $pdfLeft,
                         $width,
@@ -129,7 +129,7 @@ class SigningController extends Controller
                     );
                 });
 
-                $data->where('pageIndex', $pageNumber)->whereIn('type', ['text', 'textarea'])->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
+                $data->where('pageIndex', $pageNumber)->where('type', '!=', 'signature_pad')->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
                     $scaleX = $pageWidth / $d['pageWidth'];
                     $scaleY = $pageHeight / $d['pageHeight'];
                     $width = $d['width'] * $scaleX;
@@ -139,13 +139,13 @@ class SigningController extends Controller
                     $fontSize = min($width / $d['pageWidth'] * $pageWidth, $height / $d['pageHeight'] * $pageHeight);
 
                     $pdf->SetFont('Arial', '', $fontSize);
-                    $pdf->SetTextColor($d['color']);
+                    $pdf->SetTextColor($d['color'] ?? '000', '000', '000');
                     $pdf->SetXY($pdfTop, $pdfLeft);
 
                     if ($d['type'] === 'textarea') {
-                        $pdf->MultiCell($width, $height, $d['content'], align: 'L');
+                        $pdf->MultiCell($width, $height, $d['data'], align: 'L');
                     } else {
-                        $pdf->Cell($width, $height, $d['content'], ln: 1, align: 'L');
+                        $pdf->Cell($width, $height, $d['data'], ln: 1, align: 'L');
                     }
                 });
             }

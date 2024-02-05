@@ -34,9 +34,9 @@ class SigningMiddleware
 
             abort_if(! $disk->fileExists($file = $signer->document->id.'.pdf'), 500);
 
-            return $disk->download(
-                $file
-            );
+            //            return $disk->download(
+            //                $file
+            //            );
         }
 
         return $next($request);

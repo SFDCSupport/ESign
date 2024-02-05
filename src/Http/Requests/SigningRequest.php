@@ -38,7 +38,6 @@ class SigningRequest extends FormRequest
             'element.*.page_index' => 'required',
             'element.*.page_width' => 'required',
             'element.*.page_height' => 'required',
-            'element.*.bottom' => 'required',
             'element.*.data' => 'required_if:mode,save',
         ];
     }
