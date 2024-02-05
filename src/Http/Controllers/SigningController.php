@@ -113,8 +113,8 @@ class SigningController extends Controller
                 [$pageWidth, $pageHeight] = $pdf->getTemplateSize($templateId);
 
                 $data->where('pageIndex', $pageNumber)->where('type', 'image')->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
-                    $scaleX = $pageWidth / $d['page_width'];
-                    $scaleY = $pageHeight / $d['page_height'];
+                    $scaleX = $pageWidth / $d['pageWidth'];
+                    $scaleY = $pageHeight / $d['pageHeight'];
                     $pdfLeft = $d['left'] * $scaleX;
                     $pdfTop = $d['top'] * $scaleY;
                     $width = $d['width'] * $scaleX;
@@ -130,8 +130,8 @@ class SigningController extends Controller
                 });
 
                 $data->where('pageIndex', $pageNumber)->whereIn('type', ['text', 'textarea'])->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
-                    $scaleX = $pageWidth / $d['page_width'];
-                    $scaleY = $pageHeight / $d['page_height'];
+                    $scaleX = $pageWidth / $d['pageWidth'];
+                    $scaleY = $pageHeight / $d['pageHeight'];
                     $width = $d['width'] * $scaleX;
                     $height = $d['height'] * $scaleY;
                     $pdfLeft = $d['left'] * $scaleX;
