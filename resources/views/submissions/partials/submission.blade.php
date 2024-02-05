@@ -5,7 +5,10 @@
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-2"
             >
                 <div class="btn-toolbar align-items-center">
-                    <a href="#" class="btn btn-sm btn-success me-2">
+                    <a
+                        href="javascript: void(0);"
+                        class="btn btn-sm btn-success me-2"
+                    >
                         {{ $signer->signing_status }}
                     </a>
                     <span class="text-lg break-all flex items-center">
@@ -13,6 +16,16 @@
                     </span>
                 </div>
                 <div class="btn-toolbar mb-2 mb-md-0">
+                    @if ($isInProgress && ! $isSync && $signer->is_next_receiver)
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outline-secondary me-2"
+                        >
+                            <i class="fas fa-paper-place"></i>
+                            {{ __('esign::label.resend_mail') }}
+                        </button>
+                    @endif
+
                     <button
                         type="button"
                         onclick="copyToClipboard('{{ route('esign.signing.index', ['signing_url' => $signer->url]) }}', '{{ __('esign::label.link') }}')"
@@ -29,7 +42,6 @@
                         <i class="fas fa-eye"></i>
                         {{ __('esign::label.view') }}
                     </button>
-
                     <button
                         type="button"
                         class="btn btn-sm btn-outline-danger me-2"

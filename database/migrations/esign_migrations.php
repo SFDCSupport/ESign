@@ -71,6 +71,7 @@ return new class extends Migration
             $table->enum('signing_status', SigningStatus::values())->default(SigningStatus::NOT_SIGNED);
             $table->enum('read_status', ReadStatus::values())->default(ReadStatus::NOT_OPENED);
             $table->enum('send_status', SendStatus::values())->default(SendStatus::NOT_SENT);
+            $table->boolean('is_next_receiver')->default(true);
             $table->integer('position')->default(0);
             $table->timestamps();
             $table->softDeletes();

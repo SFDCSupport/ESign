@@ -70,14 +70,19 @@ class DocumentController extends Controller
     {
         $replica = $document->replicate();
         $replica->parent_id = $document->id;
-        $replica->title = '('.$this->getNextCloneSuffix($document).')'.$document->title;
+        $replica->title = '('.$this->getNextCloneSuffix($document).') '.$document->title;
+        $replica->status = DocumentStatus::DRAFT;
+
         $replica->push();
 
         $document->relations = [];
-        $document->load('document');
+        $attachment = $document->loadMissing('document')->document;
 
-        if ($document->document()->exists()) {
-            $replica->document()->save($document->document);
+        if ($attachment) {
+            $attachmentReplica = $attachment->replicate();
+            $attachmentReplica->deleted_at = null;
+
+            $replica->document()->save($attachmentReplica);
         }
 
         return redirect()->route('esign.documents.show', $replica);

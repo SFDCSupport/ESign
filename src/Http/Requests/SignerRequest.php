@@ -5,6 +5,7 @@ namespace NIIT\ESign\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
+use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\NotificationSequence;
 
 class SignerRequest extends FormRequest
@@ -58,6 +59,10 @@ class SignerRequest extends FormRequest
             'notification_sequence' => [
                 'sometimes',
                 new Enum(NotificationSequence::class),
+            ],
+            'status' => [
+                'sometimes',
+                new Enum(DocumentStatus::class),
             ],
             'title' => [
                 'nullable',

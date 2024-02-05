@@ -20,6 +20,7 @@ class SignerResource extends JsonResource
             'read_status' => $this->read_status,
             'send_status' => $this->send_status,
             'position' => $this->position,
+            'is_next_receiver' => $this->is_next_receiver,
             'elements' => SignerElementResource::collection(
                 $this->whenLoaded('elements'),
             ),

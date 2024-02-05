@@ -2,7 +2,9 @@
 
 namespace NIIT\ESign\Http\Controllers;
 
+use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\NotificationSequence;
+use NIIT\ESign\Events\DocumentStatusChanged;
 use NIIT\ESign\Http\Requests\SignerRequest;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
@@ -25,20 +27,6 @@ class SignerController extends Controller
         $documentData = [];
         $validatedData = $request->validated();
         $mode = $validatedData['mode'];
-        $title = $validatedData['title'] ?? null;
-        $notificationSequence = $validatedData['notification_sequence'] ?? NotificationSequence::ASYNC;
-
-        if ($document->notification_sequence !== $notificationSequence) {
-            $documentData['notification_sequence'] = $notificationSequence;
-        }
-
-        if (! blank($title) && $document->title !== $title) {
-            $documentData['title'] = $title;
-        }
-
-        if (! blank($documentData)) {
-            $document->update($documentData);
-        }
 
         foreach ($validatedData['signers'] as $i => $signer) {
             $documentId = $request->document_id;
@@ -94,6 +82,30 @@ class SignerController extends Controller
                 }
 
                 $response[$signer['uuid']]['elements'][$element['uuid']] = $elementModel->id;
+            }
+        }
+
+        $title = $validatedData['title'] ?? null;
+        $status = $validatedData['status'] ?? DocumentStatus::DRAFT;
+        $notificationSequence = $validatedData['notification_sequence'] ?? NotificationSequence::ASYNC;
+
+        if ($document->status !== $status) {
+            $documentData['status'] = $status;
+        }
+
+        if ($document->notification_sequence !== $notificationSequence) {
+            $documentData['notification_sequence'] = $notificationSequence;
+        }
+
+        if (! blank($title) && $document->title !== $title) {
+            $documentData['title'] = $title;
+        }
+
+        if (! blank($documentData)) {
+            $document->update($documentData);
+
+            if ($status === DocumentStatus::IN_PROGRESS) {
+                DocumentStatusChanged::dispatch($document, DocumentStatus::IN_PROGRESS);
             }
         }
 

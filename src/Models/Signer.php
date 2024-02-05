@@ -22,7 +22,7 @@ class Signer extends Model
         'id', 'document_id',
         'email', 'text', 'url',
         'signing_status', 'read_status', 'send_status',
-        'position',
+        'position', 'is_next_receiver',
     ];
 
     /**
@@ -32,6 +32,8 @@ class Signer extends Model
         'read_status' => ReadStatus::class,
         'send_status' => SendStatus::class,
         'signing_status' => SigningStatus::class,
+        'position' => 'integer',
+        'is_next_receiver' => 'boolean',
     ];
 
     /**

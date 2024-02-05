@@ -372,6 +372,8 @@
                     }
                 }
             });
+
+            console.log('process-ids', loadedData);
         })
         .on('document:updated', function (e, obj) {
             if (obj.from === 'loadedData') {
