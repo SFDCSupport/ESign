@@ -15,6 +15,7 @@
                 <div class="btn-toolbar mb-2 mb-md-0">
                     <button
                         type="button"
+                        onclick="copyToClipboard('{{ route('esign.signing.index', ['signing_url' => $signer->url]) }}', '{{ __('esign::label.link') }}')"
                         class="btn btn-sm btn-outline-secondary me-2"
                     >
                         <i class="fas fa-link"></i>

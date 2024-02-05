@@ -27,7 +27,7 @@ class SigningController extends Controller
             'signers' => SignerResource::collection([$signer]),
         ];
 
-        return view('esign::index', compact(
+        return view('esign::signing.index', compact(
             'signer',
             'document',
             'formattedData',
@@ -157,7 +157,15 @@ class SigningController extends Controller
 
         return $this->jsonResponse([
             'status' => 1,
+            'redirect' => route('esign.signing.show', ['signing_url' => $signer->url]),
         ])->notify(__('esign::label.signing_success_message'));
+    }
+
+    public function show(Signer $signer)
+    {
+        $signer->loadMissing('document.document', 'elements');
+
+        return view('esign::signing.show', compact('signer'));
     }
 
     public function mailTrackingPixel(Signer $signer)

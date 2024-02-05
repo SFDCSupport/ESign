@@ -99,13 +99,18 @@
                                 </a>
                                 <div class="space-y">
                                     <div class="space-y-inner">
-                                        <a
-                                            href="{{ route('esign.documents.show', $document) }}"
-                                            class="text-secondary"
-                                            title="{{ __('esign::label.edit') }}"
-                                        >
-                                            <i class="fa fa-edit"></i>
-                                        </a>
+                                        @php($isDraft = ($document->status === \NIIT\ESign\Enum\DocumentStatus::DRAFT))
+
+                                        @if ($isDraft)
+                                            <a
+                                                href="{{ route('esign.documents.show', $document) }}"
+                                                class="text-secondary"
+                                                title="{{ __('esign::label.edit') }}"
+                                            >
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        @endif
+
                                         <a
                                             href="{{ route('esign.documents.copy', $document) }}"
                                             class="text-secondary"
@@ -113,21 +118,23 @@
                                         >
                                             <i class="fa fa-copy"></i>
                                         </a>
-                                        <form
-                                            method="POST"
-                                            action="{{ route('esign.documents.destroy', $document) }}"
-                                        >
-                                            @method('DELETE')
-                                            @csrf
-                                            <a
-                                                href="{{ route('esign.documents.destroy', $document) }}"
-                                                class="text-secondary"
-                                                title="{{ __('esign::label.delete') }}"
-                                                onclick="event.preventDefault();$(document).trigger('loader:show');this.closest('form').submit();"
+                                        @if ($isDraft)
+                                            <form
+                                                method="POST"
+                                                action="{{ route('esign.documents.destroy', $document) }}"
                                             >
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                        </form>
+                                                @method('DELETE')
+                                                @csrf
+                                                <a
+                                                    href="{{ route('esign.documents.destroy', $document) }}"
+                                                    class="text-secondary"
+                                                    title="{{ __('esign::label.delete') }}"
+                                                    onclick="event.preventDefault();$(document).trigger('loader:show');this.closest('form').submit();"
+                                                >
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            </form>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

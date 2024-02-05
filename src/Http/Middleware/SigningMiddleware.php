@@ -34,6 +34,7 @@ class SigningMiddleware
 
             abort_if(! $disk->fileExists($file = $signer->document->id.'.pdf'), 500);
 
+            return redirect()->route('esign.signing.show');
             //            return $disk->download(
             //                $file
             //            );

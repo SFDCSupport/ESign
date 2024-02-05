@@ -88,6 +88,39 @@
 
         return svgContainer.innerHTML;
     };
+    const copyToClipboard = (text, type) => {
+        const getMsg = (mode) =>
+            (mode === 'success'
+                ? '{{ __('esign::label.copied_to_clipboard') }}'
+                : '{{ __('esign::label.unable_to_copy') }}'
+            ).replace(/:TYPE:/gi, type);
+
+        const _success = () => toast('success', getMsg('success', type));
+        const _error = (err) => {
+            const _msg = getMsg('error', type);
+
+            toast('error', _msg);
+            console.error(_msg, err);
+        };
+
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(_success).catch(_error);
+        } else {
+            const textarea = $('<textarea>')
+                .val(text)
+                .appendTo('body')
+                .select();
+
+            try {
+                document.execCommand('copy');
+                _success();
+            } catch (err) {
+                _error(err);
+            } finally {
+                textarea.remove();
+            }
+        }
+    };
     const ordinal = (number) => {
         let suffix;
 

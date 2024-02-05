@@ -227,12 +227,17 @@
                             },
                             success: (r) => {
                                 if (r.status === 1) {
-                                    // location.reload(true);
+                                    if (r.redirect) {
+                                        $(location).attr('href', r.redirect);
+                                    } else {
+                                        location.reload(true);
+                                    }
 
                                     return;
                                 }
 
                                 $(document).trigger('loader:hide');
+
                                 toast(
                                     'error',
                                     r.msg ?? 'Something went wrong!',

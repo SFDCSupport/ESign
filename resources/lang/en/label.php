@@ -63,4 +63,6 @@ return [
     'back' => 'Back',
     'remove' => 'Remove',
     'loading' => 'Loading...',
+    'copied_to_clipboard' => ':TYPE: copied to clipboard!',
+    'unable_to_copy' => 'Unable to copy text :TYPE:!',
 ];
