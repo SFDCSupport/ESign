@@ -23,10 +23,29 @@ class SignerController extends Controller
 
     public function store(SignerRequest $request, Document $document)
     {
-        $response = [];
-        $documentData = [];
+        $response = $documentData = [];
         $validatedData = $request->validated();
         $mode = $validatedData['mode'];
+        $title = $validatedData['title'] ?? null;
+        $status = $validatedData['status'] ?? DocumentStatus::DRAFT;
+        $notificationSequence = $validatedData['notification_sequence'] ?? NotificationSequence::ASYNC;
+        $isSync = false;
+
+        if ($document->status !== $status) {
+            $documentData['status'] = $status;
+        }
+
+        if ($document->notification_sequence !== $notificationSequence) {
+            if ($notificationSequence === NotificationSequence::SYNC) {
+                $isSync = true;
+            }
+
+            $documentData['notification_sequence'] = $notificationSequence;
+        }
+
+        if (! blank($title) && $document->title !== $title) {
+            $documentData['title'] = $title;
+        }
 
         foreach ($validatedData['signers'] as $i => $signer) {
             $documentId = $request->document_id;
@@ -75,6 +94,7 @@ class SignerController extends Controller
                     'position' => $element['position'] ?? ($index + 1),
                     'is_required' => $element['is_required'] ?? true,
                     'deleted_by' => $isElementDeleted ? $request->user()->id : null,
+                    'is_next_receiver' => ! $isSync || $index === 0,
                 ]);
 
                 if ($isElementDeleted) {
@@ -83,22 +103,6 @@ class SignerController extends Controller
 
                 $response[$signer['uuid']]['elements'][$element['uuid']] = $elementModel->id;
             }
-        }
-
-        $title = $validatedData['title'] ?? null;
-        $status = $validatedData['status'] ?? DocumentStatus::DRAFT;
-        $notificationSequence = $validatedData['notification_sequence'] ?? NotificationSequence::ASYNC;
-
-        if ($document->status !== $status) {
-            $documentData['status'] = $status;
-        }
-
-        if ($document->notification_sequence !== $notificationSequence) {
-            $documentData['notification_sequence'] = $notificationSequence;
-        }
-
-        if (! blank($title) && $document->title !== $title) {
-            $documentData['title'] = $title;
         }
 
         if (! blank($documentData)) {

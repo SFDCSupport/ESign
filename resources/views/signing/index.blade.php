@@ -4,8 +4,11 @@
     :signer="$signer"
     :isSigningRoute="true"
 >
-    @pushonce('footJs')
-        <script src="{{ url('vendor/esign/js/script.js') }}"></script>
+    @pushonce('css')
+        <link
+            href="{{ url('vendor/esign/css/jquery.datetimepicker.css') }}"
+            rel="stylesheet"
+        />
     @endpushonce
 
     <section class="header-bottom-section">
@@ -78,6 +81,11 @@
     </div>
 
     @include('esign::partials.renderer')
+
+    @pushonce('footJs')
+        <script src="{{ url('vendor/esign/js/jquery.datetimepicker.full.min.js') }}"></script>
+        <script src="{{ url('vendor/esign/js/script.js') }}"></script>
+    @endpushonce
 
     @pushonce('js')
         <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?4.1.7"></script>
@@ -263,21 +271,22 @@
 
                 const signerDataCollection = collect(signerData ?? []);
 
-                signerDataCollection.each((element, i) => {
-                    console.log(element);
-                    const isFirst = i === 0;
-                    const id = generateUniqueId('e_');
-                    let step = '';
+                $.when(
+                    signerDataCollection.each((element, i) => {
+                        console.log(element);
+                        const isFirst = i === 0;
+                        const id = generateUniqueId('e_');
+                        let step = '';
 
-                    if (isFirst) {
-                        step = 'first';
-                    }
+                        if (isFirst) {
+                            step = 'first';
+                        }
 
-                    if (i + 1 === collect(signerData ?? []).count()) {
-                        step = 'last';
-                    }
+                        if (i + 1 === collect(signerData ?? []).count()) {
+                            step = 'last';
+                        }
 
-                    $(`<div class="tab-pane fade ${isFirst ? 'active show' : ''}"
+                        $(`<div class="tab-pane fade ${isFirst ? 'active show' : ''}"
                         id="${id}-panel" role="tabpanel"
                         aria-labelledby="${id}-tab"
                         data-object-id="${element.id}"
@@ -287,7 +296,7 @@
                         ${getSigningElementByType(id, element.type, element.is_required, element.text)}
                     </div>`).appendTo('#elementPanels');
 
-                    $(`<button class="nav-link ${isFirst ? 'active' : ''} "
+                        $(`<button class="nav-link ${isFirst ? 'active' : ''} "
                         id="${id}-tab" data-bs-toggle="tab"
                         data-bs-target="#${id}-panel"
                         aria-controls="${id}-panel"
@@ -296,6 +305,16 @@
                         ${step ? 'data-step="' + step + '"' : ''}>
                         <span></span>
                     </button>`).appendTo('#elementTabs');
+                    }),
+                ).then(() => {
+                    $('input[type="date"]').datetimepicker({
+                        timepicker: false,
+                        inline: true,
+                        format: 'd-M-Y',
+                        scrollInput: false,
+                        validateOnBlur: false,
+                        step: 30,
+                    });
                 });
 
                 if (signerDataCollection.count() === 1) {

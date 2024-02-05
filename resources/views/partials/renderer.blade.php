@@ -238,6 +238,8 @@
                                                 break;
                                             case 'text':
                                             case 'textarea':
+                                            case 'date':
+                                            case 'email':
                                                 $(document).trigger(
                                                     'signing-modal:show',
                                                     {
