@@ -22,33 +22,27 @@ class SignerRequest extends FormRequest
         $additionalRules = [];
         $mode = $this->request->get('mode');
 
-        if ($mode === 'create') {
-            $additionalRules = [
-                'signers.*.id' => 'sometimes|uuid',
-                'signers.*.uuid' => 'required',
-                'signers.*.text' => 'required',
-                'signers.*.email' => 'nullable|email',
-                'signers.*.is_deleted' => 'sometimes',
-                'signers.*.position' => 'required|integer',
-                'signers.*.elements.*.id' => 'sometimes|uuid',
-                'signers.*.elements.*.uuid' => 'required',
-                'signers.*.elements.*.text' => 'required',
-                'signers.*.elements.*.page_index' => 'required|integer',
-                'signers.*.elements.*.page_width' => 'required|integer',
-                'signers.*.elements.*.page_height' => 'required|integer',
-                'signers.*.elements.*.left' => 'required',
-                'signers.*.elements.*.top' => 'required',
-                'signers.*.elements.*.eleType' => 'required',
-                'signers.*.elements.*.width' => 'required',
-                'signers.*.elements.*.height' => 'required',
-                'signers.*.elements.*.is_required' => 'sometimes',
-                'signers.*.elements.*.is_deleted' => 'sometimes',
-            ];
-        }
-
-        if ($mode === 'update') {
-
-        }
+        $additionalRules = [
+            'signers.*.id' => 'sometimes|uuid',
+            'signers.*.uuid' => 'required',
+            'signers.*.text' => 'required',
+            'signers.*.email' => 'nullable|email',
+            'signers.*.is_deleted' => 'sometimes',
+            'signers.*.position' => 'required|integer',
+            'signers.*.elements.*.id' => 'sometimes|uuid',
+            'signers.*.elements.*.uuid' => 'required',
+            'signers.*.elements.*.text' => 'required',
+            'signers.*.elements.*.page_index' => 'required|integer',
+            'signers.*.elements.*.page_width' => 'required|integer',
+            'signers.*.elements.*.page_height' => 'required|integer',
+            'signers.*.elements.*.left' => 'required',
+            'signers.*.elements.*.top' => 'required',
+            'signers.*.elements.*.eleType' => 'required',
+            'signers.*.elements.*.width' => 'required',
+            'signers.*.elements.*.height' => 'required',
+            'signers.*.elements.*.is_required' => 'sometimes',
+            'signers.*.elements.*.is_deleted' => 'sometimes',
+        ];
 
         return array_merge([
             'document_id' => [
@@ -58,7 +52,7 @@ class SignerRequest extends FormRequest
             'mode' => [
                 'required',
                 Rule::in([
-                    'create', 'update',
+                    'save', 'send',
                 ]),
             ],
             'notification_sequence' => [

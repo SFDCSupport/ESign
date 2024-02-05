@@ -336,16 +336,16 @@
                 const clonedLi = hasSigners ? $("li.signerLi:last").clone() : $($.trim($("#signerTemplate").html()));
                 const uuid = obj?.signer_uuid || obj?.uuid || generateUniqueId("s_");
 
-                const label = obj?.signer_text || obj?.text || ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}';
+                const text = obj?.signer_text || obj?.text || ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}';
                 clonedLi.removeClass("selectedSigner");
-                clonedLi.find("a.signerLabel").html(label);
+                clonedLi.find("a.signerLabel").html(text);
                 clonedLi.attr("data-signer-index", _highestSigner);
                 clonedLi.attr("data-signer-uuid", uuid);
                 clonedLi[hasSigners ? "insertAfter" : "appendTo"](hasSigners ? $("ul#signerUl li.signerLi:last") : $("ul#signerUl"));
 
                 if (obj?.from !== "loadedData") {
                     $(document).trigger("signer:added", {
-                        label,
+                        text,
                         uuid,
                         from: "sidebar",
                         "signer_index": _highestSigner
@@ -396,7 +396,9 @@
                     });
                 });
 
-                $(document).trigger("signers-save");
+                $(document).trigger("signers-save", {
+                    type: 'save',
+                });
             };
 
             $(() => {
@@ -504,18 +506,26 @@
 
                         $("#recipientsContainer span.selectedSigner").text(_t.text())
                             .attr("data-active-signer", uuid);
-                    }).on("signers-save", function(e) {
+                    }).on("signers-save", function(e, obj) {
                     e.preventDefault();
 
                     setTimeout(() => $(document).trigger("loader:show"), 0);
 
+                    const mode = obj.type ?? 'save';
+
                     $.post('{{ route('esign.documents.signers.store', $document) }}', $.extend({}, loadedData, {
                         _token: '{{ csrf_token() }}',
                         document_id: '{{ $document->id }}',
-                        mode: "create"
+                        mode: mode,
                     })).done((r) => {
                         if (r.data) {
                             $(document).trigger("process-ids", r.data);
+                        }
+
+                        if(mode === 'send' && r.redirect) {
+                            $(location).attr('href', r.redirect);
+
+                            return;
                         }
 
                         $(document).trigger("loader:hide");

@@ -117,7 +117,7 @@
     const signersSendModal = $('#signers_send_modal');
     const _signerEmailTemplate = `<div class="dark-bg-card p-2 py-3 rounded mb-3 signerEmail"
                                     data-signer-index="__INDEX" data-signer-uuid="__UUID"
-                                    data-signer-label="__LABEL">
+                                    data-signer-text="__LABEL">
                                     <label for="formControlInput__INDEX" class="col-form-label pt-1 pb-1">
                                         __LABEL
                                     </label>
@@ -199,7 +199,7 @@
                     $(document).trigger('signer:updated', {
                         from: 'signersModal',
                         uuid: _t.attr('data-signer-uuid'),
-                        label: _t.attr('data-signer-label'),
+                        text: _t.attr('data-signer-text'),
                         email: _t.find('input[name$="[email]"]').val(),
                         position: _t.attr('data-signer-index'),
                     });
@@ -232,7 +232,9 @@
                     .trigger('click');
 
                 try {
-                    saveBtnAction();
+                    $(document).trigger('signers-save', {
+                        type: 'send',
+                    });
                 } catch (e) {
                     toast('error', e);
                 }

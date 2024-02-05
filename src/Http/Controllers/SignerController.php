@@ -24,6 +24,7 @@ class SignerController extends Controller
         $response = [];
         $documentData = [];
         $validatedData = $request->validated();
+        $mode = $validatedData['mode'];
         $title = $validatedData['title'] ?? null;
         $notificationSequence = $validatedData['notification_sequence'] ?? NotificationSequence::ASYNC;
 
@@ -96,10 +97,16 @@ class SignerController extends Controller
             }
         }
 
-        return $this->jsonResponse([
-            'status' => 1,
-            'data' => $response,
-        ])->notify('Success');
+        $return['status'] = 1;
+        $return['data'] = $response;
+
+        if ($mode === 'send') {
+            $return['redirect'] = route('esign.documents.submissions.index', $document);
+        }
+
+        return $this->jsonResponse(
+            $return
+        )->notify('Success');
     }
 
     public function destroy(SignerRequest $request, Document $document, Signer $signer)
