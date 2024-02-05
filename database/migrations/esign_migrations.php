@@ -91,6 +91,7 @@ return new class extends Migration
             $table->double('width');
             $table->double('height');
             $table->integer('position')->default(0);
+            $table->boolean('is_required')->default(true);
             $table->timestamps();
             $table->softDeletes();
             $table->eSignUserStamps();

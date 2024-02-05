@@ -25,6 +25,7 @@ class SignerElementResource extends JsonResource
             'width' => $this->width,
             'height' => $this->height,
             'position' => $this->position,
+            'is_required' => $this->is_required,
         ];
     }
 }

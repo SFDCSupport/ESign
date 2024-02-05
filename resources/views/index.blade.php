@@ -90,11 +90,17 @@
             };
             let signaturePad = null;
 
-            const getSigningElementByType = (id, type, label = null) => {
+            const getSigningElementByType = (
+                id,
+                type,
+                required = true,
+                label = null,
+            ) => {
                 if (type === 'textarea') {
                     return `<p>
                       <textarea class="form-control signingElement"
                         id="id-${id}-element" rows="3" data-type="${type}"
+                        ${required ? 'required' : ''}
                       ></textarea>
                     </p>`;
                 }
@@ -109,6 +115,7 @@
                         <canvas id="id-${id}-element"
                             class="border bg-light signaturePad signingElement"
                             width="608" height="200" style="display:block;"
+                            ${required ? 'required' : ''}
                         ></canvas>
                     </div>`;
                 }
@@ -117,6 +124,7 @@
                   <input type="${type}" id="id-${id}-element"
                     class="form-control form-control-lg signingElement"
                     placeholder="${label ?? type}" data-type="${type}"
+                    ${required ? 'required' : ''}
                   />
                 </p>`;
             };
@@ -251,6 +259,7 @@
                 const signerDataCollection = collect(signerData ?? []);
 
                 signerDataCollection.each((element, i) => {
+                    console.log(element);
                     const isFirst = i === 0;
                     const id = generateUniqueId('e_');
                     let step = '';
@@ -270,7 +279,7 @@
                         data-element-type="${element.type}"
                         ${step ? 'data-step="' + step + '"' : ''}>
                         <h2>${convertToTitleString(element.text ?? element.type)}</h2>
-                        ${getSigningElementByType(id, element.type, element.text)}
+                        ${getSigningElementByType(id, element.type, element.is_required, element.text)}
                     </div>`).appendTo('#elementPanels');
 
                     $(`<button class="nav-link ${isFirst ? 'active' : ''} "

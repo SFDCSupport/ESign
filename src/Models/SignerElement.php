@@ -19,7 +19,8 @@ class SignerElement extends Model
         'id', 'signer_id', 'document_id',
         'type', 'text',
         'page_index', 'page_width', 'page_height',
-        'left', 'top', 'width', 'height', 'position',
+        'left', 'top', 'width', 'height',
+        'position', 'is_required',
     ];
 
     /**
@@ -34,6 +35,7 @@ class SignerElement extends Model
         'width' => 'double',
         'top' => 'double',
         'left' => 'double',
+        'is_required' => 'boolean',
     ];
 
     /**

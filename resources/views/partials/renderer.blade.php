@@ -816,7 +816,7 @@
 
                     const [_obj, _canvas] = getObjectById(obj.uuid);
 
-                    if (!blank(_obj)) {
+                    if (!blank(_obj) && obj.text) {
                         _obj.text = obj.text;
 
                         _canvas.renderAll();

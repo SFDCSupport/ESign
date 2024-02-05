@@ -84,6 +84,7 @@ class SignerController extends Controller
                     'left' => $element['left'],
                     'top' => $element['top'],
                     'position' => $element['position'] ?? ($index + 1),
+                    'is_required' => $element['is_required'] ?? true,
                     'deleted_by' => $isElementDeleted ? $request->user()->id : null,
                 ]);
 

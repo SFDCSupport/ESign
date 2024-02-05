@@ -236,8 +236,8 @@
 
                 signerElementUpdate();
             };
-            const signerElementUpdate = (obj) => {
-                if(blank(obj.uuid)) {
+            const signerElementUpdate = (obj = null) => {
+                if(blank(obj) || blank(obj.uuid)) {
                     return;
                 }
 
