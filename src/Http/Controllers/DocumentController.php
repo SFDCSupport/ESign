@@ -96,7 +96,7 @@ class DocumentController extends Controller
     protected function getNextCloneSuffix(Document $document)
     {
         $latestClone = $document->children()
-            ->where('title', 'LIKE', $document->title.' (%')
+            ->where('title', 'LIKE', '%) '.$document->title)
             ->whereNull('deleted_at')
             ->latest('title')
             ->first();

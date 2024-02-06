@@ -23,6 +23,13 @@ class Submission extends Model
     protected $casts = [];
 
     /**
+     * @var array<int,string>
+     */
+    protected static array $stampingColumns = [
+        'restored_at',
+    ];
+
+    /**
      * @return BelongsTo<Document, Submission>
      */
     public function document()

@@ -35,14 +35,20 @@ class SignerObserver extends Observer
         $this->logAuditTrait(
             document: $signer->document,
             event: 'signer-added',
-            signer: $signer
+            signer: $signer,
         );
     }
 
     public function updated(Signer $signer): void
     {
         $event = 'signer-updated';
-        $dirty = $signer->getDirty();
+        $dirty = array_diff_key(
+            $signer->getdirty(),
+            array_flip([
+                'updated_at',
+                'updated_by',
+            ])
+        );
 
         if (array_key_exists('signing_status', $dirty)) {
             $event = 'signer-signing-status-changed';
@@ -56,7 +62,7 @@ class SignerObserver extends Observer
             document: $signer->document,
             event: $event,
             signer: $signer,
-            metadata: $dirty
+            metadata: $dirty,
         );
     }
 
@@ -65,7 +71,7 @@ class SignerObserver extends Observer
         $this->logAuditTrait(
             document: $signer->document,
             event: 'signer-deleted',
-            signer: $signer
+            signer: $signer,
         );
     }
 
@@ -74,7 +80,7 @@ class SignerObserver extends Observer
         $this->logAuditTrait(
             document: $signer->document,
             event: 'signer-restored',
-            signer: $signer
+            signer: $signer,
         );
     }
 
@@ -83,7 +89,7 @@ class SignerObserver extends Observer
         $this->logAuditTrait(
             document: $signer->document,
             event: 'signer-force-deleted',
-            signer: $signer
+            signer: $signer,
         );
     }
 }

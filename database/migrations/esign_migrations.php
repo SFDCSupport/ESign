@@ -113,11 +113,12 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('document_id')->constrained('e_documents');
             $table->foreignUuid('signer_id')->nullable()->constrained('e_signers');
+            $table->foreignUuid('element_id')->nullable()->constrained('e_signer_elements');
             $table->string('event');
             $table->json('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->eSignUserStamps('restored_at');
+            $table->eSignUserStamps();
         });
     }
 

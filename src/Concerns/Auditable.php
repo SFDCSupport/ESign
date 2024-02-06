@@ -15,9 +15,14 @@ trait Auditable
         string $event,
         ?Signer $signer = null,
         ?SignerElement $element = null,
-        ?array $metadata = null
+        ?array $metadata = null,
+        bool $hasUserStamps = true,
     ): Audit {
         $model = new Audit;
+
+        if (! $hasUserStamps) {
+            $model = $model->disableStamping();
+        }
 
         $model->event = $event;
         $model->metadata = $metadata;
@@ -26,6 +31,10 @@ trait Auditable
         $model->document_id = $document->id;
 
         $model->save();
+
+        if (! $hasUserStamps) {
+            $model = $model->enableStamping();
+        }
 
         return $model;
     }

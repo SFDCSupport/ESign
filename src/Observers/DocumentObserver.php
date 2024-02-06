@@ -17,7 +17,13 @@ class DocumentObserver extends Observer
     public function updated(Document $document): void
     {
         $event = 'document-updated';
-        $dirty = $document->getdirty();
+        $dirty = array_diff_key(
+            $document->getdirty(),
+            array_flip([
+                'updated_at',
+                'updated_by',
+            ])
+        );
 
         if (array_key_exists('status', $dirty)) {
             $event = 'document-status-changed';

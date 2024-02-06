@@ -53,13 +53,20 @@ class SignerElementObserver extends Observer
     public function updated(Element $element): void
     {
         $signer = $this->getRelations($element);
+        $dirty = array_diff_key(
+            $element->getdirty(),
+            array_flip([
+                'updated_at',
+                'updated_by',
+            ])
+        );
 
         $this->logAuditTrait(
             document: $signer->document,
             event: 'element-updated',
             signer: $signer,
             element: $element,
-            metadata: $element->getDirty()
+            metadata: $dirty
         );
     }
 

@@ -14,10 +14,11 @@ class SubmissionObserver extends Observer
     public function created(Submission $submission): void
     {
         $this->logAuditTrait(
-            $submission->document,
-            'submission-added',
-            $submission->signer,
-            $submission->element
+            document: $submission->document,
+            event: 'submission-added',
+            signer: $submission->signer,
+            element: $submission->element,
+            hasUserStamps: false,
         );
     }
 
@@ -28,7 +29,8 @@ class SubmissionObserver extends Observer
             event: 'submission-updated',
             signer: $submission->signer,
             element: $submission->element,
-            metadata: $submission->getDirty()
+            metadata: $submission->getdirty(),
+            hasUserStamps: false,
         );
     }
 
@@ -38,7 +40,8 @@ class SubmissionObserver extends Observer
             document: $submission->document,
             event: 'submission-deleted',
             signer: $submission->signer,
-            element: $submission->element
+            element: $submission->element,
+            hasUserStamps: false,
         );
     }
 
@@ -48,7 +51,7 @@ class SubmissionObserver extends Observer
             document: $submission->document,
             event: 'submission-restored',
             signer: $submission->signer,
-            element: $submission->element
+            element: $submission->element,
         );
     }
 
@@ -58,7 +61,8 @@ class SubmissionObserver extends Observer
             document: $submission->document,
             event: 'submission-force-deleted',
             signer: $submission->signer,
-            element: $submission->element
+            element: $submission->element,
+            hasUserStamps: false,
         );
     }
 }
