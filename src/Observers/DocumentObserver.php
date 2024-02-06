@@ -8,7 +8,10 @@ class DocumentObserver extends Observer
 {
     public function created(Document $document): void
     {
-        $this->logAuditTrait($document, 'document-created');
+        $this->logAuditTrait(
+            document: $document,
+            event: 'document-created'
+        );
     }
 
     public function updated(Document $document): void
@@ -20,21 +23,34 @@ class DocumentObserver extends Observer
             $event = 'document-status-changed';
         }
 
-        $this->logAuditTrait($document, $event, null, null, $dirty);
+        $this->logAuditTrait(
+            document: $document,
+            event: $event,
+            metadata: $dirty
+        );
     }
 
     public function deleted(Document $document): void
     {
-        $this->logAuditTrait($document, 'document-deleted');
+        $this->logAuditTrait(
+            document: $document,
+            event: 'document-deleted'
+        );
     }
 
     public function restored(Document $document): void
     {
-        $this->logAuditTrait($document, 'document-restored');
+        $this->logAuditTrait(
+            document: $document,
+            event: 'document-restored'
+        );
     }
 
     public function forceDeleted(Document $document): void
     {
-        $this->logAuditTrait($document, 'document-force-deleted');
+        $this->logAuditTrait(
+            document: $document,
+            event: 'document-force-deleted'
+        );
     }
 }

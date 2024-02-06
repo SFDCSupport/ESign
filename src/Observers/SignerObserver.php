@@ -32,7 +32,11 @@ class SignerObserver extends Observer
 
     public function created(Signer $signer): void
     {
-        $this->logAuditTrait($signer->document, 'signer-added', $signer);
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: 'signer-added',
+            signer: $signer
+        );
     }
 
     public function updated(Signer $signer): void
@@ -48,21 +52,38 @@ class SignerObserver extends Observer
             $event = 'signer-send-status-changed';
         }
 
-        $this->logAuditTrait($signer->document, $event, $signer, null, $dirty);
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: $event,
+            signer: $signer,
+            metadata: $dirty
+        );
     }
 
     public function deleted(Signer $signer): void
     {
-        $this->logAuditTrait($signer->document, 'signer-deleted', $signer);
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: 'signer-deleted',
+            signer: $signer
+        );
     }
 
     public function restored(Signer $signer): void
     {
-        $this->logAuditTrait($signer->document, 'signer-restored', $signer);
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: 'signer-restored',
+            signer: $signer
+        );
     }
 
     public function forceDeleted(Signer $signer): void
     {
-        $this->logAuditTrait($signer->document, 'signer-force-deleted', $signer);
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: 'signer-force-deleted',
+            signer: $signer
+        );
     }
 }

@@ -37,7 +37,12 @@ class SignerElementObserver extends Observer
     {
         $signer = $this->getRelations($element);
 
-        $this->logAuditTrait($signer->document, 'element-added', $signer, $element);
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: 'element-added',
+            signer: $signer,
+            element: $element
+        );
     }
 
     protected function getRelations(Element $element): Signer
@@ -49,27 +54,48 @@ class SignerElementObserver extends Observer
     {
         $signer = $this->getRelations($element);
 
-        $this->logAuditTrait($signer->document, 'element-updated', $signer, $element, $element->getDirty());
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: 'element-updated',
+            signer: $signer,
+            element: $element,
+            metadata: $element->getDirty()
+        );
     }
 
     public function deleted(Element $element): void
     {
         $signer = $this->getRelations($element);
 
-        $this->logAuditTrait($signer->document, 'element-deleted', $signer, $element);
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: 'element-deleted',
+            signer: $signer,
+            element: $element
+        );
     }
 
     public function restored(Element $element): void
     {
         $signer = $this->getRelations($element);
 
-        $this->logAuditTrait($signer->document, 'element-restored', $signer, $element);
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: 'element-restored',
+            signer: $signer,
+            element: $element
+        );
     }
 
     public function forceDeleted(Element $element): void
     {
         $signer = $this->getRelations($element);
 
-        $this->logAuditTrait($signer->document, 'element-force-deleted', $signer, $element);
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: 'element-force-deleted',
+            signer: $signer,
+            element: $element
+        );
     }
 }
