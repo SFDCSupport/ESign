@@ -15,7 +15,7 @@
     {{ $redirectUrl ? 'onclick=location.href="'.$redirectUrl.'"' : '' }}
 >
     @if ($attributes->has('icon'))
-        <i class="fa fa-{{ $attributes->get('icon') }}"></i>
+        <em class="fa fa-{{ $attributes->get('icon') }}"></em>
     @endif
 
     {{ $value ?? $slot }}

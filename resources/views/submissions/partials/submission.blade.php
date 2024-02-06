@@ -10,18 +10,21 @@
                         <span
                             class="btn btn-sm btn_{{ $signingValue }} me-2 border"
                         >
+                            <em class="fa-solid fa-signature"></em>
                             {{ __('esign::label.'.$signingValue) }}
                         </span>
                         @php($readValue = $signer->read_status->value)
                         <span
                             class="btn btn-sm btn_{{ $readValue }} me-2 border"
                         >
+                            <em class="fa-solid fa-envelope-open"></em>
                             {{ __('esign::label.'.$readValue) }}
                         </span>
                         @php($sendValue = $signer->send_status->value)
                         <span
                             class="btn btn-sm btn_{{ $sendValue }} me-2 border"
                         >
+                            <em class="fa-solid fa-envelope"></em>
                             {{ __('esign::label.'.$sendValue) }}
                         </span>
                     </div>
@@ -31,37 +34,35 @@
                 </div>
                 <div class="btn-toolbar mb-2 mb-md-0">
                     @if ($isInProgress && $isSync && $signer->is_next_receiver)
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-outline-secondary me-2"
-                        >
-                            <i class="fas fa-paper-place"></i>
-                            {{ __('esign::label.resend_mail') }}
-                        </button>
+                        <x-esign::partials.button
+                            icon="paper-plane"
+                            class="btn-sm btn-outline-secondary"
+                            :value="__('esign::label.resend_mail')"
+                        />
                     @endif
 
-                    <button
-                        type="button"
+                    <x-esign::partials.button
+                        icon="link"
+                        class="btn-sm btn-outline-secondary"
                         onclick="copyToClipboard('{{ route('esign.signing.index', ['signing_url' => $signer->url]) }}', '{{ __('esign::label.link') }}')"
-                        class="btn btn-sm btn-outline-secondary me-2"
-                    >
-                        <i class="fas fa-link"></i>
-                        {{ __('esign::label.copy_link') }}
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary me-2"
-                    >
-                        <i class="fas fa-eye"></i>
-                        {{ __('esign::label.view') }}
-                    </button>
-                    <button
-                        type="button"
-                        class="btn btn-sm btn-outline-danger me-2"
-                    >
-                        <i class="fas fa-trash"></i>
-                    </button>
+                        :value="__('esign::label.copy_link')"
+                    />
+                    <x-esign::partials.button
+                        icon="eye"
+                        class="btn-sm btn-outline-secondary"
+                        :value="__('esign::label.view')"
+                        :redirect="
+                            route('esign.documents.submissions.show', [
+                                'document' => $document,
+                                'submission' => $signer->submissions,
+                            ])
+                        "
+                    />
+                    <x-esign::partials.button
+                        disabled
+                        icon="trash"
+                        class="btn-sm btn-outline-danger"
+                    />
                 </div>
             </div>
         </div>
