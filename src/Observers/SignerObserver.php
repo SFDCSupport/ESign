@@ -33,7 +33,7 @@ class SignerObserver extends Observer
     public function created(Signer $signer): void
     {
         $this->logAuditTrait(
-            document: $signer->document,
+            document: $signer->loadMissing('document')->document,
             event: 'signer-added',
             signer: $signer,
         );
@@ -59,7 +59,7 @@ class SignerObserver extends Observer
         }
 
         $this->logAuditTrait(
-            document: $signer->document,
+            document: $signer->loadMissing('document')->document,
             event: $event,
             signer: $signer,
             metadata: $dirty,
@@ -69,7 +69,7 @@ class SignerObserver extends Observer
     public function deleted(Signer $signer): void
     {
         $this->logAuditTrait(
-            document: $signer->document,
+            document: $signer->loadMissing('document')->document,
             event: 'signer-deleted',
             signer: $signer,
         );
@@ -78,7 +78,7 @@ class SignerObserver extends Observer
     public function restored(Signer $signer): void
     {
         $this->logAuditTrait(
-            document: $signer->document,
+            document: $signer->loadMissing('document')->document,
             event: 'signer-restored',
             signer: $signer,
         );
@@ -87,7 +87,7 @@ class SignerObserver extends Observer
     public function forceDeleted(Signer $signer): void
     {
         $this->logAuditTrait(
-            document: $signer->document,
+            document: $signer->loadMissing('document')->document,
             event: 'signer-force-deleted',
             signer: $signer,
         );

@@ -2,14 +2,13 @@
 
 namespace NIIT\ESign\Mail;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable as Base;
 use Illuminate\Mail\Mailables\Headers;
 use Illuminate\Queue\SerializesModels;
 
 abstract class Mailable extends Base
 {
-    use Queueable, SerializesModels;
+    use SerializesModels;
 
     private ?string $messageId = 'custom-message-id@example.com';
 
