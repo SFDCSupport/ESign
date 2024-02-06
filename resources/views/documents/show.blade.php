@@ -237,18 +237,18 @@
                 signerElementUpdate();
             };
             const signerElementUpdate = (obj = null) => {
-                if(blank(obj) || blank(obj.uuid)) {
+                if (blank(obj) || blank(obj.uuid)) {
                     return;
                 }
 
                 const element = $(`.addedElements .addedElement[data-uuid="${obj.uuid}"]`);
 
-                if(element.length <= 0) {
+                if (element.length <= 0) {
                     return;
                 }
 
-                if(obj.text) {
-                    element.find('.contenteditable-content').text(obj.text);
+                if (obj.text) {
+                    element.find(".contenteditable-content").text(obj.text);
                 }
             };
             const signerElementRemove = (element) => {
@@ -391,13 +391,13 @@
                             left: obj.left,
                             top: obj.top,
                             width: obj.width,
-                            height: obj.height,
+                            height: obj.height
                         });
                     });
                 });
 
                 $(document).trigger("signers-save", {
-                    type: 'save',
+                    type: "save"
                 });
             };
 
@@ -509,21 +509,54 @@
                     }).on("signers-save", function(e, obj) {
                     e.preventDefault();
 
+                    const cLoadedData = (loadedData ?? []);
+                    const msgSomethingWentWrong = '{{ __('esign::validations.something_went_wrong') }}';
+
+                    if (cLoadedData.length <= 0) {
+                        toast("error", msgSomethingWentWrong);
+                    }
+
+                    const msgElementMissing = '{{ __('esign::validations.signer_doesnt_have_any_elements') }}';
+                    const signersWithoutElements = collect(loadedData.signers)
+                        .filter(signer => !("elements" in signer) || signer.elements.length === 0)
+                        .pluck("uuid")
+                        .toArray();
+
+                    if (signersWithoutElements.length > 0) {
+                        collect(signersWithoutElements).each((uuid) => {
+                            const labelElement = $(`.signerLi[data-signer-uuid="${uuid}"] .signerLabel`);
+
+                            toast(
+                                "error",
+                                labelElement.length > 0
+                                    ? msgElementMissing.replace(
+                                        /:SIGNER:/ig,
+                                        $.trim(
+                                            labelElement.text()
+                                        )
+                                    )
+                                    : msgSomethingWentWrong
+                            );
+                        });
+
+                        return;
+                    }
+
                     setTimeout(() => $(document).trigger("loader:show"), 0);
 
-                    const mode = obj.type ?? 'save';
+                    const mode = obj.type ?? "save";
 
                     $.post('{{ route('esign.documents.signers.store', $document) }}', $.extend({}, loadedData, {
                         _token: '{{ csrf_token() }}',
                         document_id: '{{ $document->id }}',
-                        mode: mode,
+                        mode: mode
                     })).done((r) => {
                         if (r.data) {
                             $(document).trigger("process-ids", r.data);
                         }
 
-                        if(mode === 'send' && r.redirect) {
-                            $(location).attr('href', r.redirect);
+                        if (mode === "send" && r.redirect) {
+                            $(location).attr("href", r.redirect);
 
                             return;
                         }
@@ -544,14 +577,14 @@
                         const key = _t.attr("data-content-editable-key");
                         const value = $.trim(editable.text());
 
-                        if (key.startsWith('signers.elements.')) {
+                        if (key.startsWith("signers.elements.")) {
                             const _element = _t.closest("div.addedElement");
 
                             $(document).trigger("signer:element:updated", {
                                 from: "sidebar",
                                 uuid: _element.attr("data-uuid"),
                                 signer_uuid: _element.attr("data-element-signer-uuid"),
-                                text: value,
+                                text: value
                             });
                         } else {
                             const obj = {};
@@ -568,13 +601,13 @@
                         em.removeClass("fa-pen").addClass("fa-check");
                         editable.attr("contenteditable", "true").get(0).focus();
                     }
-                }).on('focusout keypress', '[contenteditable="true"]', function(e) {
+                }).on("focusout keypress", "[contenteditable=\"true\"]", function(e) {
                     const _t = $(this);
-                    const contentEditable = _t.parent().find('.contentEditable[data-content-editable]');
-                    const editableEle = contentEditable.attr('data-content-editable');
+                    const contentEditable = _t.parent().find(".contentEditable[data-content-editable]");
+                    const editableEle = contentEditable.attr("data-content-editable");
 
-                    if(e.keyCode === 13 || editableEle.toUpperCase() !== _t.prop('nodeName')) {
-                        contentEditable.trigger('click');
+                    if (e.keyCode === 13 || editableEle.toUpperCase() !== _t.prop("nodeName")) {
+                        contentEditable.trigger("click");
                     }
                 });
 

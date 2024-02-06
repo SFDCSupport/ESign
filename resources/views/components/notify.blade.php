@@ -42,14 +42,14 @@
 
             toastContainer.append(
                 toastr
-                    .replace('__CLASS', status + ' show')
+                    .replace('__CLASS', getToastClass(status) + ' show')
                     .replace('__BODY', message),
             );
 
             if ((toastr = $('#toastr .toast')).length > 0) {
                 setTimeout(() => {
                     toastr.remove();
-                }, {{ config('survey.notify.timeout') }});
+                }, {{ config('esign.notify_timeout') }});
             }
         }
 

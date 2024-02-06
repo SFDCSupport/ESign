@@ -23,6 +23,16 @@ class SignerController extends Controller
 
     public function store(SignerRequest $request, Document $document)
     {
+        if ($document->status === DocumentStatus::IN_PROGRESS) {
+            return $this->jsonResponse([
+                'status' => 1,
+                'redirect' => route('esign.documents.submissions.index', $document),
+            ])->notify(
+                __('esign::validations.document_is_in_progress'),
+                'error',
+            );
+        }
+
         $response = $documentData = [];
         $validatedData = $request->validated();
         $mode = $validatedData['mode'];
