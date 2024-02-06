@@ -21,7 +21,7 @@ class SendSigningLink extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Document submitted for e-sign'
+            subject: __('esign::label.document_submitted_for_esign')
         );
     }
 

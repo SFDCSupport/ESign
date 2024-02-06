@@ -17,7 +17,7 @@ class SignedByAllMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'esign::mails.signing-completed'
+            view: 'esign::mails.signed-by-all'
         );
     }
 
@@ -25,7 +25,7 @@ class SignedByAllMail extends Mailable
     {
         return new Envelope(
             from: new Address('test@example.com', 'test'),
-            subject: 'Order Shipped',
+            subject: __('esign::label.signed_by_all'),
             using: [
                 function (Email $message) {
                     // ...
