@@ -46,7 +46,7 @@ class DocumentComponent extends Component
                         fn ($q) => $q->where('title', 'LIKE', "%{$this->search}%")
                     )->when($this->filter !== 'all',
                         fn ($q) => $q->where('status', $this->filter)
-                    )->paginate(2),
+                    )->paginate(9),
             ]);
     }
 }

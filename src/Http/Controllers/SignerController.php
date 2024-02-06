@@ -2,7 +2,9 @@
 
 namespace NIIT\ESign\Http\Controllers;
 
+use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\NotificationSequence;
+use NIIT\ESign\Events\DocumentStatusChanged;
 use NIIT\ESign\Http\Requests\SignerRequest;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
@@ -21,13 +23,33 @@ class SignerController extends Controller
 
     public function store(SignerRequest $request, Document $document)
     {
-        $response = [];
-        $documentData = [];
+        if ($document->status === DocumentStatus::IN_PROGRESS) {
+            return $this->jsonResponse([
+                'status' => 1,
+                'redirect' => route('esign.documents.submissions.index', $document),
+            ])->notify(
+                __('esign::validations.document_is_in_progress'),
+                'error',
+            );
+        }
+
+        $response = $documentData = [];
         $validatedData = $request->validated();
+        $mode = $validatedData['mode'];
         $title = $validatedData['title'] ?? null;
+        $status = $validatedData['status'] ?? DocumentStatus::DRAFT;
         $notificationSequence = $validatedData['notification_sequence'] ?? NotificationSequence::ASYNC;
+        $isSync = false;
+
+        if ($document->status !== $status) {
+            $documentData['status'] = $status;
+        }
 
         if ($document->notification_sequence !== $notificationSequence) {
+            if ($notificationSequence === NotificationSequence::SYNC) {
+                $isSync = true;
+            }
+
             $documentData['notification_sequence'] = $notificationSequence;
         }
 
@@ -35,16 +57,12 @@ class SignerController extends Controller
             $documentData['title'] = $title;
         }
 
-        if (! blank($documentData)) {
-            $document->update($documentData);
-        }
-
         foreach ($validatedData['signers'] as $i => $signer) {
             $documentId = $request->document_id;
             $isSignerDeleted = $signer['is_deleted'] ?? false;
 
             $update = [
-                'label' => $signer['label'] ?? __('esign::label.nth_signer', ['nth' => ordinal($i)]),
+                'text' => $signer['text'] ?? __('esign::label.nth_signer', ['nth' => ordinal($i)]),
                 'position' => $signer['position'] ?? ($i + 1),
                 'deleted_by' => $isSignerDeleted ? $request->user()->id : null,
             ];
@@ -74,7 +92,7 @@ class SignerController extends Controller
                     'signer_id' => $signerModel->id,
                     'document_id' => $documentId,
                 ], [
-                    'label' => $element['label'] ?? str($element['eleType'])->title()->value(),
+                    'text' => $element['text'] ?? str($element['eleType'])->title()->value(),
                     'type' => $element['eleType'],
                     'page_index' => $element['page_index'],
                     'page_width' => $element['page_width'],
@@ -83,10 +101,10 @@ class SignerController extends Controller
                     'height' => $element['height'],
                     'left' => $element['left'],
                     'top' => $element['top'],
-                    'scale_x' => $element['scale_x'] ?? null,
-                    'scale_y' => $element['scale_y'] ?? null,
                     'position' => $element['position'] ?? ($index + 1),
+                    'is_required' => $element['is_required'] ?? true,
                     'deleted_by' => $isElementDeleted ? $request->user()->id : null,
+                    'is_next_receiver' => ! $isSync || $index === 0,
                 ]);
 
                 if ($isElementDeleted) {
@@ -97,10 +115,24 @@ class SignerController extends Controller
             }
         }
 
-        return $this->jsonResponse([
-            'status' => 1,
-            'data' => $response,
-        ])->notify('Success');
+        if (! blank($documentData)) {
+            $document->update($documentData);
+
+            if ($status === DocumentStatus::IN_PROGRESS) {
+                DocumentStatusChanged::dispatch($document, DocumentStatus::IN_PROGRESS);
+            }
+        }
+
+        $return['status'] = 1;
+        $return['data'] = $response;
+
+        if ($mode === 'send') {
+            $return['redirect'] = route('esign.documents.submissions.index', $document);
+        }
+
+        return $this->jsonResponse(
+            $return
+        )->notify('Success');
     }
 
     public function destroy(SignerRequest $request, Document $document, Signer $signer)

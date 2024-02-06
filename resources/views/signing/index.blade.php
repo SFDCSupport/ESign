@@ -4,8 +4,11 @@
     :signer="$signer"
     :isSigningRoute="true"
 >
-    @pushonce('footJs')
-        <script src="{{ url('vendor/esign/js/script.js') }}"></script>
+    @pushonce('css')
+        <link
+            href="{{ url('vendor/esign/css/jquery.datetimepicker.css') }}"
+            rel="stylesheet"
+        />
     @endpushonce
 
     <section class="header-bottom-section">
@@ -79,6 +82,11 @@
 
     @include('esign::partials.renderer')
 
+    @pushonce('footJs')
+        <script src="{{ url('vendor/esign/js/jquery.datetimepicker.full.min.js') }}"></script>
+        <script src="{{ url('vendor/esign/js/script.js') }}"></script>
+    @endpushonce
+
     @pushonce('js')
         <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?4.1.7"></script>
         <script>
@@ -90,11 +98,17 @@
             };
             let signaturePad = null;
 
-            const getSigningElementByType = (id, type, label = null) => {
+            const getSigningElementByType = (
+                id,
+                type,
+                required = true,
+                label = null,
+            ) => {
                 if (type === 'textarea') {
                     return `<p>
                       <textarea class="form-control signingElement"
                         id="id-${id}-element" rows="3" data-type="${type}"
+                        ${required ? 'required' : ''}
                       ></textarea>
                     </p>`;
                 }
@@ -109,14 +123,16 @@
                         <canvas id="id-${id}-element"
                             class="border bg-light signaturePad signingElement"
                             width="608" height="200" style="display:block;"
+                            ${required ? 'required' : ''}
                         ></canvas>
                     </div>`;
                 }
 
                 return `<p>
-                  <input type="text" id="id-${id}-element"
+                  <input type="${type}" id="id-${id}-element"
                     class="form-control form-control-lg signingElement"
                     placeholder="${label ?? type}" data-type="${type}"
+                    ${required ? 'required' : ''}
                   />
                 </p>`;
             };
@@ -132,102 +148,115 @@
 
                 $(document).trigger('loader:show');
 
-                canvasEditions.forEach((canvasEdition) => {
-                    canvasEdition.forEachObject((obj, index) => {
-                        if (
-                            obj instanceof fabric.Text ||
-                            obj instanceof fabric.IText
-                        ) {
+                $.when(
+                    canvasEditions.forEach((canvasEdition) => {
+                        canvasEdition.forEachObject((obj, index) => {
+                            console.log(obj);
+                            if (
+                                obj instanceof fabric.Text ||
+                                obj instanceof fabric.IText
+                            ) {
+                                const element = $(`#id-e_${obj.uuid}-element`);
+
+                                formData.append(
+                                    `element[${index}][data]`,
+                                    element.length > 0
+                                        ? element.val()
+                                        : obj.text || obj.getText(),
+                                );
+                            }
+
+                            if (obj instanceof fabric.Image) {
+                                const objBackgroundColor = obj.backgroundColor;
+
+                                obj.backgroundColor = 'rgba(0,0,0,0)';
+
+                                formData.append(
+                                    `element[${index}][data]`,
+                                    dataURLtoBlob(
+                                        obj.toDataURL({
+                                            format: 'png',
+                                            multiplier: 1,
+                                        }),
+                                    ),
+                                );
+
+                                obj.backgroundColor = objBackgroundColor;
+                            }
+
+                            formData.append(`element[${index}][id]`, obj.id);
+                            formData.append(`element[${index}][top]`, obj.top);
                             formData.append(
-                                `element[${index}][data]`,
-                                obj.text || obj.getText(),
+                                `element[${index}][left]`,
+                                obj.left,
                             );
-                        }
-
-                        if (obj instanceof fabric.Image) {
-                            const objBackgroundColor = obj.backgroundColor;
-
-                            obj.backgroundColor = 'rgba(0,0,0,0)';
-
                             formData.append(
-                                `element[${index}][data]`,
-                                dataURLtoBlob(
-                                    obj.toDataURL({
-                                        format: 'png',
-                                        multiplier: 1,
-                                    }),
-                                ),
+                                `element[${index}][type]`,
+                                obj.eleType,
                             );
+                            formData.append(
+                                `element[${index}][page_index]`,
+                                obj.page_index,
+                            );
+                            formData.append(
+                                `element[${index}][page_width]`,
+                                obj.page_width,
+                            );
+                            formData.append(
+                                `element[${index}][page_height]`,
+                                obj.page_height,
+                            );
+                            formData.append(
+                                `element[${index}][width]`,
+                                obj.width * obj.scaleX,
+                            );
+                            formData.append(
+                                `element[${index}][height]`,
+                                obj.height * obj.scaleY,
+                            );
+                        });
+                    }),
+                )
+                    .then(
+                        () =>
+                            formData.append('mode', status) &&
+                            formData.append('_token', '{{ csrf_token() }}'),
+                    )
+                    .then(() => console.log(formData))
+                    .then(() =>
+                        $.ajax({
+                            url: '{{ route('esign.signing.index', ['signing_url' => $signer->url]) }}',
+                            type: 'POST',
+                            data: formData,
+                            contentType: false,
+                            processData: false,
+                            headers: {
+                                'X-ESign': 'your-custom-header-value',
+                            },
+                            success: (r) => {
+                                if (r.status === 1) {
+                                    if (r.redirect) {
+                                        $(location).attr('href', r.redirect);
+                                    } else {
+                                        location.reload(true);
+                                    }
 
-                            obj.backgroundColor = objBackgroundColor;
-                        }
+                                    return;
+                                }
 
-                        formData.append(`element[${index}][id]`, obj.id);
-                        formData.append(`element[${index}][top]`, obj.top);
-                        formData.append(`element[${index}][left]`, obj.left);
-                        formData.append(`element[${index}][type]`, obj.eleType);
-                        formData.append(
-                            `element[${index}][page_index]`,
-                            obj.page_index,
-                        );
-                        formData.append(
-                            `element[${index}][page_width]`,
-                            obj.page_width,
-                        );
-                        formData.append(
-                            `element[${index}][page_height]`,
-                            obj.page_height,
-                        );
-                        formData.append(
-                            `element[${index}][scale_x]`,
-                            obj.scaleX,
-                        );
-                        formData.append(
-                            `element[${index}][scale_y]`,
-                            obj.scaleY,
-                        );
-                        formData.append(
-                            `element[${index}][width]`,
-                            obj.width * obj.scaleX,
-                        );
-                        formData.append(
-                            `element[${index}][height]`,
-                            obj.height * obj.scaleY,
-                        );
-                        formData.append(
-                            `element[${index}][bottom]`,
-                            (obj.top + obj.height) * obj.scaleY,
-                        );
-                    });
-                });
+                                $(document).trigger('loader:hide');
 
-                formData.append('mode', status);
-                formData.append('_token', '{{ csrf_token() }}');
-
-                $.ajax({
-                    url: '{{ route('esign.signing.index', ['signing_url' => $signer->url]) }}',
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    headers: {
-                        'X-ESign': 'your-custom-header-value',
-                    },
-                    success: (r) => {
-                        if (r.status === 1) {
-                            location.reload(true);
-
-                            return;
-                        }
-
-                        $(document).trigger('loader:hide');
-                        toast('error', r.msg ?? 'Something went wrong!');
-                    },
-                    error: (x) => {
-                        $(document).trigger('loader:hide');
-                        toast('error', x.responseText);
-                    },
-                });
+                                toast(
+                                    'error',
+                                    r.msg ?? 'Something went wrong!',
+                                );
+                            },
+                            error: (x) => {
+                                $(document).trigger('loader:hide');
+                                toast('error', x.responseText);
+                            },
+                        }),
+                    );
             };
 
             $(() => {
@@ -242,30 +271,32 @@
 
                 const signerDataCollection = collect(signerData ?? []);
 
-                signerDataCollection.each((element, i) => {
-                    const isFirst = i === 0;
-                    const id = generateUniqueId('e_');
-                    let step = '';
+                $.when(
+                    signerDataCollection.each((element, i) => {
+                        console.log(element);
+                        const isFirst = i === 0;
+                        const id = generateUniqueId('e_');
+                        let step = '';
 
-                    if (isFirst) {
-                        step = 'first';
-                    }
+                        if (isFirst) {
+                            step = 'first';
+                        }
 
-                    if (i + 1 === collect(signerData ?? []).count()) {
-                        step = 'last';
-                    }
+                        if (i + 1 === collect(signerData ?? []).count()) {
+                            step = 'last';
+                        }
 
-                    $(`<div class="tab-pane fade ${isFirst ? 'active show' : ''}"
+                        $(`<div class="tab-pane fade ${isFirst ? 'active show' : ''}"
                         id="${id}-panel" role="tabpanel"
                         aria-labelledby="${id}-tab"
                         data-object-id="${element.id}"
                         data-element-type="${element.type}"
                         ${step ? 'data-step="' + step + '"' : ''}>
-                        <h2>${convertToTitleString(element.label ?? element.type)}</h2>
-                        ${getSigningElementByType(id, element.type, element.label)}
+                        <h2>${convertToTitleString(element.text ?? element.type)}</h2>
+                        ${getSigningElementByType(id, element.type, element.is_required, element.text)}
                     </div>`).appendTo('#elementPanels');
 
-                    $(`<button class="nav-link ${isFirst ? 'active' : ''} "
+                        $(`<button class="nav-link ${isFirst ? 'active' : ''} "
                         id="${id}-tab" data-bs-toggle="tab"
                         data-bs-target="#${id}-panel"
                         aria-controls="${id}-panel"
@@ -274,6 +305,16 @@
                         ${step ? 'data-step="' + step + '"' : ''}>
                         <span></span>
                     </button>`).appendTo('#elementTabs');
+                    }),
+                ).then(() => {
+                    $('input[type="date"]').datetimepicker({
+                        timepicker: false,
+                        inline: true,
+                        format: 'd-M-Y',
+                        scrollInput: false,
+                        validateOnBlur: false,
+                        step: 30,
+                    });
                 });
 
                 if (signerDataCollection.count() === 1) {

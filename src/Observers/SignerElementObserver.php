@@ -2,52 +2,107 @@
 
 namespace NIIT\ESign\Observers;
 
+use NIIT\ESign\Models\Signer;
 use NIIT\ESign\Models\SignerElement as Element;
 
-class SignerElementObserver
+class SignerElementObserver extends Observer
 {
     public function creating(Element $element): void
     {
         if (
-            ! blank($element->position) ||
-            (
-                blank($signerId = $element->signer_id) ||
-                blank($documentId = $element->document_id)
-            )
+            blank($element->position) &&
+            $this->missingRequiredFields($element, ['signer_id', 'document_id'])
         ) {
-            return;
+            $maxPriority = Element::where([
+                'signer_id' => $signerId,
+                'document_id' => $documentId,
+            ])->max('position') ?? 0;
+
+            $element->position = $maxPriority + 1;
+        }
+    }
+
+    private function missingRequiredFields(Element $element, array $fields): bool
+    {
+        foreach ($fields as $field) {
+            if (blank($element->$field)) {
+                return true;
+            }
         }
 
-        $maxPriority = Element::where([
-            'signer_id' => $signerId,
-            'document_id' => $documentId,
-        ])->max('position') ?? 0;
-
-        $element->position = $maxPriority + 1;
+        return false;
     }
 
     public function created(Element $element): void
     {
-        //
+        $signer = $this->getRelations($element);
+
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: 'element-added',
+            signer: $signer,
+            element: $element
+        );
+    }
+
+    protected function getRelations(Element $element): Signer
+    {
+        return $element->loadMissing('signer.document')->signer;
     }
 
     public function updated(Element $element): void
     {
-        //
+        $signer = $this->getRelations($element);
+        $dirty = array_diff_key(
+            $element->getdirty(),
+            array_flip([
+                'updated_at',
+                'updated_by',
+            ])
+        );
+
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: 'element-updated',
+            signer: $signer,
+            element: $element,
+            metadata: $dirty
+        );
     }
 
     public function deleted(Element $element): void
     {
-        //
+        $signer = $this->getRelations($element);
+
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: 'element-deleted',
+            signer: $signer,
+            element: $element
+        );
     }
 
     public function restored(Element $element): void
     {
-        //
+        $signer = $this->getRelations($element);
+
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: 'element-restored',
+            signer: $signer,
+            element: $element
+        );
     }
 
     public function forceDeleted(Element $element): void
     {
-        //
+        $signer = $this->getRelations($element);
+
+        $this->logAuditTrait(
+            document: $signer->document,
+            event: 'element-force-deleted',
+            signer: $signer,
+            element: $element
+        );
     }
 }

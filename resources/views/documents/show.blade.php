@@ -217,7 +217,7 @@
             const getSignerElementTemplate = (obj, position, icon) => $.trim($("#addedElementTemplate").html())
                 .replace(/__UUID/ig, obj.uuid)
                 .replace(/__POSITION/ig, position)
-                .replace(/__LABEL/ig, $.trim(obj.label))
+                .replace(/__LABEL/ig, $.trim(obj.text))
                 .replace(/__ICON/ig, icon)
                 .replace(/__CHECKED/ig, obj.is_required ? "checked" : "")
                 .replace(/__REQUIRED/ig, obj.is_required ? "required" : "")
@@ -236,7 +236,20 @@
 
                 signerElementUpdate();
             };
-            const signerElementUpdate = () => {
+            const signerElementUpdate = (obj = null) => {
+                if (blank(obj) || blank(obj.uuid)) {
+                    return;
+                }
+
+                const element = $(`.addedElements .addedElement[data-uuid="${obj.uuid}"]`);
+
+                if (element.length <= 0) {
+                    return;
+                }
+
+                if (obj.text) {
+                    element.find(".contenteditable-content").text(obj.text);
+                }
             };
             const signerElementRemove = (element) => {
                 const _e = $(element);
@@ -323,16 +336,16 @@
                 const clonedLi = hasSigners ? $("li.signerLi:last").clone() : $($.trim($("#signerTemplate").html()));
                 const uuid = obj?.signer_uuid || obj?.uuid || generateUniqueId("s_");
 
-                const label = obj?.signer_label || obj?.label || ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}';
+                const text = obj?.signer_text || obj?.text || ordinal(_highestSigner) + ' {{ __('esign::label.signer') }}';
                 clonedLi.removeClass("selectedSigner");
-                clonedLi.find("a.signerLabel").html(label);
+                clonedLi.find("a.signerLabel").html(text);
                 clonedLi.attr("data-signer-index", _highestSigner);
                 clonedLi.attr("data-signer-uuid", uuid);
                 clonedLi[hasSigners ? "insertAfter" : "appendTo"](hasSigners ? $("ul#signerUl li.signerLi:last") : $("ul#signerUl"));
 
                 if (obj?.from !== "loadedData") {
                     $(document).trigger("signer:added", {
-                        label,
+                        text,
                         uuid,
                         from: "sidebar",
                         "signer_index": _highestSigner
@@ -370,21 +383,22 @@
 
                         console.log("Object Info:", {
                             ...additionalInfo,
+                            text: obj.text,
                             page_index: canvasEdition.page_index + 1,
                             page_width: canvasEdition.width,
                             page_height: canvasEdition.height,
                             eleType: obj.eleType,
                             left: obj.left,
                             top: obj.top,
-                            scale_x: obj.scaleX,
-                            scale_y: obj.scaleY,
-                            width: obj.width * obj.scaleX,
-                            height: obj.height * obj.scaleY
+                            width: obj.width,
+                            height: obj.height
                         });
                     });
                 });
 
-                $(document).trigger("signers-save");
+                $(document).trigger("signers-save", {
+                    type: "save"
+                });
             };
 
             $(() => {
@@ -444,7 +458,7 @@
                             return;
                         }
 
-                        obj.label = obj.text || obj.eleType;
+                        obj.text = obj.text || obj.eleType;
 
                         if ((_li = $("#signerUl li.signerLi")).length === 1 && _li.attr("data-signer-uuid") === undefined) {
                             _li.attr("data-signer-uuid", obj.signer_uuid);
@@ -492,18 +506,59 @@
 
                         $("#recipientsContainer span.selectedSigner").text(_t.text())
                             .attr("data-active-signer", uuid);
-                    }).on("signers-save", function(e) {
+                    }).on("signers-save", function(e, obj) {
                     e.preventDefault();
 
+                    const cLoadedData = (loadedData ?? []);
+                    const msgSomethingWentWrong = '{{ __('esign::validations.something_went_wrong') }}';
+
+                    if (cLoadedData.length <= 0) {
+                        toast("error", msgSomethingWentWrong);
+                    }
+
+                    const msgElementMissing = '{{ __('esign::validations.signer_doesnt_have_any_elements') }}';
+                    const signersWithoutElements = collect(loadedData.signers)
+                        .filter(signer => !("elements" in signer) || signer.elements.length === 0)
+                        .pluck("uuid")
+                        .toArray();
+
+                    if (signersWithoutElements.length > 0) {
+                        collect(signersWithoutElements).each((uuid) => {
+                            const labelElement = $(`.signerLi[data-signer-uuid="${uuid}"] .signerLabel`);
+
+                            toast(
+                                "error",
+                                labelElement.length > 0
+                                    ? msgElementMissing.replace(
+                                        /:SIGNER:/ig,
+                                        $.trim(
+                                            labelElement.text()
+                                        )
+                                    )
+                                    : msgSomethingWentWrong
+                            );
+                        });
+
+                        return;
+                    }
+
                     setTimeout(() => $(document).trigger("loader:show"), 0);
+
+                    const mode = obj.type ?? "save";
 
                     $.post('{{ route('esign.documents.signers.store', $document) }}', $.extend({}, loadedData, {
                         _token: '{{ csrf_token() }}',
                         document_id: '{{ $document->id }}',
-                        mode: "create"
+                        mode: mode
                     })).done((r) => {
                         if (r.data) {
                             $(document).trigger("process-ids", r.data);
+                        }
+
+                        if (mode === "send" && r.redirect) {
+                            $(location).attr("href", r.redirect);
+
+                            return;
                         }
 
                         $(document).trigger("loader:hide");
@@ -522,14 +577,14 @@
                         const key = _t.attr("data-content-editable-key");
                         const value = $.trim(editable.text());
 
-                        if (key.startsWith('signers.elements.')) {
+                        if (key.startsWith("signers.elements.")) {
                             const _element = _t.closest("div.addedElement");
 
                             $(document).trigger("signer:element:updated", {
                                 from: "sidebar",
                                 uuid: _element.attr("data-uuid"),
                                 signer_uuid: _element.attr("data-element-signer-uuid"),
-                                label: value,
+                                text: value
                             });
                         } else {
                             const obj = {};
@@ -546,13 +601,13 @@
                         em.removeClass("fa-pen").addClass("fa-check");
                         editable.attr("contenteditable", "true").get(0).focus();
                     }
-                }).on('focusout keypress', '[contenteditable="true"]', function(e) {
+                }).on("focusout keypress", "[contenteditable=\"true\"]", function(e) {
                     const _t = $(this);
-                    const contentEditable = _t.parent().find('.contentEditable[data-content-editable]');
-                    const editableEle = contentEditable.attr('data-content-editable');
+                    const contentEditable = _t.parent().find(".contentEditable[data-content-editable]");
+                    const editableEle = contentEditable.attr("data-content-editable");
 
-                    if(e.keyCode === 13 || editableEle.toUpperCase() === _t.prop('nodeName')) {
-                        contentEditable.trigger('click');
+                    if (e.keyCode === 13 || editableEle.toUpperCase() !== _t.prop("nodeName")) {
+                        contentEditable.trigger("click");
                     }
                 });
 

@@ -29,6 +29,8 @@
                     </div>
 
                     @if ($document->signers->count() > 0)
+                        @php($isSync = ($document->notification_sequence === \NIIT\ESign\Enum\NotificationSequence::SYNC))
+                        @php($isInProgress = ($document->status === \NIIT\ESign\Enum\DocumentStatus::IN_PROGRESS))
                         <div class="col-sm-12">
                             <div
                                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-2 align-items-center"
@@ -38,6 +40,14 @@
                                 </h4>
                                 <div class="btn-toolbar mb-2 mb-md-0">
                                     <div class="btn-group me-2">
+                                        @if ($isInProgress && $isSync)
+                                            <x-esign::partials.button
+                                                :value="__('esign::label.resend_mail')"
+                                                class="btn-secondary text-white"
+                                                icon="paper-plane"
+                                            />
+                                        @endif
+
                                         <x-esign::partials.button
                                             :value="__('esign::label.export')"
                                             class="btn-secondary text-white"
@@ -48,7 +58,9 @@
                             </div>
                         </div>
 
-                        @each('esign::submissions.partials.submission', $document->signers, 'signer')
+                        @foreach ($document->signers as $signer)
+                            @include('esign::submissions.partials.submission', compact('signer', 'isInProgress', 'isSync'))
+                        @endforeach
                     @endif
                 </div>
             </main>

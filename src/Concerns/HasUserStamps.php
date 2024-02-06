@@ -6,7 +6,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 trait HasUserStamps
 {
-    protected static $hasUserStamps = true;
+    protected static bool $hasUserStamps = true;
+
+    /**
+     * @var array<int,string>
+     */
+    protected static array $stampingColumns = [
+        'created_by',
+        'updated_by',
+        'deleted_by',
+        'restored_by',
+        'restored_at',
+    ];
 
     public static function bootHasUserStamps(): void
     {
@@ -14,36 +25,63 @@ trait HasUserStamps
             return;
         }
 
-        static::creating(function ($model) {
-            $model->created_by = optional(getOriginalUser())->id;
-        });
+        if (static::hasStampingCol('created_by')) {
+            static::creating(static function ($model) {
+                $model->created_by = optional(getOriginalUser())->id;
+            });
+        }
 
-        static::updating(function ($model) {
-            $model->updated_by = optional(getOriginalUser())->id;
-        });
+        if (static::hasStampingCol('updated_by')) {
+            static::updating(static function ($model) {
+                $model->updated_by = optional(getOriginalUser())->id;
+            });
+        }
 
         if (static::usingSoftDeletes()) {
-            static::deleting(function ($model) {
-                $model->restored_at = null;
-                $model->deleted_by = optional(getOriginalUser())->id;
+            static::deleting(static function ($model) {
+                if (static::hasStampingCol('restored_at')) {
+                    $model->restored_at = null;
+                }
+
+                if (static::hasStampingCol('deleted_by')) {
+                    $model->deleted_by = optional(getOriginalUser())->id;
+                }
             });
 
-            static::restoring(function ($model) {
-                $model->restored_at = now();
-                $model->restored_by = optional(getOriginalUser())->id;
+            static::restoring(static function ($model) {
+                if (static::hasStampingCol('restored_at')) {
+                    $model->restored_at = now();
+                }
+                if (static::hasStampingCol('restored_by')) {
+                    $model->restored_by = optional(getOriginalUser())->id;
+                }
             });
         }
     }
 
+    public function disableStamping(): self
+    {
+        static::$hasUserStamps = false;
+
+        return $this;
+    }
+
+    public function enableStamping(): self
+    {
+        static::$hasUserStamps = true;
+
+        return $this;
+    }
+
     public function initializeHasUserStamps(): void
     {
-        $this->fillable[] = 'restored_at';
-        $this->fillable[] = 'created_by';
-        $this->fillable[] = 'updated_by';
-        $this->fillable[] = 'deleted_by';
-        $this->fillable[] = 'restored_by';
+        $this->fillable = array_merge($this->fillable, static::$stampingColumns);
 
-        if (! isset($this->casts['restored_at'])) {
+        if (
+            ! isset($this->casts['restored_at']) &&
+            static::hasStampingCol('restored_at')
+        ) {
+            $this->fillable[] = 'restored_at';
             $this->casts['restored_at'] = 'datetime';
         }
     }
@@ -82,5 +120,12 @@ trait HasUserStamps
     protected function getUserClass(): string
     {
         return config('auth.providers.users.model');
+    }
+
+    protected static function hasStampingCol(array|string $col): bool
+    {
+        return is_array($col)
+            ? ! empty(array_diff($col, static::$stampingColumns))
+            : in_array($col, static::$stampingColumns, true);
     }
 }

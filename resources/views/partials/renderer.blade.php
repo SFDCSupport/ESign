@@ -126,7 +126,7 @@
                                 'drop',
                                 function (e) {
                                     e.preventDefault();
-                                    console.log(e);
+
                                     const left =
                                         e.layerX ||
                                         e.originalEvent.layerX ||
@@ -238,6 +238,8 @@
                                                 break;
                                             case 'text':
                                             case 'textarea':
+                                            case 'date':
+                                            case 'email':
                                                 $(document).trigger(
                                                     'signing-modal:show',
                                                     {
@@ -259,24 +261,13 @@
                                 })
                                 .on('object:scaling', function (e) {})
                                 .on('object:modified', function (e) {
-                                    console.log(e);
                                     if (e.target) {
                                         const obj = e.target;
-
-                                        const width = obj.width * obj.scaleX;
-                                        const height = obj.height * obj.scaleY;
-
-                                        const left = obj.left;
-                                        const top = obj.top;
 
                                         $(document).trigger(
                                             'signer:element:updated',
                                             {
                                                 ...obj,
-                                                width,
-                                                height,
-                                                left,
-                                                top,
                                                 from: 'canvas',
                                             },
                                         );
@@ -689,22 +680,24 @@
 
         const createFabricObject = (data) => {
             const _uuid = data.uuid || generateUniqueId('e_');
+            const scaleX = data.scaleX ?? 1;
+            const scaleY = data.scaleY ?? 1;
             let fabricObject;
 
             const commonStyles = {
-                left: data.left,
-                top: data.top,
-                width: data.width,
-                height: data.height,
-                fontSize: data.fontSize || data.height,
-                scaleX: data.scale_x ?? 1,
-                scaleY: data.scale_y ?? 1,
+                left: data.left * scaleX,
+                top: data.top * scaleY,
+                width: data.width * scaleX,
+                height: data.height * scaleY,
+                fontSize: data.fontSize || data.height * scaleY,
+                scaleX: scaleX,
+                scaleY: scaleY,
                 padding: 5,
                 fill: '#333333',
                 color: '#333333',
             };
 
-            const text = $.trim(data.label ?? data.text ?? data.eleType);
+            const text = $.trim(data.text ?? data.eleType);
 
             switch (data.eleType) {
                 case 'text':
@@ -726,7 +719,6 @@
             fabricObject.page_index = data.page_index ?? undefined;
             fabricObject.page_width = data.page_width ?? undefined;
             fabricObject.page_height = data.page_height ?? undefined;
-            fabricObject.label = data.label ?? undefined;
             fabricObject.uuid = _uuid;
             fabricObject.signer_uuid =
                 data.signer_uuid || getActiveSigner() || null;
@@ -754,7 +746,9 @@
 
         const getObjectById = (id) => {
             for (const canvas of canvasEditions) {
-                const object = canvas.getObjects().find((obj) => obj.id === id);
+                const object = canvas
+                    .getObjects()
+                    .find((obj) => obj.id === id || obj.uuid === id);
                 if (object) {
                     return [object, canvas];
                 }
@@ -817,6 +811,19 @@
                         }
                     });
                 })
+                .on('signer:element:updated', function (e, obj) {
+                    if (obj.from === 'canvas') {
+                        return;
+                    }
+
+                    const [_obj, _canvas] = getObjectById(obj.uuid);
+
+                    if (!blank(_obj) && obj.text) {
+                        _obj.text = obj.text;
+
+                        _canvas.renderAll();
+                    }
+                })
                 .on('load-pdf', function (e, obj) {
                     if (blank(obj.url) || !obj.container) {
                         return;
@@ -824,7 +831,7 @@
                     loadPDF(obj.url, obj.container);
                 })
                 .on('signing-to-fabric', function (e, obj) {
-                    const [oldObj, canvas] = getObjectById(obj.id);
+                    const [oldObj, canvas] = getObjectById(obj.id ?? obj.uuid);
 
                     if (blank(oldObj)) {
                         return;
@@ -890,12 +897,12 @@
                                 from: 'loadedData',
                                 signer_index: i + 1,
                                 signer_uuid: signerUuid,
-                                signer_label: item.label,
+                                signer_text: item.text,
                             });
                         }
 
                         if (i === 0) {
-                            getActiveSigner(signerUuid, item.label);
+                            getActiveSigner(signerUuid, item.text);
                         }
 
                         return {
@@ -904,7 +911,7 @@
                             elements: item.elements.map((element) => ({
                                 ...element,
                                 uuid: generateUniqueId('e_'),
-                                signer_label: item.label,
+                                signer_text: item.text,
                                 signer_uuid: signerUuid,
                             })),
                         };
@@ -941,6 +948,13 @@
                                         objPage ===
                                         canvasEdition.page_index + 1
                                     ) {
+                                        objInfo.scaleX =
+                                            canvasEdition.width /
+                                            objInfo.page_width;
+                                        objInfo.scaleY =
+                                            canvasEdition.height /
+                                            objInfo.page_height;
+
                                         const obj = createFabricObject(objInfo);
                                         const cFor = isSigning
                                             ? {
@@ -973,7 +987,7 @@
             $('.draggable').on('dragstart', function (e) {
                 const _t = $(this);
                 const eleType = _t.attr('data-type');
-                const text = _t.find('span').text();
+                const text = $.trim(_t.find('span').text());
                 const height = _t.attr('data-height') || 50;
                 const width = _t.attr('data-width') || 100;
 

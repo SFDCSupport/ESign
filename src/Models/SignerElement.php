@@ -17,10 +17,10 @@ class SignerElement extends Model
      */
     protected $fillable = [
         'id', 'signer_id', 'document_id',
-        'type', 'label',
+        'type', 'text',
         'page_index', 'page_width', 'page_height',
-        'left', 'top', 'scale_x', 'scale_y',
-        'width', 'height', 'position',
+        'left', 'top', 'width', 'height',
+        'position', 'is_required',
     ];
 
     /**
@@ -35,8 +35,7 @@ class SignerElement extends Model
         'width' => 'double',
         'top' => 'double',
         'left' => 'double',
-        'scale_x' => 'double',
-        'scale_y' => 'double',
+        'is_required' => 'boolean',
     ];
 
     /**

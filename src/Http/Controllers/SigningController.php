@@ -27,7 +27,7 @@ class SigningController extends Controller
             'signers' => SignerResource::collection([$signer]),
         ];
 
-        return view('esign::index', compact(
+        return view('esign::signing.index', compact(
             'signer',
             'document',
             'formattedData',
@@ -78,17 +78,15 @@ class SigningController extends Controller
                 'pageHeight' => $d['page_height'],
                 'top' => $d['top'],
                 'left' => $d['left'],
-                'scaleX' => $d['scale_x'],
-                'scaleY' => $d['scale_y'],
                 'bottom' => $d['bottom'],
                 'width' => $d['width'],
                 'height' => $d['height'],
             ])->when($isSignaturePad, fn ($c) => $c->merge([
-                'path' => $data,
+                'data' => $data,
                 'type' => 'image',
             ]), fn ($c) => $c->merge([
                 'type' => 'text',
-                'content' => $data,
+                'data' => $d['data'],
                 'size' => $d['size'] ?? 16,
                 'color' => $d['color'] ?? '0',
             ]));
@@ -115,13 +113,15 @@ class SigningController extends Controller
                 [$pageWidth, $pageHeight] = $pdf->getTemplateSize($templateId);
 
                 $data->where('pageIndex', $pageNumber)->where('type', 'image')->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
-                    $pdfLeft = (($d['left'] / $d['pageWidth']) * $pageWidth) - 20;
-                    $pdfTop = ($d['top'] / $d['pageHeight']) * $pageHeight;
-                    $width = ($d['width'] * $d['scaleX'] / $d['pageWidth']) * $pageWidth;
-                    $height = ($d['height'] * $d['scaleY'] / $d['pageHeight']) * $pageHeight;
+                    $scaleX = $pageWidth / $d['pageWidth'];
+                    $scaleY = $pageHeight / $d['pageHeight'];
+                    $pdfLeft = $d['left'] * $scaleX;
+                    $pdfTop = $d['top'] * $scaleY;
+                    $width = $d['width'] * $scaleX;
+                    $height = $d['height'] * $scaleY;
 
                     $pdf->Image(
-                        $d['path'],
+                        $d['data'],
                         $pdfTop,
                         $pdfLeft,
                         $width,
@@ -129,21 +129,23 @@ class SigningController extends Controller
                     );
                 });
 
-                $data->where('pageIndex', $pageNumber)->whereIn('type', ['text', 'textarea'])->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
-                    $width = ($d['width'] * $d['scaleX'] / $d['pageWidth']) * $pageWidth;
-                    $height = ($d['height'] * $d['scaleY'] / $d['pageHeight']) * $pageHeight;
-                    $pdfLeft = (($d['left'] / $d['pageWidth']) * $pageWidth) - 20;
-                    $pdfTop = ($d['top'] / $d['pageHeight']) * $pageHeight;
+                $data->where('pageIndex', $pageNumber)->where('type', '!=', 'signature_pad')->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
+                    $scaleX = $pageWidth / $d['pageWidth'];
+                    $scaleY = $pageHeight / $d['pageHeight'];
+                    $width = $d['width'] * $scaleX;
+                    $height = $d['height'] * $scaleY;
+                    $pdfLeft = $d['left'] * $scaleX;
+                    $pdfTop = $d['top'] * $scaleY;
                     $fontSize = min($width / $d['pageWidth'] * $pageWidth, $height / $d['pageHeight'] * $pageHeight);
 
                     $pdf->SetFont('Arial', '', $fontSize);
-                    $pdf->SetTextColor($d['color']);
+                    $pdf->SetTextColor($d['color'] ?? '000', '000', '000');
                     $pdf->SetXY($pdfTop, $pdfLeft);
 
                     if ($d['type'] === 'textarea') {
-                        $pdf->MultiCell($width, $height, $d['content'], align: 'L');
+                        $pdf->MultiCell($width, $height, $d['data'], align: 'L');
                     } else {
-                        $pdf->Cell($width, $height, $d['content'], ln: 1, align: 'L');
+                        $pdf->Cell($width, $height, $d['data'], ln: 1, align: 'L');
                     }
                 });
             }
@@ -155,7 +157,20 @@ class SigningController extends Controller
 
         return $this->jsonResponse([
             'status' => 1,
+            'redirect' => route('esign.signing.show', ['signing_url' => $signer->url]),
         ])->notify(__('esign::label.signing_success_message'));
+    }
+
+    public function show(Signer $signer)
+    {
+        $document = $signer->loadMissing('document.document', 'elements')->document;
+        $formattedData = [];
+
+        return view('esign::signing.show', compact(
+            'signer',
+            'document',
+            'formattedData',
+        ));
     }
 
     public function mailTrackingPixel(Signer $signer)

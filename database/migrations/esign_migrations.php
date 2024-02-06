@@ -27,7 +27,7 @@ return new class extends Migration
 
         Schema::create('e_templates', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('label');
+            $table->string('title');
             $table->longText('body');
             $table->timestamps();
             $table->softDeletes();
@@ -67,10 +67,11 @@ return new class extends Migration
             $table->foreignUuid('document_id')->constrained('e_documents');
             $table->uuid('url')->unique();
             $table->string('email')->nullable();
-            $table->string('label');
+            $table->string('text');
             $table->enum('signing_status', SigningStatus::values())->default(SigningStatus::NOT_SIGNED);
             $table->enum('read_status', ReadStatus::values())->default(ReadStatus::NOT_OPENED);
             $table->enum('send_status', SendStatus::values())->default(SendStatus::NOT_SENT);
+            $table->boolean('is_next_receiver')->default(true);
             $table->integer('position')->default(0);
             $table->timestamps();
             $table->softDeletes();
@@ -82,17 +83,16 @@ return new class extends Migration
             $table->foreignUuid('document_id')->constrained('e_documents');
             $table->foreignUuid('signer_id')->constrained('e_signers');
             $table->enum('type', ElementType::values());
-            $table->string('label');
+            $table->string('text');
             $table->integer('page_index');
             $table->double('page_width');
             $table->double('page_height');
             $table->double('left');
             $table->double('top');
-            $table->double('scale_x')->nullable();
-            $table->double('scale_y')->nullable();
             $table->double('width');
             $table->double('height');
             $table->integer('position')->default(0);
+            $table->boolean('is_required')->default(true);
             $table->timestamps();
             $table->softDeletes();
             $table->eSignUserStamps();
@@ -113,11 +113,12 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('document_id')->constrained('e_documents');
             $table->foreignUuid('signer_id')->nullable()->constrained('e_signers');
+            $table->foreignUuid('element_id')->nullable()->constrained('e_signer_elements');
             $table->string('event');
             $table->json('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->eSignUserStamps('restored_at');
+            $table->eSignUserStamps();
         });
     }
 

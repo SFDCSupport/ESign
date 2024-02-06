@@ -18,7 +18,7 @@
             <span
                 class="edit-resizing-btn contentEditable"
                 data-content-editable="span"
-                data-content-editable-key="signers.elements.label"
+                data-content-editable-key="signers.elements.text"
             >
                 <em class="fa-solid fa-pen"></em>
             </span>

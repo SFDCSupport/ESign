@@ -42,7 +42,7 @@ class DocumentController extends Controller
             'signers' => $this->mergeWhen(
                 $loadedRelations->signers->count() > 0,
                 SignerResource::collection($loadedRelations->signers),
-                [['label' => '1st Signer', 'position' => 1, 'elements' => []]]
+                [['text' => '1st Signer', 'position' => 1, 'elements' => []]]
             )->data,
         ];
 
@@ -70,14 +70,19 @@ class DocumentController extends Controller
     {
         $replica = $document->replicate();
         $replica->parent_id = $document->id;
-        $replica->title = '('.$this->getNextCloneSuffix($document).')'.$document->title;
+        $replica->title = '('.$this->getNextCloneSuffix($document).') '.$document->title;
+        $replica->status = DocumentStatus::DRAFT;
+
         $replica->push();
 
         $document->relations = [];
-        $document->load('document');
+        $attachment = $document->loadMissing('document')->document;
 
-        if ($document->document()->exists()) {
-            $replica->document()->save($document->document);
+        if ($attachment) {
+            $attachmentReplica = $attachment->replicate();
+            $attachmentReplica->deleted_at = null;
+
+            $replica->document()->save($attachmentReplica);
         }
 
         return redirect()->route('esign.documents.show', $replica);
@@ -91,7 +96,7 @@ class DocumentController extends Controller
     protected function getNextCloneSuffix(Document $document)
     {
         $latestClone = $document->children()
-            ->where('title', 'LIKE', $document->title.' (%')
+            ->where('title', 'LIKE', '%) '.$document->title)
             ->whereNull('deleted_at')
             ->latest('title')
             ->first();

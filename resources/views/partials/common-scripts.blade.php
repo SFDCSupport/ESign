@@ -88,6 +88,39 @@
 
         return svgContainer.innerHTML;
     };
+    const copyToClipboard = (text, type) => {
+        const getMsg = (mode) =>
+            (mode === 'success'
+                ? '{{ __('esign::label.copied_to_clipboard') }}'
+                : '{{ __('esign::label.unable_to_copy') }}'
+            ).replace(/:TYPE:/gi, type);
+
+        const _success = () => toast('success', getMsg('success', type));
+        const _error = (err) => {
+            const _msg = getMsg('error', type);
+
+            toast('error', _msg);
+            console.error(_msg, err);
+        };
+
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(_success).catch(_error);
+        } else {
+            const textarea = $('<textarea>')
+                .val(text)
+                .appendTo('body')
+                .select();
+
+            try {
+                document.execCommand('copy');
+                _success();
+            } catch (err) {
+                _error(err);
+            } finally {
+                textarea.remove();
+            }
+        }
+    };
     const ordinal = (number) => {
         let suffix;
 
@@ -144,7 +177,7 @@
 
             collect(loadedData.signers).push({
                 uuid: obj.uuid,
-                label: obj.label,
+                text: obj.text,
                 position: obj.signer_index,
                 elements: [],
             });
@@ -163,7 +196,7 @@
             if (index !== false) {
                 loadedData.signers[index] = collect(loadedData.signers[index])
                     .merge({
-                        label: obj.label,
+                        text: obj.text,
                         position: obj.position ?? obj.signer_index,
                         email: obj.email || null,
                     })
@@ -229,8 +262,7 @@
                     top: obj.top,
                     width: obj.width,
                     height: obj.height,
-                    scale_x: obj.scale_x,
-                    scale_y: obj.scale_y,
+                    text: obj.text,
                     is_required: obj.is_required,
                     signer_uuid: obj.signer_uuid,
                 });
@@ -264,18 +296,16 @@
                                     ? {
                                           left: obj.left,
                                           top: obj.top,
-                                          width: obj.width * obj.scaleX,
-                                          height: obj.height * obj.scaleY,
-                                          scale_x: obj.scaleX,
-                                          scale_y: obj.scaleY,
+                                          width: obj.width,
+                                          height: obj.height,
                                       }
                                     : {
                                           is_required: obj.is_required ?? true,
                                       },
                             )
-                            .when(!blank(obj.label), (c) =>
+                            .when(obj.text, (c) =>
                                 c.merge({
-                                    label: obj.label,
+                                    text: obj.text,
                                 }),
                             )
                             .all();
@@ -342,6 +372,8 @@
                     }
                 }
             });
+
+            console.log('process-ids', loadedData);
         })
         .on('document:updated', function (e, obj) {
             if (obj.from === 'loadedData') {
