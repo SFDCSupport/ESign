@@ -40,7 +40,7 @@
                                 </h4>
                                 <div class="btn-toolbar mb-2 mb-md-0">
                                     <div class="btn-group me-2">
-                                        @if ($isInProgress && $isSync)
+                                        @if ($isInProgress && ! $isSync)
                                             <x-esign::partials.button
                                                 :value="__('esign::label.resend_mail')"
                                                 class="btn-secondary text-white"

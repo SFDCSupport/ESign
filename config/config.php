@@ -9,4 +9,8 @@ return [
         'uuid' => '/^[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}$/',
     ],
     'notify_timeout' => 5000,
+    'defaults' => [
+        'document_status' => \NIIT\ESign\Enum\DocumentStatus::DRAFT,
+        'notification_sequence' => \NIIT\ESign\Enum\NotificationSequence::ASYNC,
+    ],
 ];

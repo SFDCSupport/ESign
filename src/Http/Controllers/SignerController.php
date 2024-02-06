@@ -37,8 +37,8 @@ class SignerController extends Controller
         $validatedData = $request->validated();
         $mode = $validatedData['mode'];
         $title = $validatedData['title'] ?? null;
-        $status = $validatedData['status'] ?? DocumentStatus::DRAFT;
-        $notificationSequence = $validatedData['notification_sequence'] ?? NotificationSequence::ASYNC;
+        $status = $validatedData['status'] ?? config('esign.defaults.document_status');
+        $notificationSequence = $validatedData['notification_sequence'] ?? config('esign.defaults.document_status');
         $isSync = false;
 
         if ($document->status !== $status) {
@@ -118,8 +118,9 @@ class SignerController extends Controller
         if (! blank($documentData)) {
             $document->update($documentData);
 
-            if ($status === DocumentStatus::IN_PROGRESS) {
+            if ($document->status === DocumentStatus::IN_PROGRESS) {
                 DocumentStatusChanged::dispatch($document, DocumentStatus::IN_PROGRESS);
+                dd('hello');
             }
         }
 

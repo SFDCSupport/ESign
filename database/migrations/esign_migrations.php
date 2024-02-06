@@ -39,8 +39,8 @@ return new class extends Migration
             $table->string('title');
             $table->foreignUuid('parent_id')->nullable()->constrained('e_documents');
             $table->foreignUuid('template_id')->nullable()->constrained('e_templates');
-            $table->enum('status', DocumentStatus::values())->default(DocumentStatus::DRAFT);
-            $table->enum('notification_sequence', NotificationSequence::values())->default(NotificationSequence::ASYNC);
+            $table->enum('status', DocumentStatus::values())->default(config('esign.defaults.document_status'));
+            $table->enum('notification_sequence', NotificationSequence::values())->default(config('esign.defaults.notification_sequence'));
             $table->boolean('link_sent_to_all')->default(false);
             $table->timestamps();
             $table->softDeletes();

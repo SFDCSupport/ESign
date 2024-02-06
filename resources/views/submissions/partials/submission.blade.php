@@ -30,7 +30,7 @@
                     </span>
                 </div>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    @if ($isInProgress && ! $isSync && $signer->is_next_receiver)
+                    @if ($isInProgress && $isSync && $signer->is_next_receiver)
                         <button
                             type="button"
                             class="btn btn-sm btn-outline-secondary me-2"
