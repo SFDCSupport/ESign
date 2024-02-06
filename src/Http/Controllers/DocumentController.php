@@ -2,11 +2,16 @@
 
 namespace NIIT\ESign\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use NIIT\ESign\Enum\DocumentStatus;
+use NIIT\ESign\Enum\SendStatus;
+use NIIT\ESign\ESignFacade;
 use NIIT\ESign\Http\Requests\DocumentRequest;
+use NIIT\ESign\Http\Requests\SendMailRequest;
 use NIIT\ESign\Http\Resources\SignerResource;
 use NIIT\ESign\Models\Document;
+use NIIT\ESign\Models\Signer;
 
 class DocumentController extends Controller
 {
@@ -88,9 +93,29 @@ class DocumentController extends Controller
         return redirect()->route('esign.documents.show', $replica);
     }
 
-    public function send(Document $document)
+    public function sendMail(SendMailRequest $request, Document $document, ?Signer $signer)
     {
-        return redirect()->route('esign.documents.show', $document);
+        /** @var string $mode */
+        $mode = $request->validated('mode');
+
+        /** @var Collection<Signer> $signers */
+        $signers = $document->loadMissing([
+            'signers' => fn ($q) => $q->where('send_status', SendStatus::NOT_SENT)->orderBy('position'),
+        ])->signers;
+
+        if ($mode === 'all') {
+            if (count($signers) > 0) {
+                foreach ($signers as $s) {
+                    ESignFacade::sendSigningLink($s, $document);
+                }
+            }
+        } else {
+            ESignFacade::sendSigningLink($signer, $document);
+        }
+
+        return $this->jsonResponse([
+            'status' => 1,
+        ])->notify(__('esign::label.mail_sent_successfully'));
     }
 
     protected function getNextCloneSuffix(Document $document)

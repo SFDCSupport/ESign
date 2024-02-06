@@ -34,11 +34,19 @@
                 </div>
                 <div class="btn-toolbar mb-2 mb-md-0">
                     @if ($isInProgress && $isSync && $signer->is_next_receiver)
-                        <x-esign::partials.button
-                            icon="paper-plane"
-                            class="btn-sm btn-outline-secondary"
-                            :value="__('esign::label.resend_mail')"
-                        />
+                        <form
+                            class="sendMailForm"
+                            action="{{ route('esign.documents.sendMail', [$document, $signer]) }}"
+                        >
+                            @csrf
+                            <input type="hidden" name="mode" value="single" />
+                            <x-esign::partials.button
+                                :value="__('esign::label.resend_mail')"
+                                class="btn-sm btn-outline-secondary"
+                                icon="paper-plane"
+                                onclick="$(this).closest('form').trigger('submit');"
+                            />
+                        </form>
                     @endif
 
                     <x-esign::partials.button

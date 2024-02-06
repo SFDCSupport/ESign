@@ -41,11 +41,23 @@
                                 <div class="btn-toolbar mb-2 mb-md-0">
                                     <div class="btn-group me-2">
                                         @if ($isInProgress && ! $isSync)
-                                            <x-esign::partials.button
-                                                :value="__('esign::label.resend_mail')"
-                                                class="btn-secondary text-white"
-                                                icon="paper-plane"
-                                            />
+                                            <form
+                                                class="sendMailForm"
+                                                action="{{ route('esign.documents.sendMail', $document) }}"
+                                            >
+                                                @csrf
+                                                <input
+                                                    type="hidden"
+                                                    name="mode"
+                                                    value="all"
+                                                />
+                                                <x-esign::partials.button
+                                                    :value="__('esign::label.resend_mail')"
+                                                    class="btn-secondary text-white"
+                                                    icon="paper-plane"
+                                                    onclick="$(this).closest('form').trigger('submit');"
+                                                />
+                                            </form>
                                         @endif
 
                                         <x-esign::partials.button
@@ -90,4 +102,30 @@
     @endif
 
     @include('esign::documents.modals.signers-send', compact('document'))
+
+    @pushonce('js')
+        <script>
+            $(() => {
+                $(document).on('submit', '.sendMailForm', function (e) {
+                    e.preventDefault();
+
+                    const form = $(this);
+
+                    $(document).trigger('loader:show');
+
+                    $.post(form.attr('action'), $(this).serialize())
+                        .done((r) => {
+                            form.find('button').prop(
+                                'disabled',
+                                r.status === 1,
+                            );
+                        })
+                        .fail((x) => {
+                            toast('error', x.responseText);
+                        })
+                        .complete(() => $(document).trigger('loader:hide'));
+                });
+            });
+        </script>
+    @endpushonce
 </x-esign::layout>

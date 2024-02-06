@@ -31,8 +31,8 @@ Route::middleware('auth')
 
         Route::get('documents/{document}/copy', [DocumentController::class, 'copy'])
             ->name('documents.copy');
-        Route::get('documents/{document}/send', [DocumentController::class, 'send'])
-            ->name('documents.send');
+        Route::post('documents/{document}/sendMail/{signer?}', [DocumentController::class, 'sendMail'])
+            ->name('documents.sendMail');
         Route::resource('documents', DocumentController::class)
             ->except(['create', 'edit']);
 
