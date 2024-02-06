@@ -2,15 +2,24 @@
 
 namespace NIIT\ESign\Listeners;
 
-use NIIT\ESign\Enum\SigningStatus;
 use NIIT\ESign\Events\SigningProcessStarted;
+use NIIT\ESign\Models\Document;
+use NIIT\ESign\Models\Signer;
 
 class SigningStartedListener
 {
     public function handle(SigningProcessStarted $event): void
     {
-        $event->signer->update([
-            'signing_status' => SigningStatus::NOT_SIGNED,
-        ]);
+        /** @var Document $document */
+        $document = $event->document;
+
+        /** @var Signer $signer */
+        $signer = $event->signer;
+
+        $document->logAuditTrait(
+            document: $document,
+            event: 'signing-started',
+            signer: $signer,
+        );
     }
 }

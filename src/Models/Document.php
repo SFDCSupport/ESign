@@ -12,6 +12,9 @@ use NIIT\ESign\Concerns\HasAttachment;
 use NIIT\ESign\Enum\AttachmentType;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\NotificationSequence;
+use NIIT\ESign\Enum\SendStatus;
+use NIIT\ESign\ESignFacade;
+use NIIT\ESign\Events\DocumentStatusChanged;
 
 class Document extends Model implements Attachable, HasLocalePreference
 {
@@ -115,5 +118,30 @@ class Document extends Model implements Attachable, HasLocalePreference
     public function preferredLocale(): string
     {
         return 'en';
+    }
+
+    public function markAs(DocumentStatus $status): void
+    {
+        $this->update([
+            'status' => $status,
+        ]);
+
+        DocumentStatusChanged::dispatch(
+            $this,
+            $status,
+        );
+    }
+
+    public function sendSigningLink(): void
+    {
+        $signers = $this->loadMissing(['signers' => fn ($q) => $q->where('send_status', SendStatus::NOT_SENT)->orderBy('position')])->signers;
+
+        if (! $signers || count($signers) === 0) {
+            return;
+        }
+
+        if ($this->notification_sequence !== NotificationSequence::SYNC) {
+            $signers->each(fn ($signer) => ESignFacade::sendSigningLink($signer, $this));
+        }
     }
 }

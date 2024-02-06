@@ -6,8 +6,13 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View as ViewFacade;
 use Illuminate\View\View;
+use NIIT\ESign\Enum\SendStatus;
+use NIIT\ESign\Mail\Signer\SendSigningLink;
+use NIIT\ESign\Models\Document;
+use NIIT\ESign\Models\Signer;
 
 class ESign
 {
@@ -61,6 +66,24 @@ class ESign
                     ]));
                 }
             });
+        }
+    }
+
+    public function sendSigningLink(Signer $signer, Document $document): void
+    {
+        try {
+            Mail::to($signer->email)
+                ->send(
+                    new SendSigningLink($document)
+                );
+
+            $signer->update([
+                'send_status' => SendStatus::SENT,
+            ]);
+        } catch (\Swift_TransportException|\Exception $e) {
+            $signer->update([
+                'send_status' => SendStatus::NOT_SENT,
+            ]);
         }
     }
 
