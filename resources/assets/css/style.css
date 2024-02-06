@@ -1123,3 +1123,41 @@ padding: 3px;
   background: linear-gradient(180deg,hsla(0,0%,100%,0) 0, #f8f8f8);
   padding-bottom: 10px;
 }
+
+.check-solid-sign{
+  color: #00be76;
+    font-size: 3.2rem;
+    margin: 0px auto 10px;
+    position: relative;
+    border-radius: 100px;
+    box-shadow: 0 0 0 15px #d7f5eb, 0 0 0 15px #d7f5eb;
+}
+
+.successfull-completed-msg{
+  text-transform: capitalize;
+  margin: 10px auto;
+}
+
+.btn-download{
+  background-color: #00be76;
+  color: #fff;
+}
+
+.btn-download:hover,
+.btn-download:focus{
+  background-color: #029f63;
+  color: #fff;
+}
+
+.form-completed-successfull::before{
+  content: "";
+  position: absolute;
+  background: url("../images/success-marerial.png");
+  width: 250px;
+  height: 110px;
+  left: 50%;
+  margin-left: -120px;
+  background-size: 80%;
+  opacity: .12;
+  top: 21px;;
+}
