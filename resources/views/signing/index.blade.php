@@ -43,22 +43,18 @@
                 ></div>
                 <div class="expand-section-bottom">
                     <div class="d-none form_container" id="signingContainer">
-                        <button
-                            type="button"
+                        <x-esign::partials.button
+                            icon="times"
                             class="btn btn-light minimize_form_button"
                             id="minimize-form-button"
-                        >
-                            <i class="fas fa-times"></i>
-                        </button>
+                        />
                         <div class="tab-content p-3" id="elementPanels"></div>
-                        <button
-                            type="button"
+                        <x-esign::partials.button
                             data-action="next"
                             id="nextSigningBtn"
-                            class="btn btn-secondary w-100"
-                        >
-                            {{ __('esign::label.next') }}
-                        </button>
+                            class="btn-secondary w-100"
+                            :value="__('esign::label.next')"
+                        />
                         <nav class="sign-type-nav">
                             <div
                                 class="nav nav-tabs mb-3"
@@ -67,14 +63,12 @@
                             ></div>
                         </nav>
                     </div>
-                    <button
-                        type="button"
-                        class="btn btn-dark expand_form_button expand"
+                    <x-esign::partials.button
+                        class="btn-dark expand_form_button expand"
                         id="submitSigningFormBtn"
-                    >
-                        {{ __('esign::label.submit') }}
-                        <i class="fas fa-expand-alt"></i>
-                    </button>
+                        icon="expand-alt"
+                        :value="__('esign::label.submit')"
+                    />
                 </div>
             </main>
         </div>

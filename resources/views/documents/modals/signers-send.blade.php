@@ -93,22 +93,18 @@
 
     <x-slot name="footer">
         <div class="col">
-            <button
-                type="button"
-                class="btn btn-primary w-100"
+            <x-esign::partials.button
+                class="btn-primary w-100"
                 id="signersSaveBtn"
-            >
-                {{ __('esign::label.save') }}
-            </button>
+                :value="__('esign::label.save')"
+            />
         </div>
         <div class="col">
-            <button
-                type="button"
-                class="btn btn-dark w-100"
+            <x-esign::partials.button
+                class="btn-dark w-100"
                 id="signersSendBtn"
-            >
-                {{ __('esign::label.send') }}
-            </button>
+                :value="__('esign::label.send')"
+            />
         </div>
     </x-slot>
 </x-esign::modal>

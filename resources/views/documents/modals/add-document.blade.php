@@ -6,7 +6,7 @@
         <input type="hidden" name="creationMode" />
 
         <div class="mb-3">
-            <label for="document-name" class="col-form-label">
+            <label for="documentName" class="col-form-label">
                 {{ __('esign::label.document_name') }}
             </label>
             <input

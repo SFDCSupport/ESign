@@ -28,14 +28,13 @@
                         {{ $title }}
                     </h5>
                     @if ($canClose)
-                        <button
-                            type="button"
+                        <x-esign::partials.button
                             class="btn-close"
                             data-bs-dismiss="modal"
                             aria-label="{{ __('esign::label.close') }}"
                         >
                             <span aria-hidden="true">&times;</span>
-                        </button>
+                        </x-esign::partials.button>
                     @endif
                 </div>
             @endif

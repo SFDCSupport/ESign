@@ -36,25 +36,21 @@
                     class="btn-toolbar mb-2 mb-md-0 @if(!$documentExists) d-none @endif"
                 >
                     <div class="btn-group me-2">
-                        <button
-                            type="button"
-                            class="btn btn-outline-dark"
+                        <x-esign::partials.button
+                            icon="user-plus"
+                            class="btn-outline-dark"
                             data-bs-toggle="modal"
                             data-bs-target="#signers_send_modal"
-                        >
-                            <i class="fas fa-user-plus"></i>
-                            {{ __('esign::label.send') }}
-                        </button>
+                            :value="__('esign::label.send')"
+                        />
                     </div>
-                    <button
+                    <x-esign::partials.button
+                        icon="save"
                         id="saveBtn"
-                        type="button"
                         onclick="saveBtnAction()"
-                        class="btn btn-primary d-flex align-items-center gap-1"
-                    >
-                        <i class="fas fa-save"></i>
-                        {{ __('esign::label.save') }}
-                    </button>
+                        class="btn-primary d-flex align-items-center gap-1"
+                        :value="__('esign::label.save')"
+                    />
                 </div>
             </div>
         </div>
@@ -130,13 +126,12 @@
                 >
                     <div class="offcanvas-header">
                         <h5 class="offcanvas-title" id="sidebarMenuLabel"></h5>
-                        <button
-                            type="button"
+                        <x-esign::partials.button
                             class="btn-close"
                             data-bs-dismiss="offcanvas"
                             data-bs-target="#sidebarMenu"
                             aria-label="{{ __('esign::label.close') }}"
-                        ></button>
+                        />
                     </div>
                     <div
                         class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto"
