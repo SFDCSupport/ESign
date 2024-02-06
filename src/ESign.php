@@ -74,7 +74,7 @@ class ESign
         try {
             Mail::to($signer->email)
                 ->send(
-                    new SendSigningLink($document)
+                    new SendSigningLink($document, $signer)
                 );
 
             $signer->update([

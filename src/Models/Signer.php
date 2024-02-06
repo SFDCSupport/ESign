@@ -95,4 +95,9 @@ class Signer extends Model
             },
         );
     }
+
+    public function signingUrl(): string
+    {
+        return route('esign.signing.index', $this->url);
+    }
 }

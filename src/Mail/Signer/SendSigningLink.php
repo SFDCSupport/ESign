@@ -11,10 +11,11 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use NIIT\ESign\Mail\Mailable;
 use NIIT\ESign\Models\Document;
+use NIIT\ESign\Models\Signer;
 
 class SendSigningLink extends Mailable
 {
-    public function __construct(public Document $document)
+    public function __construct(public Document $document, public Signer $signer)
     {
     }
 
