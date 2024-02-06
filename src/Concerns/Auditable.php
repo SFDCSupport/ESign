@@ -24,6 +24,12 @@ trait Auditable
             $model = $model->disableStamping();
         }
 
+        if ($document->parent_id) {
+            $metadata = array_merge($metadata ?? [], [
+                'parent_id' => $document->parent_id,
+            ]);
+        }
+
         $model->event = $event;
         $model->metadata = $metadata;
         $model->signer_id = $signer?->id;
