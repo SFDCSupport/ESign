@@ -67,4 +67,11 @@ return [
     'unable_to_copy' => 'Unable to copy text :TYPE:!',
     'resend_mail' => 'Resend Mail',
     'link' => 'Link',
+    'opened' => 'Opened',
+    'not_opened' => 'Not opened',
+    'sent' => 'Sent',
+    'not_sent' => 'Not sent',
+    'signed' => 'Signed',
+    'not_signed' => 'Not signed',
+    'completed' => 'Completed',
 ];

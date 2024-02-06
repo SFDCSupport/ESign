@@ -19,7 +19,7 @@
             <fieldset class="filter-wrapper">
                 <div class="filter-wrapper-inner">
                     <div class="filters-group">
-                        @foreach (__('esign::dropdown.document_filters') ?? [] as $key => $label)
+                        @foreach (\NIIT\ESign\Enum\DocumentStatus::options() as $key => $label)
                             <a
                                 href="javascript: void(0);"
                                 class="filter-link @if($filter === $key) active @endif"
@@ -73,7 +73,7 @@
                                 >
                                     <p class="template_type">
                                         <span>
-                                            {{ __('esign::dropdown.document_filters')[$documentStatus] }}
+                                            {{ __('esign::label.'.$documentStatus) }}
                                         </span>
                                     </p>
                                     <h5 class="card-title documentTitle">

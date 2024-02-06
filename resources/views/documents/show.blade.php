@@ -555,7 +555,7 @@
                             $(document).trigger("process-ids", r.data);
                         }
 
-                        if (mode === "send" && r.redirect) {
+                        if (r.redirect) {
                             $(location).attr("href", r.redirect);
 
                             return;

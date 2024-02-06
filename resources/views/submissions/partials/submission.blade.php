@@ -5,12 +5,26 @@
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-2"
             >
                 <div class="btn-toolbar align-items-center">
-                    <a
-                        href="javascript: void(0);"
-                        class="btn btn-sm btn-success me-2"
-                    >
-                        {{ $signer->signing_status }}
-                    </a>
+                    <div class="d-flex flex-column gap-1">
+                        @php($signingValue = $signer->signing_status->value)
+                        <span
+                            class="btn btn-sm btn_{{ $signingValue }} me-2 border"
+                        >
+                            {{ __('esign::label.'.$signingValue) }}
+                        </span>
+                        @php($readValue = $signer->read_status->value)
+                        <span
+                            class="btn btn-sm btn_{{ $readValue }} me-2 border"
+                        >
+                            {{ __('esign::label.'.$readValue) }}
+                        </span>
+                        @php($sendValue = $signer->send_status->value)
+                        <span
+                            class="btn btn-sm btn_{{ $sendValue }} me-2 border"
+                        >
+                            {{ __('esign::label.'.$sendValue) }}
+                        </span>
+                    </div>
                     <span class="text-lg break-all flex items-center">
                         {{ $signer->email ?? $signer->label }}
                     </span>

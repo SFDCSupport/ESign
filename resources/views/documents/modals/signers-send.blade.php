@@ -181,7 +181,7 @@
                         );
                     });
             })
-            .on('click', '#signersSaveBtn,#signersSendBtn', () => {
+            .on('click', '#signersSaveBtn,#signersSendBtn', function () {
                 const _t = $(this);
 
                 if (!signersForm.valid()) {
@@ -221,7 +221,9 @@
                     notification_sequence: notification_sequence,
                 };
 
-                if (_t.attr('id') === 'signersSendBtn') {
+                const isSend = _t.attr('id') === 'signersSendBtn';
+
+                if (isSend) {
                     obj.status = 'in_progress';
                 }
 
@@ -233,7 +235,7 @@
 
                 try {
                     $(document).trigger('signers-save', {
-                        type: 'send',
+                        type: isSend ? 'send' : 'save',
                     });
                 } catch (e) {
                     toast('error', e);

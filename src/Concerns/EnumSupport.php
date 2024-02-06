@@ -24,14 +24,7 @@ trait EnumSupport
         $cases = static::cases();
         $options = [];
         foreach ($cases as $case) {
-            $label = $case->name;
-            if (Str::contains($label, '_')) {
-                $label = Str::replace('_', ' ', $label);
-            }
-            $options[] = [
-                'value' => $case->value,
-                'label' => Str::title($label),
-            ];
+            $options[$case->value] = __('esign::label.'.Str::lower($case->name));
         }
 
         return $options;
