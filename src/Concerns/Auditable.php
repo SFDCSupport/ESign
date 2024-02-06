@@ -6,16 +6,23 @@ use App\Models\User;
 use NIIT\ESign\Models\Audit;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
+use NIIT\ESign\Models\SignerElement;
 
 trait Auditable
 {
-    public function logAuditTrait(Document $document, string $event, ?Signer $signer = null, ?array $metadata = null): Audit
-    {
+    public function logAuditTrait(
+        Document $document,
+        string $event,
+        ?Signer $signer = null,
+        ?SignerElement $element = null,
+        ?array $metadata = null
+    ): Audit {
         $model = new Audit;
 
         $model->event = $event;
         $model->metadata = $metadata;
         $model->signer_id = $signer?->id;
+        $model->element_id = $element?->id;
         $model->document_id = $document->id;
 
         $model->save();

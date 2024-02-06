@@ -10,7 +10,7 @@ namespace NIIT\ESign\Observers;
 use Illuminate\Support\Str;
 use NIIT\ESign\Models\Signer;
 
-class SignerObserver
+class SignerObserver extends Observer
 {
     public function creating(Signer $signer): void
     {
@@ -27,30 +27,42 @@ class SignerObserver
             ->max('position') ?? 0;
 
         $signer->position = $maxPriority + 1;
+
     }
 
     public function created(Signer $signer): void
     {
-        //
+        $this->logAuditTrait($signer->document, 'signer-added', $signer);
     }
 
     public function updated(Signer $signer): void
     {
-        //
+        $event = 'signer-updated';
+        $dirty = $signer->getDirty();
+
+        if (array_key_exists('signing_status', $dirty)) {
+            $event = 'signer-signing-status-changed';
+        } elseif (array_key_exists('read_status', $dirty)) {
+            $event = 'signer-read-status-changed';
+        } elseif (array_key_exists('send_status', $dirty)) {
+            $event = 'signer-send-status-changed';
+        }
+
+        $this->logAuditTrait($signer->document, $event, $signer, null, $dirty);
     }
 
     public function deleted(Signer $signer): void
     {
-        //
+        $this->logAuditTrait($signer->document, 'signer-deleted', $signer);
     }
 
     public function restored(Signer $signer): void
     {
-        //
+        $this->logAuditTrait($signer->document, 'signer-restored', $signer);
     }
 
     public function forceDeleted(Signer $signer): void
     {
-        //
+        $this->logAuditTrait($signer->document, 'signer-force-deleted', $signer);
     }
 }
