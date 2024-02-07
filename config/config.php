@@ -18,5 +18,11 @@ return [
         'private_key_path' => '',
         'password' => '',
         'level' => 1,
+        'info' => [
+            'Name' => 'Anand',
+            'Location' => 'Office',
+            'Reason' => 'ESign test',
+            'ContactInfo' => 'https://google.com',
+        ],
     ],
 ];
