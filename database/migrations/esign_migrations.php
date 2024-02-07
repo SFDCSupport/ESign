@@ -42,6 +42,7 @@ return new class extends Migration
             $table->enum('status', DocumentStatus::values())->default(config('esign.defaults.document_status'));
             $table->enum('notification_sequence', NotificationSequence::values())->default(config('esign.defaults.notification_sequence'));
             $table->boolean('link_sent_to_all')->default(false);
+            $table->boolean('is_signed')->default(false);
             $table->timestamps();
             $table->softDeletes();
             $table->eSignUserStamps();

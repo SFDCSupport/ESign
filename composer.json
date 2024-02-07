@@ -29,6 +29,9 @@
             "NIIT\\ESign\\": "src/",
             "NIIT\\ESign\\Database\\Factories\\": "database/factories/"
         },
+        "classmap": [
+            "SetaPDF/"
+        ],
         "files": [
             "src/helpers.php"
         ]

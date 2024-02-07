@@ -25,6 +25,14 @@ class ESign
         $this->app = $app ?? app();
     }
 
+    /**
+     * @return mixed|\Illuminate\Config\Repository
+     */
+    public function config(array|null|string $key = null)
+    {
+        return config('esign'.($key ? '.'.$key : ''));
+    }
+
     public function addMacros(): self
     {
         $this->addMacros = true;

@@ -13,3 +13,4 @@ public/storage
 testbench.yaml
 */**/*.bak
 */**/*.sqlite
+SetaPDF

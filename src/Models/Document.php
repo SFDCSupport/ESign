@@ -34,6 +34,7 @@ class Document extends Model implements Attachable, HasLocalePreference
         'notification_sequence',
         'link_sent_to_all',
         'parent_id',
+        'is_signed',
     ];
 
     /**
@@ -42,6 +43,8 @@ class Document extends Model implements Attachable, HasLocalePreference
     protected $casts = [
         'status' => DocumentStatus::class,
         'notification_sequence' => NotificationSequence::class,
+        'link_sent_to_all' => 'boolean',
+        'is_signed' => 'boolean',
     ];
 
     /**

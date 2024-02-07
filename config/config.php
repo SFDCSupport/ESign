@@ -13,4 +13,10 @@ return [
         'document_status' => \NIIT\ESign\Enum\DocumentStatus::DRAFT,
         'notification_sequence' => \NIIT\ESign\Enum\NotificationSequence::ASYNC,
     ],
+    'certificate' => [
+        'path' => '',
+        'private_key_path' => '',
+        'password' => '',
+        'level' => 1,
+    ],
 ];
