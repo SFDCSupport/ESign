@@ -23,6 +23,14 @@ class SigningMiddleware
             404
         );
 
+        $isSigned = ($signer->signing_status === SigningStatus::SIGNED);
+
+        if (! $notShowRoute && ! $isSigned) {
+            return redirect()->route('esign.signing.index', [
+                'signing_url' => $signer->url,
+            ]);
+        }
+
         abort_if(
             $request->expectsJson() && ! $request->headers->has('X-ESign'),
             403,

@@ -169,7 +169,11 @@ class SigningController extends Controller
         $document = $signer->loadMissing('document.document', 'elements')->document;
         $signedDocument = signerUploadPath($signer).'/'.$signer->document_id.'.pdf';
 
-        abort_if(! $disk->exists($signedDocument), 404);
+        abort_if(
+            ! $disk->exists($signedDocument) ||
+            $signer->signing_status !== SigningStatus::SIGNED,
+            404
+        );
 
         $signedDocumentUrl = FilepondAction::loadFile($signedDocument, 'view');
         $formattedData = [];
