@@ -27,14 +27,19 @@
                             {{ $document->title }}
                         </p>
                     </div>
+                    <div class="edit-docs-file">
+                        <div id="previewViewer"></div>
+                    </div>
                 </div>
             </div>
 
             <main class="col-10">
-                {!! $signer->text !!} {!! $signedDocument !!}
+                <div id="pdfViewer" data-url="{{ $signedDocumentUrl }}"></div>
             </main>
         </div>
     </div>
+
+    @include('esign::partials.renderer')
 
     @pushonce('js')
         <script></script>

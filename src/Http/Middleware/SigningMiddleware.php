@@ -2,9 +2,7 @@
 
 namespace NIIT\ESign\Http\Middleware;
 
-use App\Actions\FilepondAction;
 use Closure;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\SigningStatus;
@@ -34,15 +32,9 @@ class SigningMiddleware
         if (
             $signer->signing_status === SigningStatus::SIGNED && $notShowRoute
         ) {
-            /** @var Filesystem $disk */
-            $disk = FilepondAction::getDisk();
-            $signerUploadPath = signerUploadPath($signer);
-
-            abort_if(! $disk->exists($signedDocument = ($signerUploadPath.'/'.$signer->document_id.'.pdf')), 500);
-
             return redirect()->route('esign.signing.show', [
                 'signing_url' => $signer->url,
-            ])->with(compact('signedDocument'));
+            ]);
             //            return $disk->download(
             //                $signedDocument
             //            );

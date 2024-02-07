@@ -167,15 +167,11 @@ class SigningController extends Controller
         $disk = FilepondAction::getDisk();
 
         $document = $signer->loadMissing('document.document', 'elements')->document;
-        $signedDocument = $request->session()->get('signedDocument');
-
-        if (blank($signedDocument)) {
-            $signedDocument = signerUploadPath($signer).'/'.$signer->document_id.'.pdf';
-        }
+        $signedDocument = signerUploadPath($signer).'/'.$signer->document_id.'.pdf';
 
         abort_if(! $disk->exists($signedDocument), 404);
 
-        $signedDocumentUrl = FilepondAction::loadFile($signedDocument);
+        $signedDocumentUrl = FilepondAction::loadFile($signedDocument, 'view');
         $formattedData = [];
 
         return view('esign::signing.show', compact(
