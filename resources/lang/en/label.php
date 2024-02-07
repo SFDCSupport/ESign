@@ -74,4 +74,9 @@ return [
     'signed' => 'Signed',
     'not_signed' => 'Not signed',
     'completed' => 'Completed',
+    'executor' => 'Executor',
+    'action' => 'Action',
+    'time' => 'Time',
+    'audit_log' => 'Audit log',
+    'print' => 'Print',
 ];

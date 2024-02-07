@@ -5,9 +5,6 @@ use NIIT\ESign\Http\Controllers\Controller;
 use NIIT\ESign\Http\Controllers\DocumentController;
 use NIIT\ESign\Http\Controllers\SignerController;
 use NIIT\ESign\Http\Controllers\SigningController;
-use NIIT\ESign\Http\Controllers\SubmissionController;
-use NIIT\ESign\Http\Controllers\TemplateController;
-use NIIT\ESign\Http\Middleware\SigningMiddleware;
 
 Route::prefix('attachment')
     ->name('attachment.')
@@ -20,13 +17,13 @@ Route::prefix('attachment')
 // ADMIN ROUTES
 Route::middleware('auth')
     ->group(function () {
-        Route::resource('templates', TemplateController::class)
+        Route::resource('templates', \NIIT\ESign\Http\Controllers\TemplateController::class)
             ->except(['edit', 'create']);
 
         Route::resource('documents.signers', SignerController::class)
             ->except(['create', 'edit', 'show']);
 
-        Route::resource('documents.submissions', SubmissionController::class)
+        Route::resource('documents.submissions', \NIIT\ESign\Http\Controllers\SubmissionController::class)
             ->only(['index', 'show', 'destroy']);
 
         Route::get('documents/{document}/copy', [DocumentController::class, 'copy'])
@@ -40,13 +37,15 @@ Route::middleware('auth')
         Route::permanentRedirect('document', '/esign/documents');
     });
 
+Route::post('audit/{document}', \NIIT\ESign\Http\Controllers\AuditController::class)->name('audit-log');
+
 // SIGNING ROUTES
 Route::get('signers/{signer}/mail', [SigningController::class, 'mailTrackingPixel'])
     ->name('signing.mail-pixel');
 
 Route::name('signing.')
     ->middleware([
-        SigningMiddleware::class,
+        \NIIT\ESign\Http\Middleware\SigningMiddleware::class,
     ])->group(function () {
         Route::get('/{signing_url}/show', [SigningController::class, 'show'])->name('show');
         Route::get('/{signing_url}', [SigningController::class, 'index'])->name('index');

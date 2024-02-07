@@ -9,6 +9,13 @@
                         <h4 class="h4 mb-0">{{ $document->title }}</h4>
                         <div class="btn-toolbar mb-2 mb-md-0">
                             <x-esign::partials.button
+                                :value="__('esign::label.audit_log')"
+                                icon="clipboard-list"
+                                class="btn-sm btn-outline-secondary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#audit_log_modal"
+                            />
+                            <x-esign::partials.button
                                 :value="__('esign::label.archive')"
                                 icon="archive"
                                 class="btn-sm btn-outline-secondary"
@@ -101,6 +108,7 @@
         </section>
     @endif
 
+    @include('esign::partials.audit-log-modal')
     @include('esign::documents.modals.signers-send', compact('document'))
 
     @pushonce('js')

@@ -14,6 +14,13 @@
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
             >
                 <h4 class="h4">{{ $document->title }}</h4>
+                <x-esign::partials.button
+                    :value="__('esign::label.audit_log')"
+                    icon="clipboard-list"
+                    class="btn-sm btn-outline-secondary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#audit_log_modal"
+                />
             </div>
         </div>
     </section>
@@ -40,6 +47,7 @@
     </div>
 
     @include('esign::partials.renderer')
+    @include('esign::partials.audit-log-modal', compact('document'))
 
     @pushonce('js')
         <script></script>

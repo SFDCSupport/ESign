@@ -45,37 +45,37 @@ trait Auditable
         return $model;
     }
 
-    public function getAuditsByDocument(Document $document)
+    public function getAuditsByDocument(?Document $document = null)
     {
         return $this->getAuditBy([
-            'document_id' => $document->id,
-        ])->oldest();
+            'document_id' => ($document ?? $this)->id,
+        ]);
     }
 
-    public function getAuditsBySigner(Document $document, Signer $signer)
+    public function getAuditsBySigner(Signer|string $signer, ?Document $document = null)
     {
         return $this->getAuditBy([
-            'document_id' => $document->id,
-            'signer_id' => $signer->id,
-        ])->oldest();
+            'document_id' => ($document ?? $this)->id,
+            'signer_id' => $signer->id ?? $signer,
+        ]);
     }
 
     public function getAuditsByCreator(User $user)
     {
         return $this->getAuditBy([
             'created_by' => $user->id,
-        ])->oldest();
-    }
-
-    public function getAllAudits()
-    {
-        return $this->getAuditBy()->oldest();
+        ]);
     }
 
     private function getAuditBy(array $conditions = [])
     {
         return Audit::when(! blank($conditions),
             static fn ($q) => $q->where($conditions)
-        )->get();
+        )->latest()->get()
+            ->map(fn ($a) => [
+                'executor' => '',
+                'action' => $a->event,
+                'time' => $a->created_at->format('D, d M Y H:i:s e'),
+            ]);
     }
 }
