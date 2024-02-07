@@ -33,7 +33,7 @@
                     </span>
                 </div>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    @if ($isInProgress && $isSync && $signer->is_next_receiver)
+                    @if ($isInProgress && $isSync && $signer->send_status !== \NIIT\ESign\Enum\SendStatus::SENT && $signer->is_next_receiver)
                         <form
                             class="sendMailForm"
                             action="{{ route('esign.documents.sendMail', [$document, $signer]) }}"
@@ -52,7 +52,7 @@
                     <x-esign::partials.button
                         icon="link"
                         class="btn-sm btn-outline-secondary"
-                        onclick="copyToClipboard('{{ route('esign.signing.index', ['signing_url' => $signer->url]) }}', '{{ __('esign::label.link') }}')"
+                        onclick="copyToClipboard('{{ $signer->signingUrl() }}', '{{ __('esign::label.link') }}')"
                         :value="__('esign::label.copy_link')"
                     />
                     <x-esign::partials.button

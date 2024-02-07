@@ -31,6 +31,16 @@ if (! function_exists('esignUploadPath')) {
     }
 }
 
+if (! function_exists('signerUploadPath')) {
+    function signerUploadPath(\NIIT\ESign\Models\Signer $signer): string
+    {
+        return esignUploadPath('signer', [
+            'id' => $signer->document->id,
+            'signer' => $signer->id,
+        ]);
+    }
+}
+
 if (! function_exists('convertPHPSizeToBytes')) {
     function convertPHPSizeToBytes(int|string $sSize): int
     {

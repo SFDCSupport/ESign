@@ -3,8 +3,9 @@
 namespace NIIT\ESign\Http\Controllers;
 
 use App\Actions\FilepondAction;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use NIIT\ESign\Enum\ReadStatus;
 use NIIT\ESign\Enum\SigningStatus;
 use NIIT\ESign\Events\ReadStatusChanged;
@@ -20,9 +21,13 @@ class SigningController extends Controller
 {
     public function index(Signer $signer)
     {
-        SigningProcessStarted::dispatch($signer);
-
         $document = $signer->loadMissing('document.document', 'elements')->document;
+
+        SigningProcessStarted::dispatch(
+            $document,
+            $signer
+        );
+
         $formattedData = [
             'signers' => SignerResource::collection([$signer]),
         ];
@@ -39,9 +44,9 @@ class SigningController extends Controller
         $storage = FilepondAction::getDisk();
         $disk = FilepondAction::getDisk(true);
         $loadedSigner = $signer->loadMissing('document.document');
-        $tempDisk = Storage::disk('esign_temp');
+        $signerUploadPath = signerUploadPath($signer);
 
-        $data = collect($request->validated()['element'])->map(function ($d) use ($loadedSigner, $disk) {
+        $data = collect($request->validated()['element'])->map(function ($d) use ($loadedSigner, $disk, $signerUploadPath) {
             $isSignaturePad = $d['type'] === 'signature_pad';
 
             $data = $d['data'];
@@ -52,10 +57,7 @@ class SigningController extends Controller
                 $fileName = $d['id'].'_'.trim($originalFileName = $file->getClientOriginalName());
 
                 $filePath = $file->storeAs(
-                    esignUploadPath('signer', [
-                        'id' => $loadedSigner->document->id,
-                        'signer' => $loadedSigner->id,
-                    ]),
+                    $signerUploadPath,
                     $fileName.'.png',
                     $disk
                 );
@@ -78,7 +80,6 @@ class SigningController extends Controller
                 'pageHeight' => $d['page_height'],
                 'top' => $d['top'],
                 'left' => $d['left'],
-                'bottom' => $d['bottom'],
                 'width' => $d['width'],
                 'height' => $d['height'],
             ])->when($isSignaturePad, fn ($c) => $c->merge([
@@ -92,17 +93,11 @@ class SigningController extends Controller
             ]));
         });
 
-        $tempPath = $loadedSigner->document->id.'.pdf';
-
-        if (! $tempDisk->fileExists($tempPath)) {
-            $tempDisk->put(
-                $tempPath,
-                $storage->get($loadedSigner->document->document->path)
-            );
-        }
+        $fileName = $loadedSigner->document_id.'.pdf';
 
         $pdf = new Fpdi();
-        $pageCount = $pdf->setSourceFile(StreamReader::createByString($tempDisk->get($tempPath)));
+
+        $pageCount = $pdf->setSourceFile(StreamReader::createByString($storage->get($loadedSigner->document->document->path)));
 
         for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
             $templateId = $pdf->importPage($pageNumber);
@@ -151,22 +146,41 @@ class SigningController extends Controller
             }
         }
 
-        $pdf->Output('F', config('filesystems.disks.esign_temp.root').'/'.$tempPath);
+        $documentContent = $pdf->Output('S', $fileName);
+        $storage->put($signerUploadPath.'/'.$fileName, $documentContent);
 
-        SigningStatusChanged::dispatch($signer, SigningStatus::SIGNED);
+        SigningStatusChanged::dispatch(
+            $loadedSigner->document,
+            $signer,
+            SigningStatus::SIGNED
+        );
 
         return $this->jsonResponse([
             'status' => 1,
-            'redirect' => route('esign.signing.show', ['signing_url' => $signer->url]),
+            'redirect' => $signer->signingUrl().'/show',
         ])->notify(__('esign::label.signing_success_message'));
     }
 
-    public function show(Signer $signer)
+    public function show(Request $request, Signer $signer)
     {
+        /** @var Filesystem $disk */
+        $disk = FilepondAction::getDisk();
+
         $document = $signer->loadMissing('document.document', 'elements')->document;
+        $signedDocument = $request->session()->get('signedDocument');
+
+        if (blank($signedDocument)) {
+            $signedDocument = signerUploadPath($signer).'/'.$signer->document_id.'.pdf';
+        }
+
+        abort_if(! $disk->exists($signedDocument), 404);
+
+        $signedDocumentUrl = FilepondAction::loadFile($signedDocument);
         $formattedData = [];
 
         return view('esign::signing.show', compact(
+            'signedDocument',
+            'signedDocumentUrl',
             'signer',
             'document',
             'formattedData',
@@ -185,7 +199,9 @@ class SigningController extends Controller
             ->header('Last-Modified', 'Wed, 11 Jan 2006 12:59:00 GMT')
             ->header('Pragma', 'no-cache');
 
-        ReadStatusChanged::dispatch($signer, ReadStatus::OPENED);
+        if ($signer->read_status !== ReadStatus::OPENED) {
+            ReadStatusChanged::dispatch($signer, ReadStatus::OPENED);
+        }
 
         return $response;
     }

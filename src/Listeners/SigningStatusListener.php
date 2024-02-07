@@ -2,6 +2,7 @@
 
 namespace NIIT\ESign\Listeners;
 
+use Illuminate\Database\Eloquent\Collection;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\NotificationSequence;
 use NIIT\ESign\Enum\SendStatus;
@@ -31,13 +32,16 @@ class SigningStatusListener
             ]);
         }
 
+        /** @var Collection<Signer> $signers */
+        $signers = $document->loadMissing([
+            'signers' => fn ($q) => $q->where('send_status', SendStatus::NOT_SENT)
+                ->orderBy('position'),
+        ])->signers;
+        ds($signers)->label('topSigners');
+
         if ($document->notification_sequence === NotificationSequence::SYNC) {
-            if ($nextSigner = $document->loadMissing([
-                'signers' => fn ($q) => $q->where('signing_status', SendStatus::NOT_SENT)
-                    ->where('position', '>', $signer->position)
-                    ->orderBy('position'),
-            ])->signers->first()
-            ) {
+            if ($nextSigner = $signers->where('position', '>', $signer->position)->first()) {
+                ds()->model($nextSigner)->label('nextSigner');
                 $nextSigner->update([
                     'is_next_receiver' => true,
                 ]);
@@ -46,15 +50,15 @@ class SigningStatusListener
             } else {
                 $document->markAs(DocumentStatus::COMPLETED);
             }
-        } elseif (count(($signers = $document->loadMissing([
-            'signers' => fn ($q) => $q->where('signing_status', SendStatus::NOT_SENT)
-                ->orderBy('position'),
-        ])->signers)) !== 0) {
-            foreach ($signers as $signer) {
-                ESignFacade::sendSigningLink($signer, $document);
-            }
         } else {
-            $document->markAs(DocumentStatus::COMPLETED);
+            if (count($signers) > 0) {
+                ds($signers)->label('signers');
+                foreach ($signers as $signer) {
+                    ESignFacade::sendSigningLink($signer, $document);
+                }
+            } else {
+                $document->markAs(DocumentStatus::COMPLETED);
+            }
         }
     }
 }

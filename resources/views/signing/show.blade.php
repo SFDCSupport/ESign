@@ -31,7 +31,7 @@
             </div>
 
             <main class="col-10">
-                {{ $signer->text }}
+                {!! $signer->text !!} {!! $signedDocument !!}
             </main>
         </div>
     </div>

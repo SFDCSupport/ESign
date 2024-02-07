@@ -15,6 +15,7 @@ class ReadStatusListener
 
         /** @var ReadStatus $status */
         $status = $event->status;
+        ds('listening read status', $status);
 
         $signer->update([
             'read_status' => $status,

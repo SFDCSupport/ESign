@@ -98,18 +98,20 @@ class DocumentController extends Controller
         /** @var string $mode */
         $mode = $request->validated('mode');
 
-        /** @var Collection<Signer> $signers */
-        $signers = $document->loadMissing([
-            'signers' => fn ($q) => $q->where('send_status', SendStatus::NOT_SENT)->orderBy('position'),
-        ])->signers;
-
         if ($mode === 'all') {
+            /** @var Collection<Signer> $signers */
+            $signers = $document->loadMissing([
+                'signers' => fn ($q) => $q->where('send_status', SendStatus::NOT_SENT)->orderBy('position'),
+            ])->signers;
+
             if (count($signers) > 0) {
                 foreach ($signers as $s) {
                     ESignFacade::sendSigningLink($s, $document);
                 }
             }
-        } else {
+        } elseif (isset($signer)) {
+            abort_if($signer->send_status === SendStatus::SENT, 403);
+
             ESignFacade::sendSigningLink($signer, $document);
         }
 

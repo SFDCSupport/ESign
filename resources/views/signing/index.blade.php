@@ -219,7 +219,7 @@
                     .then(() => console.log(formData))
                     .then(() =>
                         $.ajax({
-                            url: '{{ route('esign.signing.index', ['signing_url' => $signer->url]) }}',
+                            url: '{{ $signer->signingUrl() }}',
                             type: 'POST',
                             data: formData,
                             contentType: false,

@@ -72,13 +72,13 @@ class ESign
     public function sendSigningLink(Signer $signer, Document $document): void
     {
         try {
-            Mail::to($signer->email)
+            $mailResponse = Mail::to($signer->email)
                 ->send(
                     new SendSigningLink($document, $signer)
                 );
 
             $signer->update([
-                'send_status' => SendStatus::SENT,
+                'send_status' => $mailResponse ? SendStatus::SENT : SendStatus::NOT_SENT,
             ]);
         } catch (\Swift_TransportException|\Exception $e) {
             $signer->update([

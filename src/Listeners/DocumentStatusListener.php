@@ -23,7 +23,8 @@ class DocumentStatusListener
         if ($status === DocumentStatus::IN_PROGRESS) {
             /** @var \Illuminate\Database\Eloquent\Collection<Signer> $signers */
             $signers = $document->loadMissing([
-                'signers' => fn ($q) => $q->orderBy('position'),
+                'signers' => fn ($q) => $q->where('send_status', SendStatus::NOT_SENT)
+                    ->orderBy('position'),
             ])->signers;
 
             if ($document->notification_sequence === NotificationSequence::ASYNC) {
