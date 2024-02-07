@@ -33,7 +33,7 @@
                     </span>
                 </div>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    @if ($isInProgress && $isSync && $signer->send_status !== \NIIT\ESign\Enum\SendStatus::SENT && $signer->is_next_receiver)
+                    @if ($isInProgress && $isSync && $signer->sendStatusIsNot(\NIIT\ESign\Enum\SendStatus::SENT) && $signer->is_next_receiver)
                         <form
                             class="sendMailForm"
                             action="{{ route('esign.documents.sendMail', [$document, $signer]) }}"
@@ -55,21 +55,24 @@
                         onclick="copyToClipboard('{{ $signer->signingUrl() }}', '{{ __('esign::label.link') }}')"
                         :value="__('esign::label.copy_link')"
                     />
-                    <x-esign::partials.button
-                        icon="eye"
-                        class="btn-sm btn-outline-secondary"
-                        :value="__('esign::label.view')"
-                        :redirect="
-                            route('esign.documents.submissions.show', [
-                                'document' => $document,
-                                'submission' => $signer->submissions,
-                            ])
-                        "
-                    />
+                    @if ($signer->signingStatusIs(\NIIT\ESign\Enum\SigningStatus::SIGNED))
+                        <x-esign::partials.button
+                            icon="eye"
+                            class="btn-sm btn-outline-secondary"
+                            :value="__('esign::label.view')"
+                            :redirect="
+                                route('esign.documents.submissions.show', [
+                                    'document' => $document,
+                                    'submission' => $signer->submissions,
+                                ])
+                            "
+                        />
+                    @endif
+
                     <x-esign::partials.button
                         disabled
                         icon="trash"
-                        class="btn-sm btn-outline-danger"
+                        class="d-none btn-sm btn-outline-danger"
                     />
                 </div>
             </div>

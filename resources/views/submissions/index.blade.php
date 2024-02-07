@@ -29,8 +29,8 @@
                     </div>
 
                     @if ($document->signers->count() > 0)
-                        @php($isSync = ($document->notification_sequence === \NIIT\ESign\Enum\NotificationSequence::SYNC))
-                        @php($isInProgress = ($document->status === \NIIT\ESign\Enum\DocumentStatus::IN_PROGRESS))
+                        @php($isSync = ($document->notificationSequenceIs(\NIIT\ESign\Enum\NotificationSequence::SYNC)))
+                        @php($isInProgress = ($document->statusIs(\NIIT\ESign\Enum\DocumentStatus::IN_PROGRESS)))
                         <div class="col-sm-12">
                             <div
                                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-2 align-items-center"

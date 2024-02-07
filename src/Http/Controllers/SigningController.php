@@ -97,7 +97,11 @@ class SigningController extends Controller
 
         $pdf = new Fpdi();
 
-        $pageCount = $pdf->setSourceFile(StreamReader::createByString($storage->get($loadedSigner->document->document->path)));
+        $pageCount = $pdf->setSourceFile(
+            StreamReader::createByString(
+                $storage->get($loadedSigner->document->document->path)
+            )
+        );
 
         for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
             $templateId = $pdf->importPage($pageNumber);
@@ -147,7 +151,10 @@ class SigningController extends Controller
         }
 
         $documentContent = $pdf->Output('S', $fileName);
-        $storage->put($signerUploadPath.'/'.$fileName, $documentContent);
+        $storage->put(
+            $signerUploadPath.'/'.$fileName,
+            $documentContent
+        );
 
         SigningStatusChanged::dispatch(
             $loadedSigner->document,
@@ -171,7 +178,7 @@ class SigningController extends Controller
 
         abort_if(
             ! $disk->exists($signedDocument) ||
-            $signer->signing_status !== SigningStatus::SIGNED,
+            $signer->signingStatusIsNot(SigningStatus::SIGNED),
             404
         );
 
@@ -195,11 +202,11 @@ class SigningController extends Controller
             ->header('Content-type', 'image/gif')
             ->header('Content-Length', 42)
             ->header('Cache-Control', 'private, no-cache, no-cache=Set-Cookie, proxy-revalidate')
-            ->header('Expires', 'Wed, 11 Jan 2000 12:59:00 GMT')
-            ->header('Last-Modified', 'Wed, 11 Jan 2006 12:59:00 GMT')
+            ->header('Expires', now()->addMinutes(5)->format('D, d M Y H:i:s e'))
+            ->header('Last-Modified', now()->subMinutes(5)->format('D, d M Y H:i:s e'))
             ->header('Pragma', 'no-cache');
 
-        if ($signer->read_status !== ReadStatus::OPENED) {
+        if ($signer->readStatusIsNot(ReadStatus::OPENED)) {
             ReadStatusChanged::dispatch($signer, ReadStatus::OPENED);
         }
 

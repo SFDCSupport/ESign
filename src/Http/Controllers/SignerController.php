@@ -23,7 +23,7 @@ class SignerController extends Controller
 
     public function store(SignerRequest $request, Document $document)
     {
-        if ($document->status === DocumentStatus::IN_PROGRESS) {
+        if ($document->statusIs(DocumentStatus::IN_PROGRESS)) {
             return $this->jsonResponse([
                 'status' => 1,
                 'redirect' => route('esign.documents.submissions.index', $document),
@@ -118,9 +118,8 @@ class SignerController extends Controller
         if (! blank($documentData)) {
             $document->update($documentData);
 
-            if ($document->status === DocumentStatus::IN_PROGRESS) {
+            if ($document->statusIs(DocumentStatus::IN_PROGRESS)) {
                 DocumentStatusChanged::dispatch($document, DocumentStatus::IN_PROGRESS);
-                dd('hello');
             }
         }
 

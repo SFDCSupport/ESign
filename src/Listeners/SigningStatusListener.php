@@ -25,7 +25,7 @@ class SigningStatusListener
         /** @var SigningStatus $status */
         $status = $event->status;
 
-        if ($signer->signing_status !== $status) {
+        if ($signer->signingStatusIsNot($status)) {
             $signer->update([
                 'is_next_receiver' => false,
                 'signing_status' => $status,
@@ -39,7 +39,7 @@ class SigningStatusListener
         ])->signers;
         ds($signers)->label('topSigners');
 
-        if ($document->notification_sequence === NotificationSequence::SYNC) {
+        if ($document->notificationSequenceIs(NotificationSequence::SYNC)) {
             if ($nextSigner = $signers->where('position', '>', $signer->position)->first()) {
                 ds()->model($nextSigner)->label('nextSigner');
                 $nextSigner->update([

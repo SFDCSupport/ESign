@@ -34,7 +34,7 @@ class DocumentController extends Controller
 
     public function show(Document $document)
     {
-        if ($document->status !== DocumentStatus::DRAFT) {
+        if ($document->statusIsNot(DocumentStatus::DRAFT)) {
             return redirect()->route('esign.documents.submissions.index', $document);
         }
 
@@ -110,7 +110,7 @@ class DocumentController extends Controller
                 }
             }
         } elseif (isset($signer)) {
-            abort_if($signer->send_status === SendStatus::SENT, 403);
+            abort_if($signer->sendStatusIs(SendStatus::SENT), 403);
 
             ESignFacade::sendSigningLink($signer, $document);
         }

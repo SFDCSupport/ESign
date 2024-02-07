@@ -56,7 +56,7 @@ class SigningCompletedListener
                 file_get_contents($config['private_key_path']),
                 $config['password'],
                 '',
-                2,
+                $config['level'],
                 $config['info']
             );
 

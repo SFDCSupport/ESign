@@ -33,11 +33,11 @@ class SendMailRequest extends FormRequest
                         $fail(__('esign::validations.document_in_async_sequence_with_signer'));
                     }
 
-                    if ($document->status === NotificationSequence::SYNC && $val === 'all') {
+                    if ($document->statusIs(NotificationSequence::SYNC) && $val === 'all') {
                         $fail(__('esign::validations.document_in_sync_sequence'));
                     }
 
-                    if ($document->status === NotificationSequence::ASYNC && $val === 'single') {
+                    if ($document->statusIs(NotificationSequence::ASYNC) && $val === 'single') {
                         $fail(__('esign::validations.document_in_async_sequence'));
                     }
                 },

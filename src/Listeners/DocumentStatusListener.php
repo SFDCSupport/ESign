@@ -27,7 +27,7 @@ class DocumentStatusListener
                     ->orderBy('position'),
             ])->signers;
 
-            if ($document->notification_sequence === NotificationSequence::ASYNC) {
+            if ($document->notificationSequenceIs(NotificationSequence::ASYNC)) {
                 $signers->each(fn ($signer) => ESignFacade::sendSigningLink($signer, $document));
             } else {
                 $signer = $signers->where('send_status', SendStatus::NOT_SENT)

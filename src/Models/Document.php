@@ -143,7 +143,7 @@ class Document extends Model implements Attachable, HasLocalePreference
             return;
         }
 
-        if ($this->notification_sequence !== NotificationSequence::SYNC) {
+        if ($this->notificationSequenceIsNot(NotificationSequence::SYNC)) {
             $signers->each(fn ($signer) => ESignFacade::sendSigningLink($signer, $this));
         }
     }

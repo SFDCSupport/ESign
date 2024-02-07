@@ -14,16 +14,16 @@ class SigningMiddleware
         $signer = $request->signer();
         $loadedModel = $request->signer()->loadMissing('document');
         $notShowRoute = ! $request->routeIs('esign.signing.show');
-        $documentStatus = $loadedModel->document->status;
+        $document = $loadedModel->document;
 
         abort_if(
             ! $signer ||
-            $documentStatus === DocumentStatus::DRAFT ||
-            ($notShowRoute && $documentStatus !== DocumentStatus::IN_PROGRESS),
+            $document->statusIs(DocumentStatus::DRAFT) ||
+            ($notShowRoute && $document->statusIsNot(DocumentStatus::IN_PROGRESS)),
             404
         );
 
-        $isSigned = ($signer->signing_status === SigningStatus::SIGNED);
+        $isSigned = ($signer->signingStatusIs(SigningStatus::SIGNED));
 
         if (! $notShowRoute && ! $isSigned) {
             return redirect()->route('esign.signing.index', [
@@ -38,7 +38,7 @@ class SigningMiddleware
         );
 
         if (
-            $signer->signing_status === SigningStatus::SIGNED && $notShowRoute
+            $signer->signingStatusIs(SigningStatus::SIGNED) && $notShowRoute
         ) {
             return redirect()->route('esign.signing.show', [
                 'signing_url' => $signer->url,

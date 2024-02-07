@@ -99,7 +99,7 @@
                                 </a>
                                 <div class="space-y">
                                     <div class="space-y-inner">
-                                        @php($isDraft = ($document->status === \NIIT\ESign\Enum\DocumentStatus::DRAFT))
+                                        @php($isDraft = ($document->statusIs(\NIIT\ESign\Enum\DocumentStatus::DRAFT)))
 
                                         @if ($isDraft)
                                             <a
