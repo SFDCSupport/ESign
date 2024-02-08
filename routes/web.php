@@ -15,27 +15,30 @@ Route::prefix('attachment')
     });
 
 // ADMIN ROUTES
-Route::middleware('auth')
-    ->group(function () {
-        Route::resource('templates', \NIIT\ESign\Http\Controllers\TemplateController::class)
-            ->except(['edit', 'create']);
+Route::middleware([
+    'auth',
+    \NIIT\ESign\Http\Middleware\Heartbeat::class,
+])->group(function () {
+    Route::post('heartbeat', \NIIT\ESign\Http\Controllers\HeartbeatController::class)->name('heartbeat');
+    Route::resource('templates', \NIIT\ESign\Http\Controllers\TemplateController::class)
+        ->except(['edit', 'create']);
 
-        Route::resource('documents.signers', SignerController::class)
-            ->except(['create', 'edit', 'show']);
+    Route::resource('documents.signers', SignerController::class)
+        ->except(['create', 'edit', 'show']);
 
-        Route::resource('documents.submissions', \NIIT\ESign\Http\Controllers\SubmissionController::class)
-            ->only(['index', 'show', 'destroy']);
+    Route::resource('documents.submissions', \NIIT\ESign\Http\Controllers\SubmissionController::class)
+        ->only(['index', 'show', 'destroy']);
 
-        Route::get('documents/{document}/copy', [DocumentController::class, 'copy'])
-            ->name('documents.copy');
-        Route::post('documents/{document}/sendMail/{signer?}', [DocumentController::class, 'sendMail'])
-            ->name('documents.sendMail');
-        Route::resource('documents', DocumentController::class)
-            ->except(['create', 'edit']);
+    Route::get('documents/{document}/copy', [DocumentController::class, 'copy'])
+        ->name('documents.copy');
+    Route::post('documents/{document}/sendMail/{signer?}', [DocumentController::class, 'sendMail'])
+        ->name('documents.sendMail');
+    Route::resource('documents', DocumentController::class)
+        ->except(['create', 'edit']);
 
-        Route::permanentRedirect('/', '/esign/documents');
-        Route::permanentRedirect('document', '/esign/documents');
-    });
+    Route::permanentRedirect('/', '/esign/documents');
+    Route::permanentRedirect('document', '/esign/documents');
+});
 
 Route::post('audit/{document}', \NIIT\ESign\Http\Controllers\AuditController::class)->name('audit-log');
 

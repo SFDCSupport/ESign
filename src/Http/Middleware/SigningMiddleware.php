@@ -23,10 +23,10 @@ class SigningMiddleware
          */
         abort_if(
             ! $signer ||
-            ! $document->statusIs([
+            ! $document->statusIs(
                 DocumentStatus::COMPLETED,
                 DocumentStatus::IN_PROGRESS,
-            ]),
+            ),
             404);
 
         /**

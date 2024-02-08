@@ -28,7 +28,7 @@ abstract class Model extends Base
         }
 
         if (isset($column, $this->{$column})) {
-            $array = Arr::wrap($parameters[0]);
+            $array = Arr::wrap($parameters);
 
             return $endsWithIs
                 ? in_array($this->{$column}, $array, true)
