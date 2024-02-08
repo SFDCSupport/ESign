@@ -1,5 +1,13 @@
 <x-esign::layout :title="__('esign::label.submissions')">
-    <div class="container-fluid bg-white">
+    @pushonce('css')
+    <style>
+        body{
+            background-color: #f6f9fc;
+        }
+    </style>
+    @endpushonce
+
+    <div class="container-fluid bg-light-gray">
         <div class="row">
             <main class="col-md-12 ms-sm-auto col-lg-12 pb-0 mb-0">
                 <div class="container">

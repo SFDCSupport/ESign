@@ -1161,3 +1161,52 @@ padding: 3px;
   opacity: .12;
   top: 21px;;
 }
+
+.datatable{
+  width: 100%;
+  border: 1px solid #d4dcf7;
+  border-radius: 4px;
+  border-collapse: collapse;
+}
+
+.datatable td,
+.datatable th{
+  padding: 8px;
+  border: 1px solid #d4dcf7;
+  border-collapse: collapse;
+  background-color: #f0f2f9;
+}
+
+.datatable th{
+  background-color:#d4dcf7;
+  color: #0e36bd;
+  font-weight: bold;
+  border-color: #bdc7e8;
+  padding: 8px;
+}
+
+.datatable tr:nth-of-type(even) td{
+  background-color: #fff;
+}
+
+.submission_card{
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(14,30,37,.12);
+  border: 0px;
+}
+
+.btn_not_signed,
+.btn_not_opened,
+.btn_not_sent{
+  background-color: #94d4ef;
+  font-size: .8rem;
+  margin: 1px 4px;
+  padding: 4px 10px 3px 10px;
+  border-radius: 60px !important;
+  border: 1px solid #94d4ef !important;
+}
+
+.btn_not_sent {
+  background-color: #ffd9df;
+  border: 1px solid #ffced5 !important;
+}

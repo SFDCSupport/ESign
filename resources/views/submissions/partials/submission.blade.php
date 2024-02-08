@@ -1,5 +1,5 @@
 <div class="col-md-12 col-sm-12 mb-3">
-    <div class="card document-template-cards">
+    <div class="card document-template-cards submission_card">
         <div class="card-body p-1">
             <div
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-2"
