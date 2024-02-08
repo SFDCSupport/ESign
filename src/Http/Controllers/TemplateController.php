@@ -12,7 +12,7 @@ class TemplateController extends Controller
     {
         $templates = Template::all();
 
-        return view('esign::templates.index', compact('templates'));
+        return $this->view('esign::templates.index', compact('templates'));
     }
 
     public function store(TemplateRequest $request)
@@ -24,7 +24,7 @@ class TemplateController extends Controller
 
     public function show(Template $template)
     {
-        return view('esign::templates.show', compact('template'));
+        return $this->view('esign::templates.show', compact('template'));
     }
 
     public function update(TemplateRequest $request, Template $template)

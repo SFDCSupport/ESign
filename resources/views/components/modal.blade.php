@@ -1,6 +1,6 @@
 @props([
     'id',
-    'title',
+    'title' => null,
     'body' => null,
     'footer' => null,
     'canClose' => true,
@@ -17,7 +17,7 @@
     id="{{ $id }}"
     tabindex="-1"
     role="dialog"
-    aria-labelledby="{{ $title }}"
+    {{ $title ? 'aria-labelledby="'.$title.'"' : '' }}
     aria-hidden="true"
 >
     <div class="modal-dialog {{ $size }}" role="{{ $role }}">

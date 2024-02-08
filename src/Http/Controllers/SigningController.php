@@ -32,7 +32,7 @@ class SigningController extends Controller
             'signers' => SignerResource::collection([$signer]),
         ];
 
-        return view('esign::signing.index', compact(
+        return $this->view('esign::signing.index', compact(
             'signer',
             'document',
             'formattedData',
@@ -185,7 +185,7 @@ class SigningController extends Controller
         $signedDocumentUrl = FilepondAction::loadFile($signedDocument, 'view');
         $formattedData = [];
 
-        return view('esign::signing.show', compact(
+        return $this->view('esign::signing.show', compact(
             'signedDocument',
             'signedDocumentUrl',
             'signer',

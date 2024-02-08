@@ -113,6 +113,8 @@
 
     @pushonce('js')
         <script>
+            const signingSuccessTemplate = `@include('esign::signing.partials.success')`;
+
             $(() => {
                 $(document).on('submit', '.sendMailForm', function (e) {
                     e.preventDefault();

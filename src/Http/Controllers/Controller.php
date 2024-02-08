@@ -5,6 +5,7 @@ namespace NIIT\ESign\Http\Controllers;
 use App\Actions\FilepondAction;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -102,6 +103,17 @@ class Controller extends Base
     protected function jsonResponse($data, $status = 200, array $headers = [], $options = JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
     {
         return response()->json($data, $status, $headers, $options);
+    }
+
+    protected function view(string $blade, array|Arrayable $data = [], array $mergeData = [])
+    {
+        $view = view($blade, $data, $mergeData);
+
+        return response($view)->withHeaders([
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
     }
 
     protected function user(?Request $request = null): User|Authenticatable|null

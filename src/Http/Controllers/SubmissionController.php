@@ -12,12 +12,12 @@ class SubmissionController extends Controller
     {
         $document->load(['signers' => fn ($q) => $q->orderBy('position'), 'signers.submissions']);
 
-        return view('esign::submissions.index', compact('document'));
+        return $this->view('esign::submissions.index', compact('document'));
     }
 
     public function show(Request $request, Document $document, Submission $submission)
     {
-        return view('esign::submissions.show', compact('document', 'submission'));
+        return $this->view('esign::submissions.show', compact('document', 'submission'));
     }
 
     public function destroy(Request $request, Document $document, Submission $submission)
