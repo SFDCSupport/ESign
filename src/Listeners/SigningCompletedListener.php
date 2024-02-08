@@ -5,9 +5,11 @@ namespace NIIT\ESign\Listeners;
 use App\Actions\FilepondAction;
 use Exception;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Mail;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\ESignFacade;
 use NIIT\ESign\Events\SigningProcessCompleted;
+use NIIT\ESign\Mail\SignedByAllMail;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
 use setasign\Fpdi\PdfParser\StreamReader;
@@ -41,7 +43,6 @@ class SigningCompletedListener
 
         $config = ESignFacade::config('certificate');
         $documentPath = $document->document->path;
-        $documentFileName = $document->document->file_name;
 
         try {
             $pdf = new Fpdi();
@@ -60,17 +61,11 @@ class SigningCompletedListener
                 $config['info']
             );
 
-            $outputFileName = (
-                pathinfo($documentFileName, PATHINFO_FILENAME).
-                '_signed.'.
-                pathinfo($documentFileName, PATHINFO_EXTENSION)
-            );
+            [$outputFileName, $outputPath] = $document->getSignedDocumentPath(true);
+
             $outputPdf = $pdf->Output('S', $outputFileName);
             $disk->put(
-                (
-                    esignUploadPath('document', ['id' => $document->id]).
-                    $outputFileName
-                ),
+                $outputPath,
                 $outputPdf
             );
 
@@ -81,6 +76,12 @@ class SigningCompletedListener
             $document->logAuditTrait(
                 document: $document,
                 event: 'document-signed',
+            );
+
+            Mail::to(
+                $document->loadMissing('signers')->signers->pluck('email')
+            )->send(
+                new SignedByAllMail($document, $signedDocumentPath)
             );
         } catch (Exception $e) {
             throw $e;

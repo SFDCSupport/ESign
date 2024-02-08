@@ -1,10 +1,10 @@
 <x-esign::layout :title="__('esign::label.submissions')">
     @pushonce('css')
-    <style>
-        body{
-            background-color: #f6f9fc;
-        }
-    </style>
+        <style>
+            body {
+                background-color: #f6f9fc;
+            }
+        </style>
     @endpushonce
 
     <div class="container-fluid bg-light-gray">

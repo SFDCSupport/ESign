@@ -21,7 +21,7 @@ class SigningMiddleware
         abort_if(
             ! $signer ||
             $document->statusIs(DocumentStatus::DRAFT) ||
-            ($notShowRoute && $document->statusIsNot(DocumentStatus::IN_PROGRESS)),
+            ! ($notShowRoute && $document->statusIsNot(DocumentStatus::IN_PROGRESS)),
             404
         );
 

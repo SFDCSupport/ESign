@@ -44,7 +44,7 @@ class SigningController extends Controller
         $storage = FilepondAction::getDisk();
         $disk = FilepondAction::getDisk(true);
         $loadedSigner = $signer->loadMissing('document.document');
-        $signerUploadPath = signerUploadPath($signer);
+        $signerUploadPath = $signer->getUploadPath();
 
         $data = collect($request->validated()['element'])->map(function ($d) use ($loadedSigner, $disk, $signerUploadPath) {
             $isSignaturePad = $d['type'] === 'signature_pad';
@@ -177,7 +177,7 @@ class SigningController extends Controller
         $disk = FilepondAction::getDisk();
 
         $document = $signer->loadMissing('document.document', 'elements')->document;
-        $signedDocument = signerUploadPath($signer).'/'.$signer->document_id.'.pdf';
+        $signedDocument = $signer->getSignedDocumentPath();
 
         abort_if(
             ! $disk->exists($signedDocument) ||

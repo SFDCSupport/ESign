@@ -119,8 +119,21 @@ class Signer extends Model implements Attachable
     public function toMailAttachment(): MailAttachment
     {
         return MailAttachment::fromStorageDisk(
-            FilepondAction::getDisk(true),
-            signerUploadPath($this).'/'.$this->document_id.'.pdf'
+            $this->loadMissing('document')->document->document->disk ?? FilepondAction::getDisk(true),
+            $this->getSignedDocumentPath()
         );
+    }
+
+    public function getSignedDocumentPath(): string
+    {
+        return $this->getUploadPath().'/'.$this->document_id.'.pdf';
+    }
+
+    public function getUploadPath(): string
+    {
+        return esignUploadPath('signer', [
+            'id' => $this->loadMissing('document')->document->id,
+            'signer' => $this->id,
+        ]);
     }
 }

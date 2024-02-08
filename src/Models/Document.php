@@ -2,12 +2,10 @@
 
 namespace NIIT\ESign\Models;
 
-use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Mail\Attachment;
 use NIIT\ESign\Concerns\HasAttachment;
 use NIIT\ESign\Enum\AttachmentType;
 use NIIT\ESign\Enum\DocumentStatus;
@@ -16,7 +14,7 @@ use NIIT\ESign\Enum\SendStatus;
 use NIIT\ESign\ESignFacade;
 use NIIT\ESign\Events\DocumentStatusChanged;
 
-class Document extends Model implements Attachable, HasLocalePreference
+class Document extends Model implements HasLocalePreference
 {
     use HasAttachment;
 
@@ -105,19 +103,6 @@ class Document extends Model implements Attachable, HasLocalePreference
             ->latest();
     }
 
-    public function toMailAttachment(): Attachment
-    {
-        return Attachment::fromStorageDisk(
-            /** @phpstan-ignore-next-line */
-            $this->disk, $this->path
-        )
-            ->as(
-                /** @phpstan-ignore-next-line */
-                $this->name
-            )
-            ->withMime('application/pdf');
-    }
-
     public function preferredLocale(): string
     {
         return 'en';
@@ -146,5 +131,25 @@ class Document extends Model implements Attachable, HasLocalePreference
         if ($this->notificationSequenceIsNot(NotificationSequence::SYNC)) {
             $signers->each(fn ($signer) => ESignFacade::sendSigningLink($signer, $this));
         }
+    }
+
+    /**
+     * @return array<string, string>|string
+     */
+    public function getSignedDocumentPath(bool $getBoth = false): array|string
+    {
+        $fileName = $this->loadMissing('document')->document->file_name;
+
+        $signedFileName = (
+            pathinfo($fileName, PATHINFO_FILENAME).
+            '_signed.'.
+            pathinfo($fileName, PATHINFO_EXTENSION)
+        );
+
+        $path = esignUploadPath('document', ['id' => $this->id]).$signedFileName;
+
+        return $getBoth
+            ? [$signedFileName, $path]
+            : $path;
     }
 }

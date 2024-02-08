@@ -85,4 +85,5 @@ return [
     'signed_with_msg' => '<p>Signed with <a href="'.route('esign.documents.index').'">ESign</a></p>',
     'redirecting_in_seconds' => 'Redirecting in :SECONDS: seconds!',
     'document_copy_sent' => 'Document copy sent successfully!',
+    'document_submitted_for_esign' => 'You are invited to submit a document',
 ];
