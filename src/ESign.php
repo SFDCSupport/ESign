@@ -28,9 +28,14 @@ class ESign
     /**
      * @return mixed|\Illuminate\Config\Repository
      */
-    public function config(array|null|string $key = null)
+    public function config(array|null|string $key = null, mixed $default = null)
     {
-        return config('esign'.($key ? '.'.$key : ''));
+        return config('esign'.($key ? '.'.$key : ''), $default);
+    }
+
+    public function signingHeaders(): array
+    {
+        return $this->config('signing_headers', []);
     }
 
     public function addMacros(): self

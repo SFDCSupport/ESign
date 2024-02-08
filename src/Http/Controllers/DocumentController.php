@@ -17,7 +17,7 @@ class DocumentController extends Controller
 {
     public function index(Request $request)
     {
-        return view('esign::documents.index');
+        return $this->view('esign::documents.index');
     }
 
     public function store(DocumentRequest $request)
@@ -51,7 +51,7 @@ class DocumentController extends Controller
             )->data,
         ];
 
-        return view('esign::documents.show', compact(
+        return $this->view('esign::documents.show', compact(
             'document',
             'formattedData',
         ));

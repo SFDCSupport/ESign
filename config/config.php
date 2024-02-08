@@ -25,4 +25,7 @@ return [
             'ContactInfo' => 'https://google.com',
         ],
     ],
+    'signing_headers' => [
+        'ESign' => 'XYZ',
+    ],
 ];

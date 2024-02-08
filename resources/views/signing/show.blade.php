@@ -14,13 +14,22 @@
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-0"
             >
                 <h4 class="h4">{{ $document->title }}</h4>
-                <x-esign::partials.button
-                    :value="__('esign::label.audit_log')"
-                    icon="clipboard-list"
-                    class="btn-sm btn-outline-secondary"
-                    data-bs-toggle="modal"
-                    data-bs-target="#audit_log_modal"
-                />
+                <div>
+                    <x-esign::partials.button
+                        :value="__('esign::label.download')"
+                        icon="download"
+                        class="btn-sm btn-outline-secondary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#signing_success_modal"
+                    />
+                    <x-esign::partials.button
+                        :value="__('esign::label.audit_log')"
+                        icon="clipboard-list"
+                        class="btn-sm btn-outline-secondary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#audit_log_modal"
+                    />
+                </div>
             </div>
         </div>
     </section>
@@ -49,7 +58,26 @@
     @include('esign::partials.renderer')
     @include('esign::partials.audit-log-modal', compact('document'))
 
+    <x-esign::modal id="signing_success">
+        @include('esign::signing.partials.success', compact('signedDocumentUrl'))
+        <x-slot name="footer">
+            <div class="w-100 d-flex justify-content-center">
+                <x-esign::partials.button
+                    class="btn-dark"
+                    :value="__('esign::label.close')"
+                    data-bs-dismiss="modal"
+                />
+            </div>
+        </x-slot>
+    </x-esign::modal>
+
     @pushonce('js')
-        <script></script>
+        <script>
+            $(() => {
+                $('button[data-bs-target="#signing_success_modal"]').trigger(
+                    'click',
+                );
+            });
+        </script>
     @endpushonce
 </x-esign::layout>

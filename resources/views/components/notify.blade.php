@@ -1,6 +1,7 @@
 <div>
     <div
         id="toastr"
+        style="z-index: 9999999"
         class="toast-container position-fixed bottom-0 end-0 p-3"
     ></div>
 

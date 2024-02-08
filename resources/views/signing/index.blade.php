@@ -75,6 +75,18 @@
     </div>
 
     @include('esign::partials.renderer')
+    <x-esign::modal
+        id="signing_success"
+        size="modal-fullscreen"
+        backdrop="static"
+        data-bs-keyboard="false"
+    >
+        <div
+            class="w-100 h-100 d-flex justify-content-center align-items-center"
+        >
+            @include('esign::signing.partials.success')
+        </div>
+    </x-esign::modal>
 
     @pushonce('footJs')
         <script src="{{ url('vendor/esign/js/jquery.datetimepicker.full.min.js') }}"></script>
@@ -224,21 +236,61 @@
                             data: formData,
                             contentType: false,
                             processData: false,
-                            headers: {
-                                'X-ESign': 'your-custom-header-value',
-                            },
+                            headers: @json(request()->signingHeaders()),
                             success: (r) => {
                                 if (r.status === 1) {
-                                    if (r.redirect) {
-                                        $(location).attr('href', r.redirect);
+                                    const signingSuccessModal = $(
+                                        '#signing_success_modal',
+                                    );
+
+                                    signingSuccessModal.modal('show');
+                                    signingSuccessModal
+                                        .find('.downloadBtn')
+                                        .attr(
+                                            'href',
+                                            r.downloadUrl ||
+                                                'javascript: void(0);',
+                                        );
+
+                                    if (blank(r.downloadUrl)) {
+                                        $(document).trigger('loader:show');
+
+                                        if (!blank(r.redirectUrl)) {
+                                            $(location).attr(
+                                                'href',
+                                                r.redirectUrl,
+                                            );
+                                        } else {
+                                            location.reload(true);
+                                        }
                                     } else {
-                                        location.reload(true);
+                                        const redirectTime = 60;
+                                        const metaRedirect = $(
+                                            '<meta http-equiv="refresh">',
+                                        );
+
+                                        if (!blank(r.redirectUrl)) {
+                                            metaRedirect.attr(
+                                                'content',
+                                                `${redirectTime};url=${r.redirectUrl}`,
+                                            );
+                                        } else {
+                                            metaRedirect.attr(
+                                                'content',
+                                                redirectTime,
+                                            );
+                                        }
+
+                                        $('head').append(metaRedirect);
+
+                                        toast(
+                                            'info',
+                                            `Redirecting in ${redirectTime} seconds!`,
+                                        );
                                     }
 
                                     return;
                                 }
-
-                                $(document).trigger('loader:hide');
 
                                 toast(
                                     'error',
@@ -246,9 +298,9 @@
                                 );
                             },
                             error: (x) => {
-                                $(document).trigger('loader:hide');
                                 toast('error', x.responseText);
                             },
+                            complete: () => $(document).trigger('loader:hide'),
                         }),
                     );
             };
@@ -485,30 +537,34 @@
                         });
                     });
 
-                signaturePad = new SignaturePad($('.signaturePad')[0], {
-                    penColor: 'rgb(0, 0, 0)',
-                    minWidth: 1,
-                    maxWidth: 2,
-                });
+                const signaturePadEle = $('.signaturePad');
 
-                signaturePad.addEventListener('endStroke', () => {
-                    $(document).trigger('signing-to-fabric', {
-                        eleType: 'signature_pad',
-                        id: $('#elementPanels .tab-pane.active').attr(
-                            'data-object-id',
-                        ),
-                        data: signaturePad.toDataURL(),
+                if (signaturePadEle.length > 0) {
+                    signaturePad = new SignaturePad(signaturePadEle[0], {
+                        penColor: 'rgb(0, 0, 0)',
+                        minWidth: 1,
+                        maxWidth: 2,
                     });
-                });
-                signaturePad.addEventListener('beginStroke', () => {
-                    console.log('beginStroke');
-                });
-                signaturePad.addEventListener('beforeUpdateStroke', () => {
-                    console.log('beforeUpdateStroke');
-                });
-                signaturePad.addEventListener('afterUpdateStroke', () => {
-                    console.log('afterUpdateStroke');
-                });
+
+                    signaturePad.addEventListener('endStroke', () => {
+                        $(document).trigger('signing-to-fabric', {
+                            eleType: 'signature_pad',
+                            id: $('#elementPanels .tab-pane.active').attr(
+                                'data-object-id',
+                            ),
+                            data: signaturePad.toDataURL(),
+                        });
+                    });
+                    signaturePad.addEventListener('beginStroke', () => {
+                        console.log('beginStroke');
+                    });
+                    signaturePad.addEventListener('beforeUpdateStroke', () => {
+                        console.log('beforeUpdateStroke');
+                    });
+                    signaturePad.addEventListener('afterUpdateStroke', () => {
+                        console.log('afterUpdateStroke');
+                    });
+                }
             });
         </script>
     @endpushonce

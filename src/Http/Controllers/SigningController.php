@@ -32,7 +32,7 @@ class SigningController extends Controller
             'signers' => SignerResource::collection([$signer]),
         ];
 
-        return view('esign::signing.index', compact(
+        return $this->view('esign::signing.index', compact(
             'signer',
             'document',
             'formattedData',
@@ -152,9 +152,11 @@ class SigningController extends Controller
 
         $documentContent = $pdf->Output('S', $fileName);
         $storage->put(
-            $signerUploadPath.'/'.$fileName,
+            ($documentPath = $signerUploadPath.'/'.$fileName),
             $documentContent
         );
+
+        $downloadUrl = FilepondAction::loadFile($documentPath, 'view');
 
         SigningStatusChanged::dispatch(
             $loadedSigner->document,
@@ -164,7 +166,8 @@ class SigningController extends Controller
 
         return $this->jsonResponse([
             'status' => 1,
-            'redirect' => $signer->signingUrl().'/show',
+            'downloadUrl' => $downloadUrl,
+            'redirectUrl' => $signer->signingUrl().'/show',
         ])->notify(__('esign::label.signing_success_message'));
     }
 
@@ -185,7 +188,7 @@ class SigningController extends Controller
         $signedDocumentUrl = FilepondAction::loadFile($signedDocument, 'view');
         $formattedData = [];
 
-        return view('esign::signing.show', compact(
+        return $this->view('esign::signing.show', compact(
             'signedDocument',
             'signedDocumentUrl',
             'signer',
