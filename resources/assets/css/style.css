@@ -98,13 +98,13 @@ body{
 }
 
 .document-template-cards.status-draft{
-  background-image: linear-gradient(71.04deg, rgb(174 115 34) -6.92%, rgb(255 195 112) 109.43%);
-  border-color: #ffc574;
+  background-image: linear-gradient(71.04deg, rgb(174 115 34) -6.92%, rgb(255 221 173) 109.43%);
+    border-color: #ffc574;
 }
 
 .document-template-cards.status-in_progress{
-  background-image: linear-gradient(71.04deg, #0c398b -6.92%, rgb(62, 118, 216) 109.43%);
-  border-color: #0c398b;
+  background-image: linear-gradient(71.04deg, #0c398b -6.92%, rgb(154 191 255) 109.43%);
+  border-color: #c4d1e9;
 }
 
 .document-template-cards.status-completed{
@@ -113,8 +113,8 @@ body{
 }
 
 .document-template-cards.status-archived{
-  background-image: linear-gradient(71.04deg, rgb(174 115 34) -6.92%, rgb(255 195 112) 109.43%);
-  border-color: #ffc574;
+  background-image: linear-gradient(71.04deg, #767676 -6.92%, #e3e3e3 109.43%);
+  border-color: #d3d3d3;
 }
 
 .document-template-cards:hover{
