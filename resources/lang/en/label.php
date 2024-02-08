@@ -86,4 +86,5 @@ return [
     'redirecting_in_seconds' => 'Redirecting in :SECONDS: seconds!',
     'document_copy_sent' => 'Document copy sent successfully!',
     'document_submitted_for_esign' => 'You are invited to submit a document',
+    'send_copy_mail_subject' => 'Your document copy',
 ];

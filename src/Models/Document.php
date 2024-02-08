@@ -2,6 +2,7 @@
 
 namespace NIIT\ESign\Models;
 
+use App\Actions\FilepondAction;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -151,5 +152,10 @@ class Document extends Model implements HasLocalePreference
         return $getBoth
             ? [$signedFileName, $path]
             : $path;
+    }
+
+    public function getSignedDocumentUrl(): string
+    {
+        return FilepondAction::loadFile($this->getSignedDocumentPath(), 'view');
     }
 }

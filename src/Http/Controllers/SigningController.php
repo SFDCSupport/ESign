@@ -185,7 +185,7 @@ class SigningController extends Controller
             404
         );
 
-        $signedDocumentUrl = FilepondAction::loadFile($signedDocument, 'view');
+        $signedDocumentUrl = $signer->getSignedDocumentUrl();
         $formattedData = [];
 
         return $this->view('esign::signing.show', compact(

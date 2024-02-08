@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 use NIIT\ESign\Enum\ReadStatus;
 use NIIT\ESign\Enum\SendStatus;
 use NIIT\ESign\Enum\SigningStatus;
-use NIIT\ESign\Mail\Signer\SigningCompletedMail;
+use NIIT\ESign\Mail\Signer\SendCopyMail;
 
 class Signer extends Model implements Attachable
 {
@@ -108,7 +108,7 @@ class Signer extends Model implements Attachable
 
     public function sendCopy(): bool
     {
-        $mailResponse = Mail::to($this->email)->send(new SigningCompletedMail(
+        $mailResponse = Mail::to($this->email)->send(new SendCopyMail(
             $this->loadMissing('document')->document,
             $this
         ));
@@ -127,6 +127,11 @@ class Signer extends Model implements Attachable
     public function getSignedDocumentPath(): string
     {
         return $this->getUploadPath().'/'.$this->document_id.'.pdf';
+    }
+
+    public function getSignedDocumentUrl(): string
+    {
+        return FilepondAction::loadFile($this->getSignedDocumentPath(), 'view');
     }
 
     public function getUploadPath(): string

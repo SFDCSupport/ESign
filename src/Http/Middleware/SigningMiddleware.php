@@ -15,23 +15,38 @@ class SigningMiddleware
     {
         $signer = $request->signer();
         $loadedModel = $request->signer()->loadMissing('document');
-        $notShowRoute = ! $request->routeIs('esign.signing.show');
         $document = $loadedModel->document;
 
+        /**
+         * abort_if: signer not exists
+         * abort_if: document status is not draft | completed
+         */
         abort_if(
             ! $signer ||
-            $document->statusIs(DocumentStatus::DRAFT) ||
-            ! ($notShowRoute && $document->statusIsNot(DocumentStatus::IN_PROGRESS)),
+            ! $document->statusIs([
+                DocumentStatus::COMPLETED,
+                DocumentStatus::IN_PROGRESS,
+            ]),
+            404);
+
+        /**
+         * abort_if: route is signing index with document without in progress state
+         */
+        abort_if(
+            $document->statusIsNot(DocumentStatus::IN_PROGRESS) &&
+            ($isIndexRoute = $request->routeIs('esign.signing.index')),
             404
         );
 
-        $isSigned = ($signer->signingStatusIs(SigningStatus::SIGNED));
+        $isSigned = $signer->signingStatusIs(SigningStatus::SIGNED);
 
-        if (! $notShowRoute && ! $isSigned) {
-            return redirect()->route('esign.signing.index', [
-                'signing_url' => $signer->url,
-            ]);
-        }
+        /**
+         * abort_if: route is signing index with signed signer
+         */
+        abort_if(
+            $request->routeIs('esign.signing.show') && ! $isSigned,
+            404
+        );
 
         Request::macro('signingHeaders', fn () => ESignFacade::signingHeaders());
 
@@ -58,14 +73,11 @@ class SigningMiddleware
         }
 
         if (
-            $signer->signingStatusIs(SigningStatus::SIGNED) && $notShowRoute
+            $signer->signingStatusIs(SigningStatus::SIGNED) && $isIndexRoute
         ) {
             return redirect()->route('esign.signing.show', [
                 'signing_url' => $signer->url,
             ]);
-            //            return $disk->download(
-            //                $signedDocument
-            //            );
         }
 
         return $next($request);
