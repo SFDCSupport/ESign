@@ -12,13 +12,17 @@
 @php($id = ($id ?? \Illuminate\Support\Str::random(12)).'_modal')
 
 <div
-    class="modal fade"
     @if ($backdrop) data-bs-backdrop="{{ $backdrop }}" @endif
     id="{{ $id }}"
     tabindex="-1"
     role="dialog"
     {{ $title ? 'aria-labelledby="'.$title.'"' : '' }}
     aria-hidden="true"
+    {{
+        $attributes->merge([
+            'class' => 'modal fade',
+        ])
+    }}
 >
     <div class="modal-dialog {{ $size }}" role="{{ $role }}">
         <div class="modal-content">
@@ -42,9 +46,11 @@
             <div class="modal-body">
                 {{ $body ?? $slot ?? '' }}
             </div>
-            <div class="modal-footer">
-                {{ $footer ?? '' }}
-            </div>
+            @if ($footer)
+                <div class="modal-footer">
+                    {{ $footer }}
+                </div>
+            @endif
         </div>
     </div>
 </div>

@@ -4,8 +4,10 @@ namespace NIIT\ESign\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\SigningStatus;
+use NIIT\ESign\ESignFacade;
 
 class SigningMiddleware
 {
@@ -31,11 +33,29 @@ class SigningMiddleware
             ]);
         }
 
-        abort_if(
-            $request->expectsJson() && ! $request->headers->has('X-ESign'),
-            403,
-            'Forbidden'
-        );
+        Request::macro('signingHeaders', fn () => ESignFacade::signingHeaders());
+
+        if ($request->expectsJson()) {
+            Collection::macro('checkHeaders', function ($request) {
+                $hasAllHeaders = true;
+
+                $checkHeaders = function ($header, $value) use ($request, &$hasAllHeaders) {
+                    $hasAllHeaders = $hasAllHeaders && $request->headers->contains($header, $value);
+                };
+
+                $this->each(function ($value, $header) use ($checkHeaders) {
+                    $checkHeaders($header, $value);
+                });
+
+                return $hasAllHeaders;
+            });
+
+            abort_if(
+                ! collect($request->signingHeaders())->checkHeaders($request),
+                403,
+                'Forbidden'
+            );
+        }
 
         if (
             $signer->signingStatusIs(SigningStatus::SIGNED) && $notShowRoute

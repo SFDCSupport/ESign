@@ -152,9 +152,11 @@ class SigningController extends Controller
 
         $documentContent = $pdf->Output('S', $fileName);
         $storage->put(
-            $signerUploadPath.'/'.$fileName,
+            ($documentPath = $signerUploadPath.'/'.$fileName),
             $documentContent
         );
+
+        $downloadUrl = FilepondAction::loadFile($documentPath, 'view');
 
         SigningStatusChanged::dispatch(
             $loadedSigner->document,
@@ -164,7 +166,8 @@ class SigningController extends Controller
 
         return $this->jsonResponse([
             'status' => 1,
-            'redirect' => $signer->signingUrl().'/show',
+            'downloadUrl' => $downloadUrl,
+            'redirectUrl' => $signer->signingUrl().'/show',
         ])->notify(__('esign::label.signing_success_message'));
     }
 
