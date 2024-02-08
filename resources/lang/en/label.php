@@ -83,4 +83,6 @@ return [
     'send_copy_via_email' => 'Send copy via email',
     'download' => 'Download',
     'signed_with_msg' => '<p>Signed with <a href="'.route('esign.documents.index').'">ESign</a></p>',
+    'redirecting_in_seconds' => 'Redirecting in :SECONDS: seconds!',
+    'document_copy_sent' => 'Document copy sent successfully!',
 ];

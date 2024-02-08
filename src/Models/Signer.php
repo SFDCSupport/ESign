@@ -2,15 +2,20 @@
 
 namespace NIIT\ESign\Models;
 
+use App\Actions\FilepondAction;
+use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Mail\Attachment as MailAttachment;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use NIIT\ESign\Enum\ReadStatus;
 use NIIT\ESign\Enum\SendStatus;
 use NIIT\ESign\Enum\SigningStatus;
+use NIIT\ESign\Mail\Signer\SigningCompletedMail;
 
-class Signer extends Model
+class Signer extends Model implements Attachable
 {
     /** @var string */
     protected $table = 'e_signers';
@@ -99,5 +104,23 @@ class Signer extends Model
     public function signingUrl(): string
     {
         return route('esign.signing.index', $this->url);
+    }
+
+    public function sendCopy(): bool
+    {
+        $mailResponse = Mail::to($this->email)->send(new SigningCompletedMail(
+            $this->loadMissing('document')->document,
+            $this
+        ));
+
+        return (bool) $mailResponse;
+    }
+
+    public function toMailAttachment(): MailAttachment
+    {
+        return MailAttachment::fromStorageDisk(
+            FilepondAction::getDisk(true),
+            signerUploadPath($this).'/'.$this->document_id.'.pdf'
+        );
     }
 }

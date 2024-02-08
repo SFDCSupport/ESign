@@ -1,7 +1,6 @@
-<div>
+<div style="z-index: 9999999">
     <div
         id="toastr"
-        style="z-index: 9999999"
         class="toast-container position-fixed bottom-0 end-0 p-3"
     ></div>
 
@@ -11,6 +10,7 @@
             role="alert"
             aria-live="assertive"
             aria-atomic="true"
+            data-auto-hide="true"
         >
             <div class="toast-body">__BODY</div>
         </div>
@@ -23,6 +23,7 @@
                 case 'warning':
                     return 'danger';
                 case 'info':
+                    return 'info';
                 case 'success':
                 default:
                     return 'success';
@@ -30,16 +31,28 @@
         };
 
         $(function () {
-            $(document).on('click', '#toastr .toast', function (e) {
-                e.stopImmediatePropagation();
+            $(document).on(
+                'click',
+                '#toastr .toast[data-auto-hide="true"]',
+                function (e) {
+                    e.stopImmediatePropagation();
 
-                $(this).remove();
-            });
+                    $(this).remove();
+                },
+            );
         });
 
-        function toast(status, message) {
-            let toastContainer = $('#toastr');
+        function toast(
+            status,
+            message,
+            autoHide = {{ config('esign.notify_timeout') }},
+        ) {
+            const toastContainer = $('#toastr');
             let toastr = $('#toastTemplate').html();
+
+            if (!autoHide) {
+                toastr = toastr.replace('data-auto-hide="true"', '');
+            }
 
             toastContainer.append(
                 toastr
@@ -47,10 +60,10 @@
                     .replace('__BODY', message),
             );
 
-            if ((toastr = $('#toastr .toast')).length > 0) {
+            if (autoHide && (toastr = $('#toastr .toast')).length > 0) {
                 setTimeout(() => {
                     toastr.remove();
-                }, {{ config('esign.notify_timeout') }});
+                }, autoHide);
             }
         }
 

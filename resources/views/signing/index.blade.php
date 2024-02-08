@@ -143,9 +143,24 @@
                 </p>`;
             };
 
+            const startCountdown = (countdownDiv, seconds, msg) => {
+                const interval = setInterval(function () {
+                    countdownDiv.text(msg.replace(':SECONDS:', seconds));
+
+                    if (seconds <= 0) {
+                        clearInterval(interval);
+                    } else {
+                        seconds--;
+                    }
+                }, 1000);
+            };
+
             const saveBtnAction = (status = 'save') => {
                 if (undefined === canvasEditions) {
-                    toast('error', 'Something went wrong!');
+                    toast(
+                        'error',
+                        '{{ __('esign::validations.something_went_wrong') }}',
+                    );
 
                     return;
                 }
@@ -285,7 +300,14 @@
 
                                         toast(
                                             'info',
-                                            `Redirecting in ${redirectTime} seconds!`,
+                                            `<div id="countdown">Redirecting in ${redirectTime} seconds!</div>`,
+                                            false,
+                                        );
+
+                                        startCountdown(
+                                            $('.toast-body #countdown'),
+                                            redirectTime,
+                                            '{{ __('esign::label.redirecting_in_seconds') }}',
                                         );
                                     }
 
@@ -294,12 +316,11 @@
 
                                 toast(
                                     'error',
-                                    r.msg ?? 'Something went wrong!',
+                                    r.msg ??
+                                        '{{ __('esign::validations.something_went_wrong') }}',
                                 );
                             },
-                            error: (x) => {
-                                toast('error', x.responseText);
-                            },
+                            error: (x) => toast('error', x.responseText),
                             complete: () => $(document).trigger('loader:hide'),
                         }),
                     );

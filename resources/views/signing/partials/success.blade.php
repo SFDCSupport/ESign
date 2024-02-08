@@ -10,7 +10,8 @@
             <div class="Submissions-btns-grp mt-3 mb-3">
                 <a
                     href="javascript: void(0);"
-                    class="btn btn-outline-dark sendCopyViaEmailBtn"
+                    class="btn btn-outline-dark"
+                    onclick="sendCopyViaEmail()"
                 >
                     <em class="far fa-envelope"></em>
                     {{ __('esign::label.send_copy_via_email') }}
@@ -27,4 +28,32 @@
             {!! __('esign::label.signed_with_msg') !!}
         </div>
     </div>
+
+    <script>
+        const sendCopyViaEmail = () => {
+            $(document).trigger('loader:show');
+
+            $.ajax({
+                url: '{{ route('esign.signing.send-copy', ['signing_url' => $signer->url]) }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                },
+                headers: @json(request()->signingHeaders()),
+                success: (r) => {
+                    const isDone = r.status === 1;
+
+                    toast(
+                        isDone ? 'success' : 'error',
+                        r.msg ??
+                            (isDone
+                                ? '{{ __('esign::label.document_copy_sent') }}'
+                                : '{{ __('esign::validations.something_went_wrong') }}'),
+                    );
+                },
+                error: (x) => toast('error', x.responseText),
+                complete: () => $(document).trigger('loader:hide'),
+            });
+        };
+    </script>
 </section>
