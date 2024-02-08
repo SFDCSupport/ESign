@@ -3,6 +3,7 @@
 namespace NIIT\ESign\Concerns;
 
 use App\Models\User;
+use Illuminate\Support\Str;
 use NIIT\ESign\Models\Audit;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
@@ -73,7 +74,7 @@ trait Auditable
             static fn ($q) => $q->where($conditions)
         )->latest()->get()
             ->map(fn ($a) => [
-                'executor' => '',
+                'executor' => Str::random(rand(3, 12)),
                 'action' => $a->event,
                 'time' => $a->created_at->format('D, d M Y H:i:s e'),
             ]);

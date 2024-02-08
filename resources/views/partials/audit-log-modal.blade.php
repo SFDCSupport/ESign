@@ -30,7 +30,6 @@
                 {{ __('esign::label.print') }}
             </x-esign::partials.button>
             <x-esign::partials.button
-                icon="close"
                 data-bs-dismiss="modal"
                 class="btn-sm btn-primary"
             >
