@@ -47,7 +47,11 @@
         }
     },
     "scripts": {
-        "format": "vendor/bin/pint"
+        "format": "vendor/bin/pint",
+        "lint": "vendor/bin/duster lint --dirty",
+        "lint-all": "vendor/bin/duster lint",
+        "fix": "vendor/bin/duster fix --dirty",
+        "fix-all": "vendor/bin/duster fix"
     },
     "config": {
         "sort-packages": true,
