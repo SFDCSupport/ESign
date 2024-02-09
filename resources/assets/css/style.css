@@ -273,6 +273,7 @@ body{
   padding: 0px;
   text-align: center;
   border-radius: 100px;
+  color: #555 !important;
 }
 
 .space-y-inner a:hover{
@@ -1008,12 +1009,88 @@ padding: 3px;
   right: 0;
   top: 30px;
   max-width: 340px;
+  -webkit-animation: slide_up_down 1.7s ease-in-out infinite alternate both;
+  animation: slide_up_down 1.7s ease-in-out infinite alternate both;
 }
 
 .banner-home2 {
   right: inherit;
   left: 0;
   max-width: 260px;
+  -webkit-filter: drop-shadow(-10px 10px 20px #084cba77);
+    filter: drop-shadow(-10px 10px 20px #084cba77);
+    -webkit-animation: scale_up_down 1s ease-in-out infinite alternate both;
+    animation: scale_up_down 1s ease-in-out infinite alternate both;
+}
+
+/**
+* ----------------------------------------
+* animation scale_up_down
+* ----------------------------------------
+*/
+.scale_up_down {
+ -webkit-animation: scale_up_down 1s ease-in-out infinite alternate both;
+ animation: scale_up_down 1s ease-in-out infinite alternate both;
+}
+
+/* ------- */
+@-webkit-keyframes scale_up_down {
+ 0% {
+   -webkit-transform: scale(0.85);
+   transform: scale(0.65);
+ }
+
+ 100% {
+   -webkit-transform: scale(.85);
+   transform: scale(.85);
+ }
+}
+
+@keyframes scale_up_down {
+ 0% {
+   -webkit-transform: scale(0.85);
+   transform: scale(0.85);
+ }
+
+ 100% {
+   -webkit-transform: scale(.9);
+   transform: scale(.9);
+ }
+}
+
+/**
+ * ----------------------------------------
+ * animation slide_up_down
+ * ----------------------------------------
+*/
+.slide_up_down {
+  -webkit-animation: slide_up_down 1.7s ease-in-out infinite alternate both;
+  animation: slide_up_down 1.7s ease-in-out infinite alternate both;
+}
+
+/* ------- */
+@-webkit-keyframes slide_up_down {
+  0% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+
+  100% {
+    -webkit-transform: translateY(-10px);
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes slide_up_down {
+  0% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+
+  100% {
+    -webkit-transform: translateY(-10px);
+    transform: translateY(-10px);
+  }
 }
 
 @media screen and (max-width: 1360px) {
@@ -1098,6 +1175,10 @@ padding: 3px;
   max-width: 60px;
   margin: 0px auto 14px;
   display: block;
+  -webkit-filter: drop-shadow(-4px 3px 54px #ff7d7dc9);
+    filter: drop-shadow(-4px 3px 54px #ff7d7dc9);
+    -webkit-animation: scale_up_down 1s ease-in-out infinite alternate both;
+    animation: scale_up_down 1s ease-in-out infinite alternate both;
 }
 
 .header-logo{
