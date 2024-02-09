@@ -49,18 +49,19 @@
                         </form>
                     @endif
 
-                    <x-esign::partials.button
-                        icon="link"
-                        class="btn-sm btn-outline-secondary"
-                        onclick="copyToClipboard('{{ $signer->signingUrl() }}', '{{ __('esign::label.link') }}')"
-                        :value="__('esign::label.copy_link')"
-                    />
-                    @if ($signer->signingStatusIs(\NIIT\ESign\Enum\SigningStatus::SIGNED))
+                    @if ($signer->signingStatusIs(\NIIT\ESign\Enum\SigningStatus::NOT_SIGNED))
+                        <x-esign::partials.button
+                            icon="link"
+                            class="btn-sm btn-outline-secondary"
+                            onclick="copyToClipboard('{{ $signer->signingUrl() }}', '{{ __('esign::label.link') }}')"
+                            :value="__('esign::label.copy_link')"
+                        />
+                    @elseif ($signer->signingStatusIs(\NIIT\ESign\Enum\SigningStatus::SIGNED))
                         <x-esign::partials.button
                             icon="eye"
                             class="btn-sm btn-outline-secondary"
                             :value="__('esign::label.view')"
-                            :redirect="
+                            :redirectUrl="
                                 route('esign.documents.submissions.show', [
                                     'document' => $document,
                                     'submission' => $signer->submissions,

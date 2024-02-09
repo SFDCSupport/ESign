@@ -75,6 +75,7 @@ class SigningController extends Controller
             }
 
             return collect([
+                'signer_element_id' => $d['id'],
                 'pageIndex' => $d['page_index'],
                 'pageWidth' => $d['page_width'],
                 'pageHeight' => $d['page_height'],
@@ -157,6 +158,17 @@ class SigningController extends Controller
         );
 
         $downloadUrl = FilepondAction::loadFile($documentPath, 'view');
+        $createOrUpdateSubmissions = static function ($data, $elementId) use ($loadedSigner) {
+            return $loadedSigner->submissions()->updateOrCreate([
+                'signer_element_id' => $elementId,
+                'signer_id' => $loadedSigner->id,
+                'document_id' => $loadedSigner->document->id,
+            ], [
+                'data' => $data,
+            ]);
+        };
+
+        $data->pluck('data', 'signer_element_id')->each(fn ($elementId, $data) => $createOrUpdateSubmissions($elementId, $data));
 
         SigningStatusChanged::dispatch(
             $loadedSigner->document,

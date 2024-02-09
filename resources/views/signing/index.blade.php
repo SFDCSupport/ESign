@@ -96,13 +96,13 @@
     @pushonce('js')
         <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?4.1.7"></script>
         <script>
-            const signerData = @json($signer->elements);
             const labels = {
                 next: '{{ __('esign::label.next') }}',
                 previous: '{{ __('esign::label.previous') }}',
                 submit: '{{ __('esign::label.submit') }}',
             };
             let signaturePad = null;
+            let signerData = [];
 
             const getSigningElementByType = (
                 id,
@@ -134,8 +134,10 @@
                     </div>`;
                 }
 
+                const $type = type === 'date' ? 'text' : type;
+
                 return `<p>
-                  <input type="${type}" id="id-${id}-element"
+                  <input type="${$type}" id="id-${id}-element"
                     class="form-control form-control-lg signingElement"
                     placeholder="${label ?? type}" data-type="${type}"
                     ${required ? 'required' : ''}
@@ -172,12 +174,11 @@
                 $.when(
                     canvasEditions.forEach((canvasEdition) => {
                         canvasEdition.forEachObject((obj, index) => {
-                            console.log(obj);
                             if (
                                 obj instanceof fabric.Text ||
                                 obj instanceof fabric.IText
                             ) {
-                                const element = $(`#id-e_${obj.uuid}-element`);
+                                const element = $(`#id-${obj.uuid}-element`);
 
                                 formData.append(
                                     `element[${index}][data]`,
@@ -336,59 +337,61 @@
                     nextBtn: $('#nextSigningBtn'),
                 };
 
-                const signerDataCollection = collect(signerData ?? []);
+                $(document).on('elements-added-to-canvas', () => {
+                    signerData = collect(loadedData.signers)
+                        .pluck('elements')
+                        .sortBy('position')
+                        .flatten(1);
 
-                $.when(
-                    signerDataCollection.each((element, i) => {
-                        console.log(element);
-                        const isFirst = i === 0;
-                        const id = generateUniqueId('e_');
-                        let step = '';
+                    $.when(
+                        signerData.each((element, i) => {
+                            const isFirst = i === 0;
+                            let step = '';
 
-                        if (isFirst) {
-                            step = 'first';
-                        }
+                            if (isFirst) {
+                                step = 'first';
+                            }
 
-                        if (i + 1 === collect(signerData ?? []).count()) {
-                            step = 'last';
-                        }
+                            if (i + 1 === signerElements.count()) {
+                                step = 'last';
+                            }
 
-                        $(`<div class="tab-pane fade ${isFirst ? 'active show' : ''}"
-                        id="${id}-panel" role="tabpanel"
-                        aria-labelledby="${id}-tab"
-                        data-object-id="${element.id}"
-                        data-element-type="${element.type}"
-                        ${step ? 'data-step="' + step + '"' : ''}>
-                        <h2>${convertToTitleString(element.text ?? element.type)}</h2>
-                        ${getSigningElementByType(id, element.type, element.is_required, element.text)}
-                    </div>`).appendTo('#elementPanels');
+                            $(`<div class="tab-pane fade ${isFirst ? 'active show' : ''}"
+                                id="${element.uuid}-panel" role="tabpanel"
+                                aria-labelledby="${element.uuid}-tab"
+                                data-object-id="${element.id}"
+                                data-element-type="${element.type}"
+                                ${step ? 'data-step="' + step + '"' : ''}>
+                                <h2>${convertToTitleString(element.text ?? element.eleType)}</h2>
+                                ${getSigningElementByType(element.uuid, element.eleType, element.is_required, element.text)}
+                            </div>`).appendTo('#elementPanels');
 
-                        $(`<button class="nav-link ${isFirst ? 'active' : ''} "
-                        id="${id}-tab" data-bs-toggle="tab"
-                        data-bs-target="#${id}-panel"
-                        aria-controls="${id}-panel"
-                        aria-selected="${isFirst ? 'true' : 'false'}"
-                        type="button" role="tab"
-                        ${step ? 'data-step="' + step + '"' : ''}>
-                        <span></span>
-                    </button>`).appendTo('#elementTabs');
-                    }),
-                ).then(() => {
-                    $('input[type="date"]').datetimepicker({
-                        timepicker: false,
-                        inline: true,
-                        format: 'd-M-Y',
-                        scrollInput: false,
-                        validateOnBlur: false,
-                        step: 30,
+                            $(`<button class="nav-link ${isFirst ? 'active' : ''} "
+                                id="${element.uuid}-tab" data-bs-toggle="tab"
+                                data-bs-target="#${element.uuid}-panel"
+                                aria-controls="${element.uuid}-panel"
+                                aria-selected="${isFirst ? 'true' : 'false'}"
+                                type="button" role="tab"
+                                ${step ? 'data-step="' + step + '"' : ''}>
+                                <span></span>
+                            </button>`).appendTo('#elementTabs');
+                        }),
+                    ).then(() => {
+                        $('input[data-type="date"]').datetimepicker({
+                            timepicker: false,
+                            format: 'd-M-Y',
+                            scrollInput: false,
+                            validateOnBlur: false,
+                            step: 30,
+                        });
                     });
-                });
 
-                if (signerDataCollection.count() === 1) {
-                    eles.nextBtn
-                        .attr('data-action', 'submit')
-                        .text(labels.submit);
-                }
+                    if (signerData.count() === 1) {
+                        eles.nextBtn
+                            .attr('data-action', 'submit')
+                            .text(labels.submit);
+                    }
+                });
 
                 $(document)
                     .on(
