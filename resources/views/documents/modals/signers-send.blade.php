@@ -21,11 +21,11 @@
                         <input
                             class="form-check-input"
                             type="checkbox"
-                            name="send_mail"
-                            id="send_mail"
+                            name="notification_sequence"
+                            id="preserve_order"
                         />
-                        <label class="form-check-label" for="send_mail">
-                            {{ __('esign::label.send_emails') }}
+                        <label class="form-check-label" for="preserve_order">
+                            {{ __('esign::label.preserve_order') }}
                         </label>
                     </div>
                 </div>
@@ -73,19 +73,6 @@
                             ></textarea>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-sm-12">
-                <div class="form-check mb-2">
-                    <input
-                        class="form-check-input"
-                        type="checkbox"
-                        name="notification_sequence"
-                        id="preserve_order"
-                    />
-                    <label class="form-check-label" for="preserve_order">
-                        {{ __('esign::label.preserve_order') }}
-                    </label>
                 </div>
             </div>
         </form>
@@ -176,6 +163,13 @@
                                 .replace(/__INDEX/gi, s.position ?? i + 1),
                         );
                     });
+
+                signersForm
+                    .find('input#preserve_order')
+                    .prop(
+                        'checked',
+                        loadedData?.notification_sequence === 'sync',
+                    );
             })
             .on('click', '#signersSaveBtn,#signersSendBtn', function () {
                 const _t = $(this);
@@ -201,10 +195,6 @@
                     });
                 });
 
-                const send_mail = signersForm
-                    .find('input[name="send_mail"]')
-                    .is(':checked');
-
                 const notification_sequence = signersForm
                     .find('input[name="notification_sequence"]')
                     .is(':checked')
@@ -213,7 +203,6 @@
 
                 const obj = {
                     from: 'signersSend',
-                    send_mail: send_mail,
                     notification_sequence: notification_sequence,
                 };
 

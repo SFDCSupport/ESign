@@ -21,7 +21,7 @@ class Heartbeat
             return $response;
         }
 
-        $timestamp = now();
+        $timestamp = now()->format('YmdHms');
         $heartbeatRoute = route('esign.heartbeat');
 
         $javascriptCode = <<<JS

@@ -88,4 +88,7 @@ return [
     'document_submitted_for_esign' => 'You are invited to submit a document',
     'send_copy_mail_subject' => 'Your document copy',
     'all' => 'All',
+    'success' => 'Success',
+    'signed_by_all' => 'Signed by all',
+    'clear_signature' => 'Clear signature',
 ];
