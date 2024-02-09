@@ -53,7 +53,7 @@
             </fieldset>
         </div>
         <div class="container">
-            <div wire:loading>
+            <div class="w-100" wire:loading>
                 <div
                     class="d-flex justify-content-center align-items-center text-center"
                 >
