@@ -22,7 +22,7 @@
                         @foreach (\NIIT\ESign\Enum\DocumentStatus::options() as $key => $label)
                             <a
                                 href="javascript: void(0);"
-                                class="filter-link @if($filter === $key) active @endif"
+                                class="filter-link @if ($filter === $key) active @endif"
                                 wire:click="setFilter('{{ $key }}')"
                                 wire:loading.attr="disabled"
                             >

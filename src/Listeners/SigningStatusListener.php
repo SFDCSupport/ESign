@@ -53,7 +53,6 @@ class SigningStatusListener
             }
         } else {
             if (count($signers) > 0) {
-                ds($signers)->label('signers');
                 foreach ($signers as $signer) {
                     ESignFacade::sendSigningLink($signer, $document);
                 }

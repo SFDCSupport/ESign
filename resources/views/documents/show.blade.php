@@ -33,7 +33,7 @@
                     </a>
                 </div>
                 <div
-                    class="btn-toolbar mb-2 mb-md-0 @if(!$documentExists) d-none @endif"
+                    class="btn-toolbar mb-2 mb-md-0 @if (!$documentExists) d-none @endif"
                 >
                     <div class="btn-group me-2">
                         <x-esign::partials.button
@@ -59,7 +59,7 @@
     <div class="container-fluid">
         <div class="row">
             <div
-                class="col-sm-2 dark-grey-bg @if(!$documentExists) d-none @endif"
+                class="col-sm-2 dark-grey-bg @if (!$documentExists) d-none @endif"
             >
                 <div class="add-doc-sec">
                     <div class="text-center mb-2">
@@ -94,7 +94,7 @@
             </div>
 
             <main
-                class="@if(!$documentExists) col-10 @else col-md-7 ms-sm-auto col-lg-7 px-md-0 @endif"
+                class="@if (!$documentExists) col-10 @else col-md-7 ms-sm-auto col-lg-7 px-md-0 @endif"
             >
                 @if ($documentExists)
                     <div
@@ -116,7 +116,7 @@
 
             <div
                 id="recipientsContainer"
-                class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary @if(!$documentExists) d-none @endif"
+                class="sidebar border border-right col-md-3 col-lg-3 p-0 bg-body-tertiary @if (!$documentExists) d-none @endif"
             >
                 <div
                     class="offcanvas-md offcanvas-end bg-body-tertiary"

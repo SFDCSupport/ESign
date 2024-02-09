@@ -1,5 +1,8 @@
 <?php
 
+use App\Actions\FilepondAction;
+use App\Helper\Placeholders;
+
 if (! function_exists('splitLineBreak')) {
     function splitLineBreak(string $value): array|false
     {
@@ -17,14 +20,14 @@ if (! function_exists('splitLineBreakWithComma')) {
 if (! function_exists('esignUploadPath')) {
     function esignUploadPath(string $key, array $data = []): ?string
     {
-        $path = \App\Actions\FilepondAction::getDiskPath(config("esign.upload.{$key}"));
+        $path = FilepondAction::getDiskPath(config("esign.upload.{$key}"));
 
         if (blank($path)) {
             return null;
         }
 
         if (! blank($data)) {
-            $path = (new \App\Helper\Placeholders)->parse($path, $data);
+            $path = (new Placeholders)->parse($path, $data);
         }
 
         return $path;

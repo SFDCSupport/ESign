@@ -11,10 +11,8 @@ use Symfony\Component\Mime\Email;
 
 class SignedByAllMail extends Mailable
 {
-    public function __construct(
-        public Document $document,
-        public ?string $signedDocumentPath = null
-    ) {
+    public function __construct(public Document $document, public ?string $signedDocumentPath = null)
+    {
     }
 
     public function content(): Content
@@ -47,9 +45,9 @@ class SignedByAllMail extends Mailable
         return [
             Attachment::fromStorageDisk(
                 $attachment->disk ?? FilepondAction::getDisk(true),
-                $this->signedDocumentPath ?? $this->document->getSignedDocumentPath()
+                ($path = $this->signedDocumentPath ?? $this->document->getSignedDocumentPath())
             )->as(
-                $this->document->title.'.'.$attachment->extension
+                $this->document->title.'.'.($attachment->extension ?? pathinfo($path, PATHINFO_EXTENSION))
             )->withMime(
                 'application/pdf'
             ),

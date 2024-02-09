@@ -22,17 +22,6 @@ class SignerElementObserver extends Observer
         }
     }
 
-    private function missingRequiredFields(Element $element, array $fields): bool
-    {
-        foreach ($fields as $field) {
-            if (blank($element->$field)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public function created(Element $element): void
     {
         $signer = $this->getRelations($element);
@@ -43,11 +32,6 @@ class SignerElementObserver extends Observer
             signer: $signer,
             element: $element
         );
-    }
-
-    protected function getRelations(Element $element): Signer
-    {
-        return $element->loadMissing('signer.document')->signer;
     }
 
     public function updated(Element $element): void
@@ -104,5 +88,21 @@ class SignerElementObserver extends Observer
             signer: $signer,
             element: $element
         );
+    }
+
+    protected function getRelations(Element $element): Signer
+    {
+        return $element->loadMissing('signer.document')->signer;
+    }
+
+    private function missingRequiredFields(Element $element, array $fields): bool
+    {
+        foreach ($fields as $field) {
+            if (blank($element->$field)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

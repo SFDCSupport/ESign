@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Submission extends Model
 {
+    /**
+     * @var array<int,string>
+     */
+    protected static array $stampingColumns = [
+        'restored_at',
+    ];
+
     /** @var string */
     protected $table = 'e_submissions';
 
@@ -21,13 +28,6 @@ class Submission extends Model
      * @var array<string,string>
      */
     protected $casts = [];
-
-    /**
-     * @var array<int,string>
-     */
-    protected static array $stampingColumns = [
-        'restored_at',
-    ];
 
     /**
      * @return BelongsTo<Document, Submission>

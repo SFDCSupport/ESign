@@ -11,10 +11,8 @@ use Symfony\Component\Mime\Email;
 
 class SigningCompletedMail extends Mailable
 {
-    public function __construct(
-        public Document $document,
-        public Signer $signer
-    ) {
+    public function __construct(public Document $document, public Signer $signer)
+    {
     }
 
     public function content(): Content

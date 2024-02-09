@@ -11,10 +11,8 @@ use Symfony\Component\Mime\Email;
 
 class SendCopyMail extends Mailable
 {
-    public function __construct(
-        public Document $document,
-        public Signer $signer
-    ) {
+    public function __construct(public Document $document, public Signer $signer)
+    {
     }
 
     public function content(): Content

@@ -22,7 +22,8 @@
         "tecnickcom/tcpdf": "^6.6"
     },
     "require-dev": {
-        "laravel/pint": "^1.13"
+        "laravel/pint": "^1.13",
+        "tightenco/duster": "^2.7"
     },
     "autoload": {
         "psr-4": {
@@ -30,7 +31,6 @@
             "NIIT\\ESign\\Database\\Factories\\": "database/factories/"
         },
         "classmap": [
-            "SetaPDF/"
         ],
         "files": [
             "src/helpers.php"

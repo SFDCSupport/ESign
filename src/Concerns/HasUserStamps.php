@@ -59,6 +59,24 @@ trait HasUserStamps
         }
     }
 
+    public static function usingSoftDeletes(): bool
+    {
+        static $usingSoftDeletes;
+
+        if (is_null($usingSoftDeletes)) {
+            return $usingSoftDeletes = in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses_recursive(static::class), true);
+        }
+
+        return $usingSoftDeletes;
+    }
+
+    protected static function hasStampingCol(array|string $col): bool
+    {
+        return is_array($col)
+            ? ! empty(array_diff($col, static::$stampingColumns))
+            : in_array($col, static::$stampingColumns, true);
+    }
+
     public function disableStamping(): self
     {
         static::$hasUserStamps = false;
@@ -106,26 +124,8 @@ trait HasUserStamps
         return $this->belongsTo($this->getUserClass(), 'restored_by');
     }
 
-    public static function usingSoftDeletes(): bool
-    {
-        static $usingSoftDeletes;
-
-        if (is_null($usingSoftDeletes)) {
-            return $usingSoftDeletes = in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses_recursive(static::class), true);
-        }
-
-        return $usingSoftDeletes;
-    }
-
     protected function getUserClass(): string
     {
         return config('auth.providers.users.model');
-    }
-
-    protected static function hasStampingCol(array|string $col): bool
-    {
-        return is_array($col)
-            ? ! empty(array_diff($col, static::$stampingColumns))
-            : in_array($col, static::$stampingColumns, true);
     }
 }
