@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Mail\Attachment as MailAttachment;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use NIIT\ESign\Enum\ReadStatus;
@@ -17,6 +18,8 @@ use NIIT\ESign\Mail\Signer\SendCopyMail;
 
 class Signer extends Model implements Attachable
 {
+    use Notifiable;
+
     /** @var string */
     protected $table = 'e_signers';
 

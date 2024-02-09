@@ -15,25 +15,25 @@ class Heartbeat
         if (
             $request->expectsJson() ||
             ! $response->isSuccessful() ||
-            blank($interval = ESignFacade::config('heartbeat_interval')) ||
+            blank($interval = ESignFacade::config('intervals.heartbeat')) ||
             ! str($response->headers->get('content-type'))->startsWith('text/html')
         ) {
             return $response;
         }
 
+        $timestamp = now();
         $heartbeatRoute = route('esign.heartbeat');
 
         $javascriptCode = <<<JS
                 <script>
                     setInterval(function () {
-                        $.post(
-                            '$heartbeatRoute',
-                            {}
-                            ).done((r) => {
+                        $.post("$heartbeatRoute", {
+                            timestamp: $timestamp,
+                            }).done((r) => {
                                 console.log(r);
-                            }).fail((x) => toast('error', x.responseText));
+                            }).fail((x) => toast("error", x.responseText));
                     }, $interval);
-                </script>
+                </script>;
             JS;
 
         $content = $response->getContent();

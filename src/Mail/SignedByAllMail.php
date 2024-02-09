@@ -4,7 +4,6 @@ namespace NIIT\ESign\Mail;
 
 use App\Actions\FilepondAction;
 use Illuminate\Mail\Attachment;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use NIIT\ESign\Models\Document;
@@ -13,7 +12,8 @@ use Symfony\Component\Mime\Email;
 class SignedByAllMail extends Mailable
 {
     public function __construct(
-        public Document $document
+        public Document $document,
+        public ?string $signedDocumentPath = null
     ) {
     }
 
@@ -27,7 +27,6 @@ class SignedByAllMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('test@example.com', 'test'),
             subject: __('esign::label.signed_by_all'),
             using: [
                 function (Email $message) {
@@ -42,12 +41,15 @@ class SignedByAllMail extends Mailable
      */
     public function attachments(): array
     {
+        /** @var \NIIT\ESign\Models\Attachment $attachment */
+        $attachment = $this->document->loadMissing('document')->document;
+
         return [
             Attachment::fromStorageDisk(
-                $this->document->loadMissing('document')->document->disk ?? FilepondAction::getDisk(true),
-                $this->document->getSignedDocumentPath()
+                $attachment->disk ?? FilepondAction::getDisk(true),
+                $this->signedDocumentPath ?? $this->document->getSignedDocumentPath()
             )->as(
-                $this->document->title
+                $this->document->title.'.'.$attachment->extension
             )->withMime(
                 'application/pdf'
             ),

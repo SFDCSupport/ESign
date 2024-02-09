@@ -63,15 +63,11 @@ class SigningCompletedListener
 
             [$outputFileName, $outputPath] = $document->getSignedDocumentPath(true);
 
-            $outputPdf = $pdf->Output('S', $outputFileName);
+            $outputPdf = $pdf->Output($outputFileName, 'S');
             $disk->put(
                 $outputPath,
                 $outputPdf
             );
-
-            $document->update([
-                'is_signed' => true,
-            ]);
 
             $document->logAuditTrait(
                 document: $document,
@@ -79,9 +75,14 @@ class SigningCompletedListener
             );
 
             Mail::to(
-                $document->loadMissing('signers')->signers->pluck('email')
+                $document->signers()
+                    ->pluck('email')
+                    ->merge([
+                        $document->loadMissing('creator')
+                            ->creator->email,
+                    ])->toArray()
             )->send(
-                new SignedByAllMail($document, $signedDocumentPath)
+                new SignedByAllMail($document, $outputPath)
             );
         } catch (Exception $e) {
             throw $e;

@@ -109,7 +109,7 @@ class Document extends Model implements HasLocalePreference
         return 'en';
     }
 
-    public function markAs(DocumentStatus $status): void
+    public function markAs(DocumentStatus $status, ?Signer $signer = null): void
     {
         $this->update([
             'status' => $status,
@@ -118,6 +118,7 @@ class Document extends Model implements HasLocalePreference
         DocumentStatusChanged::dispatch(
             $this,
             $status,
+            $signer,
         );
     }
 
@@ -147,7 +148,7 @@ class Document extends Model implements HasLocalePreference
             pathinfo($fileName, PATHINFO_EXTENSION)
         );
 
-        $path = esignUploadPath('document', ['id' => $this->id]).$signedFileName;
+        $path = esignUploadPath('document', ['id' => $this->id]).'/'.$signedFileName;
 
         return $getBoth
             ? [$signedFileName, $path]

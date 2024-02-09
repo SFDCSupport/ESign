@@ -7,6 +7,7 @@ use NIIT\ESign\Enum\NotificationSequence;
 use NIIT\ESign\Enum\SendStatus;
 use NIIT\ESign\ESignFacade;
 use NIIT\ESign\Events\DocumentStatusChanged;
+use NIIT\ESign\Events\SigningProcessCompleted;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
 
@@ -20,6 +21,9 @@ class DocumentStatusListener
         /** @var DocumentStatus $status */
         $status = $event->status;
 
+        /** @var ?Signer $signer */
+        $signer = $event->signer;
+
         if ($status === DocumentStatus::IN_PROGRESS) {
             /** @var \Illuminate\Database\Eloquent\Collection<Signer> $signers */
             $signers = $document->loadMissing([
@@ -30,11 +34,17 @@ class DocumentStatusListener
             if ($document->notificationSequenceIs(NotificationSequence::ASYNC)) {
                 $signers->each(fn ($signer) => ESignFacade::sendSigningLink($signer, $document));
             } else {
-                $signer = $signers->where('send_status', SendStatus::NOT_SENT)
+                $_signer = $signers->where('send_status', SendStatus::NOT_SENT)
                     ->first();
 
-                ESignFacade::sendSigningLink($signer, $document);
+                ESignFacade::sendSigningLink($_signer, $document);
             }
+        }
+
+        if ($status === DocumentStatus::COMPLETED && $signer) {
+            SigningProcessCompleted::dispatch(
+                $document, $signer
+            );
         }
     }
 }

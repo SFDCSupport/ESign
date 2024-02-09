@@ -23,6 +23,8 @@ Route::middleware([
     Route::resource('templates', \NIIT\ESign\Http\Controllers\TemplateController::class)
         ->except(['edit', 'create']);
 
+    Route::get('documents/{document}/signers/{signer}/send-mail', [SignerController::class, 'sendMail'])
+        ->name('documents.signers.sendMail');
     Route::resource('documents.signers', SignerController::class)
         ->except(['create', 'edit', 'show']);
 

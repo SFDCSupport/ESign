@@ -2,6 +2,8 @@
 
 namespace NIIT\ESign\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Notifications\Notification;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\NotificationSequence;
 use NIIT\ESign\Events\DocumentStatusChanged;
@@ -9,6 +11,7 @@ use NIIT\ESign\Http\Requests\SignerRequest;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
 use NIIT\ESign\Models\SignerElement;
+use NIIT\ESign\Notifications\SendSingingLink;
 
 class SignerController extends Controller
 {
@@ -137,5 +140,20 @@ class SignerController extends Controller
 
     public function destroy(SignerRequest $request, Document $document, Signer $signer)
     {
+    }
+
+    public function sendMail(Request $request, Document $document, Signer $signer)
+    {
+        /** @var Notification $notification */
+        $notification = match ($request->get('notify-type')) {
+            'signing-link' => SendSingingLink::class,
+            'signing-pending' => '',
+            'singing-completed' => '',
+            'signed-copy' => '',
+        };
+
+        return (new $notification($signer))->toMail($signer);
+        \Illuminate\Support\Facades\Notification::route('mail', $signer)->notify(new $notification($signer));
+        $signer->notify(new $notification($signer));
     }
 }

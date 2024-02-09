@@ -45,7 +45,7 @@
         function toast(
             status,
             message,
-            autoHide = {{ config('esign.notify_timeout') }},
+            autoHide = {{ config('esign.intervals.notify') }},
         ) {
             const toastContainer = $('#toastr');
             let toastr = $('#toastTemplate').html();

@@ -8,16 +8,18 @@ return [
     'expressions' => [
         'uuid' => '/^[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}$/',
     ],
-    'notify_timeout' => 5000,
-    'heartbeat_interval' => 6000,
+    'intervals' => [
+        'notify' => 5000,
+        'heartbeat' => 6000,
+    ],
     'defaults' => [
         'document_status' => \NIIT\ESign\Enum\DocumentStatus::DRAFT,
         'notification_sequence' => \NIIT\ESign\Enum\NotificationSequence::ASYNC,
     ],
     'certificate' => [
-        'path' => '',
-        'private_key_path' => '',
-        'password' => '',
+        'path' => storage_path('app/esign/certificate.crt'),
+        'private_key_path' => storage_path('app/esign/private_key.pem'),
+        'password' => 'password',
         'level' => 1,
         'info' => [
             'Name' => 'Anand',

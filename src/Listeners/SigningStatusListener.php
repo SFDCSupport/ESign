@@ -37,18 +37,19 @@ class SigningStatusListener
             'signers' => fn ($q) => $q->where('send_status', SendStatus::NOT_SENT)
                 ->orderBy('position'),
         ])->signers;
-        ds($signers)->label('topSigners');
 
         if ($document->notificationSequenceIs(NotificationSequence::SYNC)) {
             if ($nextSigner = $signers->where('position', '>', $signer->position)->first()) {
-                ds()->model($nextSigner)->label('nextSigner');
                 $nextSigner->update([
                     'is_next_receiver' => true,
                 ]);
 
                 ESignFacade::sendSigningLink($nextSigner, $document);
             } else {
-                $document->markAs(DocumentStatus::COMPLETED);
+                $document->markAs(
+                    status: DocumentStatus::COMPLETED,
+                    signer: $signer
+                );
             }
         } else {
             if (count($signers) > 0) {
@@ -57,7 +58,10 @@ class SigningStatusListener
                     ESignFacade::sendSigningLink($signer, $document);
                 }
             } else {
-                $document->markAs(DocumentStatus::COMPLETED);
+                $document->markAs(
+                    status: DocumentStatus::COMPLETED,
+                    signer: $signer
+                );
             }
         }
     }
