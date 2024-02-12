@@ -100,7 +100,7 @@ class SigningController extends Controller
 
         $pageCount = $pdf->setSourceFile(
             StreamReader::createByString(
-                $storage->get($loadedSigner->document->document->path)
+                $storage->get($documentPath = $loadedSigner->document->document->path)
             )
         );
 
@@ -153,11 +153,16 @@ class SigningController extends Controller
 
         $documentContent = $pdf->Output('S', $fileName);
         $storage->put(
-            ($documentPath = $signerUploadPath.'/'.$fileName),
+            ($signedCopyPath = $signerUploadPath.'/'.$fileName),
             $documentContent
         );
 
-        $downloadUrl = FilepondAction::loadFile($documentPath, 'view');
+        $storage->put(
+            $documentPath,
+            $documentContent
+        );
+
+        $downloadUrl = FilepondAction::loadFile($signedCopyPath, 'view');
         $createOrUpdateSubmissions = static function ($data, $elementId) use ($loadedSigner) {
             return $loadedSigner->submissions()->updateOrCreate([
                 'signer_element_id' => $elementId,

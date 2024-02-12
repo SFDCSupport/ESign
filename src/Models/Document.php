@@ -100,8 +100,7 @@ class Document extends Model implements HasLocalePreference
     public function document(): MorphOne
     {
         return $this->attachment(AttachmentType::DOCUMENT)
-            ->where('is_current', true)
-            ->latest();
+            ->where('is_current', true);
     }
 
     public function preferredLocale(): string
@@ -148,7 +147,7 @@ class Document extends Model implements HasLocalePreference
             pathinfo($fileName, PATHINFO_EXTENSION)
         );
 
-        $path = esignUploadPath('document', ['id' => $this->id]).'/'.$signedFileName;
+        $path = esignUploadPath('document', ['document' => $this->id]).'/'.$signedFileName;
 
         return $getBoth
             ? [$signedFileName, $path]

@@ -77,7 +77,7 @@ class Controller extends Base
         $fileName = date('YmdHms').'_'.trim($originalFileName = $file->getClientOriginalName());
 
         if ($filePath = $file->storeAs(
-            esignUploadPath($type, ['id' => $id]),
+            esignUploadPath($type, ['document' => $id]),
             $fileName,
             ($disk = FilepondAction::getDisk(true))
         )) {

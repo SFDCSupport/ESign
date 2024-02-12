@@ -7,10 +7,13 @@ use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Mail\Attachment as MailAttachment;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use NIIT\ESign\Concerns\HasAttachment;
+use NIIT\ESign\Enum\AttachmentType;
 use NIIT\ESign\Enum\ReadStatus;
 use NIIT\ESign\Enum\SendStatus;
 use NIIT\ESign\Enum\SigningStatus;
@@ -18,6 +21,7 @@ use NIIT\ESign\Mail\Signer\SendCopyMail;
 
 class Signer extends Model implements Attachable
 {
+    use HasAttachment;
     use Notifiable;
 
     /** @var string */
@@ -84,6 +88,12 @@ class Signer extends Model implements Attachable
         );
     }
 
+    public function signedCopy(): MorphOne
+    {
+        return $this->attachment(AttachmentType::SIGNER_DOCUMENT)
+            ->where('is_current', true);
+    }
+
     public function position(): Attribute
     {
         return new Attribute(
@@ -140,8 +150,23 @@ class Signer extends Model implements Attachable
     public function getUploadPath(): string
     {
         return esignUploadPath('signer', [
-            'id' => $this->loadMissing('document')->document->id,
+            'document' => $this->loadMissing('document')->document->id,
             'signer' => $this->id,
+        ]);
+    }
+
+    public function createCopy($path, $fileName, $disk, $bucket): \Illuminate\Database\Eloquent\Model
+    {
+        return $this->signedCopy()->updateOrCreate([
+            'model_type' => $this,
+            'model_id' => $this->id,
+            'type' => AttachmentType::SIGNER_DOCUMENT,
+        ], [
+            'path' => $path,
+            'file_name' => $fileName,
+            'disk' => $disk,
+            'bucket' => $bucket,
+            'extension' => pathinfo($fileName, PATHINFO_EXTENSION),
         ]);
     }
 }

@@ -15,10 +15,12 @@ use NIIT\ESign\Listeners\SendStatusListener;
 use NIIT\ESign\Listeners\SigningCompletedListener;
 use NIIT\ESign\Listeners\SigningStartedListener;
 use NIIT\ESign\Listeners\SigningStatusListener;
+use NIIT\ESign\Models\Attachment;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
 use NIIT\ESign\Models\SignerElement;
 use NIIT\ESign\Models\Submission;
+use NIIT\ESign\Observers\AttachmentObserver;
 use NIIT\ESign\Observers\DocumentObserver;
 use NIIT\ESign\Observers\SignerElementObserver;
 use NIIT\ESign\Observers\SignerObserver;
@@ -51,9 +53,10 @@ class EventServiceProvider extends Base
     {
         parent::boot();
 
-        Document::observe(DocumentObserver::class);
         Signer::observe(SignerObserver::class);
+        Document::observe(DocumentObserver::class);
         Submission::observe(SubmissionObserver::class);
+        Attachment::observe(AttachmentObserver::class);
         SignerElement::observe(SignerElementObserver::class);
     }
 }

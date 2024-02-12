@@ -26,6 +26,7 @@ class Attachment extends Model
         'extension',
         'path',
         'is_current',
+        'version',
     ];
 
     /**
@@ -34,6 +35,7 @@ class Attachment extends Model
     protected $casts = [
         'is_current' => 'boolean',
         'type' => AttachmentType::class,
+        'version' => 'integer',
     ];
 
     protected $appends = [
@@ -53,5 +55,14 @@ class Attachment extends Model
         return new Attribute(
             get: fn (?string $value, array $attributes) => FilepondAction::loadFile($attributes['path'], 'view'),
         );
+    }
+
+    public function reversion(): self
+    {
+        $newModel = $this->replicate();
+        $newModel->is_current = true;
+        $newModel->version = $this->version + 1;
+
+        $newModel->push();
     }
 }

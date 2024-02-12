@@ -5,7 +5,6 @@ namespace NIIT\ESign\Listeners;
 use Illuminate\Database\Eloquent\Collection;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\NotificationSequence;
-use NIIT\ESign\Enum\SendStatus;
 use NIIT\ESign\Enum\SigningStatus;
 use NIIT\ESign\ESignFacade;
 use NIIT\ESign\Events\SigningStatusChanged;
@@ -34,7 +33,7 @@ class SigningStatusListener
 
         /** @var Collection<Signer> $signers */
         $signers = $document->loadMissing([
-            'signers' => fn ($q) => $q->where('send_status', SendStatus::NOT_SENT)
+            'signers' => fn ($q) => $q->where('signing_status', SigningStatus::NOT_SIGNED)
                 ->orderBy('position'),
         ])->signers;
 

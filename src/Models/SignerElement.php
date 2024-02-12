@@ -5,10 +5,15 @@ namespace NIIT\ESign\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use NIIT\ESign\Concerns\HasAttachment;
+use NIIT\ESign\Enum\AttachmentType;
 use NIIT\ESign\Enum\ElementType;
 
 class SignerElement extends Model
 {
+    use HasAttachment;
+
     /** @var string */
     protected $table = 'e_signer_elements';
 
@@ -71,6 +76,12 @@ class SignerElement extends Model
         );
     }
 
+    public function attachedData(): MorphOne
+    {
+        return $this->attachment(AttachmentType::SIGNER_ELEMENT)
+            ->where('is_current', true);
+    }
+
     public function position(): Attribute
     {
         return new Attribute(
@@ -91,5 +102,16 @@ class SignerElement extends Model
                 return $maxPriority + 1;
             },
         );
+    }
+
+    public function getUploadPath(): string
+    {
+        $loadedModel = $this->loadMissing('signer.document');
+
+        return esignUploadPath('signer', [
+            'document' => $loadedModel->document->id,
+            'signer' => $this->signer->id,
+            'element' => $this->id,
+        ]);
     }
 }

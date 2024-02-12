@@ -18,10 +18,10 @@ return new class extends Migration
         Schema::disableForeignKeyConstraints();
         $this->dropIfTableExists('e_templates');
         $this->dropIfTableExists('e_documents');
-        $this->dropIfTableExists('e_attachments');
         $this->dropIfTableExists('e_signers');
         $this->dropIfTableExists('e_signer_elements');
         $this->dropIfTableExists('e_submissions');
+        $this->dropIfTableExists('e_attachments');
         $this->dropIfTableExists('e_audits');
         Schema::enableForeignKeyConstraints();
 
@@ -43,21 +43,6 @@ return new class extends Migration
             $table->enum('notification_sequence', NotificationSequence::values())->default(config('esign.defaults.notification_sequence'));
             $table->boolean('link_sent_to_all')->default(false);
             $table->boolean('is_signed')->default(false);
-            $table->timestamps();
-            $table->softDeletes();
-            $table->eSignUserStamps();
-        });
-
-        Schema::create('e_attachments', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuidMorphs('model');
-            $table->enum('type', AttachmentType::values())->default(AttachmentType::DOCUMENT);
-            $table->string('disk');
-            $table->string('bucket')->nullable();
-            $table->string('file_name');
-            $table->string('extension');
-            $table->string('path');
-            $table->boolean('is_current')->default(1);
             $table->timestamps();
             $table->softDeletes();
             $table->eSignUserStamps();
@@ -110,6 +95,23 @@ return new class extends Migration
             $table->eSignUserStamps('restored_at');
         });
 
+        Schema::create('e_attachments', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->uuidMorphs('model');
+            $table->enum('type', AttachmentType::values())->default(AttachmentType::DOCUMENT);
+            $table->foreignUuid('signer_id')->nullable()->constrained('e_signers');
+            $table->string('disk');
+            $table->string('bucket')->nullable();
+            $table->string('file_name');
+            $table->string('extension');
+            $table->string('path');
+            $table->tinyInteger('version')->default(0);
+            $table->boolean('is_current')->default(true);
+            $table->timestamps();
+            $table->softDeletes();
+            $table->eSignUserStamps();
+        });
+
         Schema::create('e_audits', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('document_id')->constrained('e_documents');
@@ -126,12 +128,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::drop('e_audits');
+        Schema::drop('e_attachments');
         Schema::drop('e_submissions');
         Schema::drop('e_signer_elements');
         Schema::drop('e_signers');
         Schema::drop('e_documents');
         Schema::drop('e_templates');
-        Schema::drop('e_attachments');
     }
 
     protected function dropIfTableExists(string $table): void

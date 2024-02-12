@@ -60,10 +60,13 @@ class SigningCompletedListener
                 $config['level'],
                 $config['info']
             );
+            $pdf->AddPage();
+            $pdf->addEmptySignatureAppearance(180, 80, 15, 15);
 
             [$outputFileName, $outputPath] = $document->getSignedDocumentPath(true);
 
             $outputPdf = $pdf->Output($outputFileName, 'S');
+
             $disk->put(
                 $outputPath,
                 $outputPdf

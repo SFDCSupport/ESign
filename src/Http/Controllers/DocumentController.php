@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\SendStatus;
+use NIIT\ESign\Enum\SigningStatus;
 use NIIT\ESign\ESignFacade;
 use NIIT\ESign\Http\Requests\DocumentRequest;
 use NIIT\ESign\Http\Requests\SendMailRequest;
@@ -101,7 +102,9 @@ class DocumentController extends Controller
         if ($mode === 'all') {
             /** @var Collection<Signer> $signers */
             $signers = $document->loadMissing([
-                'signers' => fn ($q) => $q->where('send_status', SendStatus::NOT_SENT)->orderBy('position'),
+                'signers' => fn ($q) => $q->where('send_status', SendStatus::NOT_SENT)
+                    ->orWhere('signing_status', SigningStatus::NOT_SIGNED)
+                    ->orderBy('position'),
             ])->signers;
 
             if (count($signers) > 0) {

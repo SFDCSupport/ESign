@@ -29,12 +29,14 @@ class SigningMiddleware
             ),
             404);
 
+        $isIndexRoute = $request->routeIs('esign.signing.index');
+
         /**
          * abort_if: route is signing index with document without in progress state
          */
         abort_if(
             $document->statusIsNot(DocumentStatus::IN_PROGRESS) &&
-            ($isIndexRoute = $request->routeIs('esign.signing.index')),
+            $isIndexRoute,
             404
         );
 
