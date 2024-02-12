@@ -21,7 +21,7 @@ return [
         'path' => storage_path('app/esign/certificate.crt'),
         'private_key_path' => storage_path('app/esign/private_key.pem'),
         'password' => 'password',
-        'level' => 1,
+        'level' => 2,
         'info' => [
             'Name' => 'Anand',
             'Location' => 'Office',

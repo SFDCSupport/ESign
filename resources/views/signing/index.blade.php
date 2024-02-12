@@ -370,7 +370,7 @@
                                 id="${element.uuid}-panel" role="tabpanel"
                                 aria-labelledby="${element.uuid}-tab"
                                 data-object-id="${element.id}"
-                                data-element-type="${element.type}"
+                                data-element-type="${element.eleType}"
                                 ${step ? 'data-step="' + step + '"' : ''}>
                                 <h2>${convertToTitleString(element.text ?? element.eleType)}</h2>
                                 ${getSigningElementByType(element.uuid, element.eleType, element.is_required, element.text)}
@@ -632,7 +632,7 @@
 
                         console.log('signing:updated', signerData);
                     })
-                    .on('keyup', '.signingElement', function (e) {
+                    .on('change keyup paste', '.signingElement', function (e) {
                         e.preventDefault();
 
                         const _t = $(this);

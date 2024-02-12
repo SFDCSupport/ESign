@@ -874,7 +874,7 @@
 
                             canvas.add(newImg);
                         });
-                    } else if (['text', 'textarea'].includes(obj.eleType)) {
+                    } else {
                         oldObj.set('text', obj.data || obj.eleType);
                         canvas.renderAll();
                     }
@@ -951,9 +951,7 @@
                                         objInfo.scaleX =
                                             canvasEdition.width /
                                             objInfo.page_width;
-                                        objInfo.scaleY =
-                                            canvasEdition.height /
-                                            objInfo.page_height;
+                                        objInfo.scaleY = 0.8; //canvasEdition.height / objInfo.page_height;
 
                                         const obj = createFabricObject(objInfo);
                                         const cFor = isSigning
