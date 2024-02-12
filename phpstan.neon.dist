@@ -1,0 +1,15 @@
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    paths:
+        - src
+
+    checkMissingIterableValueType: false
+
+    checkGenericClassInNonGenericObjectType: false
+
+    level: max
+
+    ignoreErrors:
+        - '#Cannot access offset .* on Illuminate\\Contracts\\Foundation\\Application#'

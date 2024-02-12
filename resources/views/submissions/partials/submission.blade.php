@@ -62,10 +62,9 @@
                             class="btn-sm btn-outline-secondary"
                             :value="__('esign::label.view')"
                             :redirectUrl="
-                                route('esign.documents.submissions.show', [
-                                    'document' => $document,
-                                    'submission' => $signer->submissions,
-                                ])
+                                route('esign.signing.show', [
+                                    'signing_url' => $signer->url,
+                                ]).'?v'
                             "
                         />
                     @endif

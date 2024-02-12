@@ -28,8 +28,10 @@ Route::middleware([
     Route::resource('documents.signers', SignerController::class)
         ->except(['create', 'edit', 'show']);
 
-    Route::resource('documents.submissions', \NIIT\ESign\Http\Controllers\SubmissionController::class)
-        ->only(['index', 'show', 'destroy']);
+    Route::get('documents/{document}/submissions', [\NIIT\ESign\Http\Controllers\SubmissionController::class, 'index'])
+        ->name('documents.submissions.index');
+    Route::get('documents/{document}/submissions/{signer}', [\NIIT\ESign\Http\Controllers\SubmissionController::class, 'show'])
+        ->name('documents.submissions.show');
 
     Route::get('documents/{document}/copy', [DocumentController::class, 'copy'])
         ->name('documents.copy');

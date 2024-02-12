@@ -42,6 +42,7 @@
 
         <script src="{{ url('vendor/esign/js/collect.min.js') }}"></script>
         <script src="{{ url('vendor/esign/js/jquery.min.js') }}"></script>
+        <script src="{{ url('js/common-functions.js') }}"></script>
         <script>
             const handleContentReplacement = () => {
                 const isNot768 = $(window).width() <= 767;

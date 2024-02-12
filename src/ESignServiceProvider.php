@@ -15,9 +15,9 @@ use NIIT\ESign\Models\Signer;
 
 class ESignServiceProvider extends ServiceProvider
 {
-    const NAME = 'esign';
+    public const NAME = 'esign';
 
-    protected $commands = [
+    protected array $commands = [
         Commands\InstallCommand::class,
     ];
 
@@ -26,6 +26,7 @@ class ESignServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', self::NAME);
 
         $this->app->register(Providers\EventServiceProvider::class);
+        $this->app->register(Providers\AuthServiceProvider::class);
 
         $this->app->singleton('fileSampark', Support\FileSampark::class);
 
@@ -59,7 +60,7 @@ class ESignServiceProvider extends ServiceProvider
         $this->bindRouting();
         $this->loadAssets();
 
-        Gate::define('sign-document', function ($user, $document) {
+        Gate::define('sign-document', static function ($user, $document) {
             return $user->is($document->signer);
         });
 

@@ -74,9 +74,11 @@
     @pushonce('js')
         <script>
             $(() => {
-                $('button[data-bs-target="#signing_success_modal"]').trigger(
-                    'click',
-                );
+                if (!('v' in getQuery())) {
+                    $(
+                        'button[data-bs-target="#signing_success_modal"]',
+                    ).trigger('click');
+                }
             });
         </script>
     @endpushonce
