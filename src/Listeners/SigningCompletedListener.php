@@ -12,8 +12,6 @@ use NIIT\ESign\Events\SigningProcessCompleted;
 use NIIT\ESign\Mail\SignedByAllMail;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
-use setasign\Fpdi\PdfParser\StreamReader;
-use setasign\Fpdi\Tcpdf\Fpdi;
 
 class SigningCompletedListener
 {
@@ -45,29 +43,29 @@ class SigningCompletedListener
         $documentPath = $document->document->path;
 
         try {
-            $pdf = new Fpdi();
-            $pdf->setSourceFile(
-                StreamReader::createByString(
-                    $disk->get($documentPath)
-                )
-            );
+            $outputPdfFile = null;
+            $writer = new \SetaPDF_Core_Writer_Var($outputPdfFile);
+            $sDocument = \SetaPDF_Core_Document::loadByString($disk->get($documentPath), $writer);
+            $signer = new \SetaPDF_Signer($sDocument);
 
-            $pdf->setSignature(
-                file_get_contents($config['path']),
-                file_get_contents($config['private_key_path']),
-                $config['password'],
-                '',
-                $config['level'],
-                $config['info']
-            );
+            $signer->setReason('This document is fixed');
+            $signer->setLocation('Imphal');
+            $signer->setContactInfo('+91-600-530-92-42');
+
+            $module = new \SetaPDF_Signer_Signature_Module_Cms();
+
+            $module->setCertificate(file_get_contents($config['path']));
+            $module->setPrivateKey([file_get_contents($config['private_key_path']), 'password']);
+
+            $signer->setCertificationLevel($config['level']);
+
+            $signer->sign($module);
 
             [$outputFileName, $outputPath] = $document->getSignedDocumentPath(true);
 
-            $outputPdf = $pdf->Output($outputFileName, 'S');
-
             $disk->put(
                 $outputPath,
-                $outputPdf
+                $outputPdfFile
             );
 
             $document->logAuditTrait(

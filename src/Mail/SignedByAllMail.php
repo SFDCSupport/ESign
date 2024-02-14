@@ -39,15 +39,15 @@ class SignedByAllMail extends Mailable
      */
     public function attachments(): array
     {
-        /** @var \NIIT\ESign\Models\Attachment $attachment */
-        $attachment = $this->document->loadMissing('document')->document;
+        /** @var \NIIT\ESign\Models\Asset $asset */
+        $asset = $this->document->loadMissing('document')->document;
 
         return [
             Attachment::fromStorageDisk(
-                $attachment->disk ?? FilepondAction::getDisk(true),
+                $asset->disk ?? FilepondAction::getDisk(true),
                 ($path = $this->signedDocumentPath ?? $this->document->getSignedDocumentPath())
             )->as(
-                $this->document->title.'.'.($attachment->extension ?? pathinfo($path, PATHINFO_EXTENSION))
+                $this->document->title.'.'.($asset->extension ?? pathinfo($path, PATHINFO_EXTENSION))
             )->withMime(
                 'application/pdf'
             ),

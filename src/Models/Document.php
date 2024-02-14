@@ -7,8 +7,8 @@ use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use NIIT\ESign\Concerns\HasAttachment;
-use NIIT\ESign\Enum\AttachmentType;
+use NIIT\ESign\Concerns\HasAsset;
+use NIIT\ESign\Enum\AssetType;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\NotificationSequence;
 use NIIT\ESign\Enum\SendStatus;
@@ -17,7 +17,7 @@ use NIIT\ESign\Events\DocumentStatusChanged;
 
 class Document extends Model implements HasLocalePreference
 {
-    use HasAttachment;
+    use HasAsset;
 
     /** @var string */
     protected $table = 'e_documents';
@@ -99,8 +99,11 @@ class Document extends Model implements HasLocalePreference
 
     public function document(): MorphOne
     {
-        return $this->attachment(AttachmentType::DOCUMENT)
-            ->where('is_current', true);
+        return $this->asset(AssetType::DOCUMENT)
+            ->where(
+                fn ($q) => $q->whereNull('is_snapshot')
+                    ->orWhere('is_snapshot', false)
+            )->latest('version');
     }
 
     public function preferredLocale(): string
@@ -137,7 +140,7 @@ class Document extends Model implements HasLocalePreference
     /**
      * @return array<string, string>|string
      */
-    public function getSignedDocumentPath(bool $getBoth = false): array|string
+    public function getDocumentPath(bool $getBoth = false): array|string
     {
         $fileName = $this->loadMissing('document')->document->file_name;
 

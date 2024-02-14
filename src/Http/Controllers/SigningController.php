@@ -13,6 +13,7 @@ use NIIT\ESign\Events\SigningProcessStarted;
 use NIIT\ESign\Events\SigningStatusChanged;
 use NIIT\ESign\Http\Requests\SigningRequest;
 use NIIT\ESign\Http\Resources\SignerResource;
+use NIIT\ESign\Models\Asset;
 use NIIT\ESign\Models\Signer;
 
 class SigningController extends Controller
@@ -93,7 +94,9 @@ class SigningController extends Controller
         });
 
         $fileName = $loadedSigner->document_id.'.pdf';
-        $documentPath = $loadedSigner->document->document->path;
+        /** @var Asset $asset */
+        $asset = $loadedSigner->document->document;
+        $documentPath = $asset->path;
 
         /** @var UploadedFile $signedDocument */
         $signedDocument = $request->validated()['signed_document'];

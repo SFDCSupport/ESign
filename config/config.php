@@ -3,8 +3,8 @@
 return [
     'upload' => [
         'document' => 'esign/{document}',
-        'signer' => 'esign/{document}/signer/{signer}',
-        'signer_element' => 'esign/{document}/signer/{signer}/element/{element}',
+        'signer_snapshot' => 'esign/{document}/signer/{signer}/snapshots',
+        'signer_element' => 'esign/{document}/signer/{signer}/elements/{element}',
     ],
     'expressions' => [
         'uuid' => '/^[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}$/',

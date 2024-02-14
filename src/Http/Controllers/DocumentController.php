@@ -82,13 +82,13 @@ class DocumentController extends Controller
         $replica->push();
 
         $document->relations = [];
-        $attachment = $document->loadMissing('document')->document;
+        $asset = $document->loadMissing('document')->document;
 
-        if ($attachment) {
-            $attachmentReplica = $attachment->replicate();
-            $attachmentReplica->deleted_at = null;
+        if ($asset) {
+            $assetReplica = $asset->replicate();
+            $assetReplica->deleted_at = null;
 
-            $replica->document()->save($attachmentReplica);
+            $replica->document()->save($assetReplica);
         }
 
         return redirect()->route('esign.documents.show', $replica);

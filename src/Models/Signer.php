@@ -7,22 +7,23 @@ use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Mail\Attachment as MailAttachment;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use NIIT\ESign\Concerns\HasAttachment;
-use NIIT\ESign\Enum\AttachmentType;
+use NIIT\ESign\Concerns\HasAsset;
+use NIIT\ESign\Enum\AssetType;
 use NIIT\ESign\Enum\ReadStatus;
 use NIIT\ESign\Enum\SendStatus;
 use NIIT\ESign\Enum\SigningStatus;
+use NIIT\ESign\Enum\SnapshotType;
 use NIIT\ESign\Mail\Signer\SendCopyMail;
 
 class Signer extends Model implements Attachable
 {
-    use HasAttachment;
-    use Notifiable;
+    use HasAsset, Notifiable;
 
     /** @var string */
     protected $table = 'e_signers';
@@ -88,10 +89,25 @@ class Signer extends Model implements Attachable
         );
     }
 
-    public function signedCopy(): MorphOne
+    public function spanshots(): MorphMany
     {
-        return $this->attachment(AttachmentType::SIGNER_DOCUMENT)
-            ->where('is_current', true);
+        return $this->assets(AssetType::SIGNER_SNAPSHOT)
+            ->where('is_snapshot', true)
+            ->whereIn('snapshot_type', SnapshotType::values());
+    }
+
+    public function postSubmitSnapshot(): MorphOne
+    {
+        return $this->asset(AssetType::SIGNER_SNAPSHOT)
+            ->where('is_snapshot', true)
+            ->where('snapshot_type', SnapshotType::POST_SUBMIT);
+    }
+
+    public function preSubmitSnapshot(): MorphOne
+    {
+        return $this->asset(AssetType::SIGNER_SNAPSHOT)
+            ->where('is_snapshot', true)
+            ->where('snapshot_type', SnapshotType::PRE_SUBMIT);
     }
 
     public function position(): Attribute
@@ -149,24 +165,9 @@ class Signer extends Model implements Attachable
 
     public function getUploadPath(): string
     {
-        return esignUploadPath('signer', [
+        return esignUploadPath('signer_snapshot', [
             'document' => $this->loadMissing('document')->document->id,
             'signer' => $this->id,
-        ]);
-    }
-
-    public function createCopy($path, $fileName, $disk, $bucket): \Illuminate\Database\Eloquent\Model
-    {
-        return $this->signedCopy()->updateOrCreate([
-            'model_type' => $this,
-            'model_id' => $this->id,
-            'type' => AttachmentType::SIGNER_DOCUMENT,
-        ], [
-            'path' => $path,
-            'file_name' => $fileName,
-            'disk' => $disk,
-            'bucket' => $bucket,
-            'extension' => pathinfo($fileName, PATHINFO_EXTENSION),
         ]);
     }
 }

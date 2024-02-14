@@ -6,11 +6,11 @@ use NIIT\ESign\Http\Controllers\DocumentController;
 use NIIT\ESign\Http\Controllers\SignerController;
 use NIIT\ESign\Http\Controllers\SigningController;
 
-Route::prefix('attachment')
-    ->name('attachment.')
+Route::prefix('asset')
+    ->name('asset.')
     ->group(function () {
         Route::any('upload/{type}', [Controller::class, 'upload'])->name('upload');
-        Route::any('remove/{attachment}', [Controller::class, 'remove'])
+        Route::any('remove/{asset}', [Controller::class, 'remove'])
             ->name('remove');
     });
 

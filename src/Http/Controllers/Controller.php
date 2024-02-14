@@ -15,31 +15,29 @@ use Illuminate\Routing\Controller as Base;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use NIIT\ESign\Concerns\Auditable;
-use NIIT\ESign\Models\Attachment;
+use NIIT\ESign\Models\Asset;
 use NIIT\ESign\Models\Document;
 
 class Controller extends Base
 {
     use Auditable, AuthorizesRequests, ConditionallyLoadsAttributes, DispatchesJobs, ValidatesRequests;
 
-    public function remove(Request $request, Attachment $attachment)
+    public function remove(Request $request, Asset $asset)
     {
         $data = $request->validate([
             'id' => 'required|exists:e_documents,id',
         ]);
 
-        $type = $attachment->type->value;
+        $type = $asset->type->value;
 
         abort_if(
             (! method_exists(Document::class, ($method = Str::camel($type))) ||
-                $attachment->model_id !== $data['id']), 400);
+                $asset->model_id !== $data['id']), 400);
 
-        $isDeleted = $attachment->update([
-            'is_current' => false,
-        ]) && $attachment->delete();
+        $isDeleted = $asset->delete();
 
         if ($isDeleted && $type === 'document') {
-            $attachment->model->signers->each(function ($signer) {
+            $asset->model->signers->each(function ($signer) {
                 $signer->elements->each(function ($element) {
                     $element->delete();
                 });
@@ -93,7 +91,6 @@ class Controller extends Base
                 'file_name' => $originalFileName,
                 'disk' => $disk,
                 'extension' => $file->getClientOriginalExtension(),
-                'is_current' => 1,
             ]);
         }
 

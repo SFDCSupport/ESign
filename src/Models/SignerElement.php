@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use NIIT\ESign\Concerns\HasAttachment;
-use NIIT\ESign\Enum\AttachmentType;
+use NIIT\ESign\Concerns\HasAsset;
+use NIIT\ESign\Enum\AssetType;
 use NIIT\ESign\Enum\ElementType;
 
 class SignerElement extends Model
 {
-    use HasAttachment;
+    use HasAsset;
 
     /** @var string */
     protected $table = 'e_signer_elements';
@@ -78,8 +78,7 @@ class SignerElement extends Model
 
     public function attachedData(): MorphOne
     {
-        return $this->attachment(AttachmentType::SIGNER_ELEMENT)
-            ->where('is_current', true);
+        return $this->asset(AssetType::SIGNER_ELEMENT);
     }
 
     public function position(): Attribute
@@ -108,7 +107,7 @@ class SignerElement extends Model
     {
         $loadedModel = $this->loadMissing('signer.document');
 
-        return esignUploadPath('signer', [
+        return esignUploadPath('signer_element', [
             'document' => $loadedModel->document->id,
             'signer' => $this->signer->id,
             'element' => $this->id,

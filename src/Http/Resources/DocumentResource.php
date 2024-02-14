@@ -15,7 +15,7 @@ class DocumentResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'document' => new AttachmentResource($this->whenLoaded('document')),
+            'document' => new AssetResource($this->whenLoaded('document')),
             'signers' => SignerResource::collection(
                 $this->whenLoaded('signers'),
             ),

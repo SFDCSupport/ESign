@@ -56,7 +56,7 @@
                 _dropzoneEle.data('page') === 'outer';
 
             _dropzoneEle.dropzone({
-                url: '{{ route('esign.attachment.upload', ['type' => 'document']) }}',
+                url: '{{ route('esign.asset.upload', ['type' => 'document']) }}',
                 uploadMultiple: {{ $multiple ? 'true' : 'false' }},
                 maxFilesize: {{ $maxFileSize / 1000 }},
                 acceptedFiles: '{!! $allowed !!}',

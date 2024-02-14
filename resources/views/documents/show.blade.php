@@ -403,7 +403,7 @@
                 }).on("click", "#documentRemoveBtn", () => {
                     $(document).trigger("loader:show");
 
-                    $.post('{{ route('esign.attachment.remove', ['attachment' => $document?->document?->id ?? '1']) }}', {
+                    $.post('{{ route('esign.asset.remove', ['asset' => $document?->document?->id ?? '1']) }}', {
                         id: getDocumentId()
                     }).done((r) => {
                         const isSuccess = r.status;

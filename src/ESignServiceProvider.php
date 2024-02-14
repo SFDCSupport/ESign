@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use NIIT\ESign\Livewire\DocumentComponent;
-use NIIT\ESign\Models\Attachment;
+use NIIT\ESign\Models\Asset;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
 
@@ -117,7 +117,7 @@ class ESignServiceProvider extends ServiceProvider
         foreach ([
             'document' => Document::class,
             'signer' => Signer::class,
-            'attachment' => Attachment::class,
+            'asset' => Asset::class,
         ] as $binding => $class) {
             Route::bind($binding, function (string $value) use ($class, $uuidExpressions) {
                 if (preg_match($uuidExpressions, $value) !== 1) {
