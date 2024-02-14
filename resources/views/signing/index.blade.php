@@ -9,6 +9,11 @@
             href="{{ url('vendor/esign/css/jquery.datetimepicker.css') }}"
             rel="stylesheet"
         />
+        <style>
+            .tab-pane:not(.active) {
+                display: none;
+            }
+        </style>
     @endpushonce
 
     <section class="header-bottom-section">
@@ -97,6 +102,95 @@
 
     @pushonce('js')
         <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?4.1.7"></script>
+        <script src="{{ url('vendor/esign/js/pdf-lib.min.js') }}?1.4.0"></script>
+        <script src="{{ url('vendor/esign/js/download.min.js') }}?1.4.7"></script>
+        <script>
+            const { degrees, PDFDocument, rgb, StandardFonts } = PDFLib;
+
+            const groupEntriesByIndex = (formData) => {
+                const groupedEntries = {};
+
+                formData.forEach((value, key) => {
+                    const match = key.match(/element\[(\d+)\]\[(\w+)\]/);
+
+                    if (match) {
+                        const index = match[1];
+                        const property = match[2];
+
+                        if (!groupedEntries[index]) {
+                            groupedEntries[index] = {};
+                        }
+
+                        groupedEntries[index][property] = value;
+                    }
+                });
+
+                return groupedEntries;
+            };
+
+            const modifyPdf = async (url, formData) => {
+                const existingPdfBytes = await fetch(url).then((res) =>
+                    res.arrayBuffer(),
+                );
+
+                const pdfDoc = await PDFDocument.load(existingPdfBytes);
+
+                const helveticaFont = await pdfDoc.embedFont(
+                    StandardFonts.Helvetica,
+                );
+                const fontSize = 12;
+
+                const pages = pdfDoc.getPages();
+
+                collect(groupEntriesByIndex(formData)).each(async (o) => {
+                    const page = pages[o.page_index - 1];
+                    const { width, height } = page.getSize();
+
+                    if (o.type === 'signature_pad') {
+                        const signatureImage = signaturePad.toDataURL();
+                        const imageBytes = await fetch(signatureImage).then(
+                            (response) => response.arrayBuffer(),
+                        );
+                        const image = await pdfDoc.embedPng(imageBytes);
+                        const imageDimensions = image.scale(0.25);
+
+                        page.drawImage(image, {
+                            x: parseInt(o.left),
+                            y: parseInt(o.top),
+                            width: imageDimensions.width,
+                            height: imageDimensions.height,
+                            opacity: 1,
+                        });
+                    } else {
+                        page.drawText(o.data, {
+                            x: parseInt(o.left),
+                            y: height - parseInt(o.top) - fontSize,
+                            font: helveticaFont,
+                            color: rgb(0, 0, 0),
+                            align: 'left',
+                            size: fontSize,
+                        });
+                    }
+                });
+
+                const pdfBytes = await pdfDoc.save();
+
+                download(
+                    pdfBytes,
+                    'pdf-lib_modification_example.pdf',
+                    'application/pdf',
+                );
+
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const file = new File([blob], 'signed_document.pdf', {
+                    type: 'application/pdf',
+                });
+
+                formData.append('signed_document', file);
+
+                return formData;
+            };
+        </script>
         <script>
             const labels = {
                 next: '{{ __('esign::label.next') }}',
@@ -253,86 +347,92 @@
                             formData.append('mode', status) &&
                             formData.append('_token', '{{ csrf_token() }}'),
                     )
-                    .then(() => console.log(formData))
+                    .then(() => console.table(Object.fromEntries(formData)))
                     .then(() =>
-                        $.ajax({
-                            url: '{{ $signer->signingUrl() }}',
-                            type: 'POST',
-                            data: formData,
-                            contentType: false,
-                            processData: false,
-                            headers: @json(request()->signingHeaders()),
-                            success: (r) => {
-                                if (r.status === 1) {
-                                    const signingSuccessModal = $(
-                                        '#signing_success_modal',
-                                    );
-
-                                    signingSuccessModal.modal('show');
-                                    signingSuccessModal
-                                        .find('.downloadBtn')
-                                        .attr(
-                                            'href',
-                                            r.downloadUrl ||
-                                                'javascript: void(0);',
+                        modifyPdf(
+                            $('#pdfViewer[data-url]').attr('data-url'),
+                            formData,
+                        ).then((formData) =>
+                            $.ajax({
+                                url: '{{ $signer->signingUrl() }}',
+                                type: 'POST',
+                                data: formData,
+                                contentType: false,
+                                processData: false,
+                                headers: @json(request()->signingHeaders()),
+                                success: (r) => {
+                                    if (r.status === 1) {
+                                        const signingSuccessModal = $(
+                                            '#signing_success_modal',
                                         );
 
-                                    if (blank(r.downloadUrl)) {
-                                        $(document).trigger('loader:show');
-
-                                        if (!blank(r.redirectUrl)) {
-                                            $(location).attr(
+                                        signingSuccessModal.modal('show');
+                                        signingSuccessModal
+                                            .find('.downloadBtn')
+                                            .attr(
                                                 'href',
-                                                r.redirectUrl,
+                                                r.downloadUrl ||
+                                                    'javascript: void(0);',
                                             );
-                                        } else {
-                                            location.reload(true);
-                                        }
-                                    } else {
-                                        const redirectTime = 60;
-                                        const metaRedirect = $(
-                                            '<meta http-equiv="refresh">',
-                                        );
 
-                                        if (!blank(r.redirectUrl)) {
-                                            metaRedirect.attr(
-                                                'content',
-                                                `${redirectTime};url=${r.redirectUrl}`,
-                                            );
+                                        if (blank(r.downloadUrl)) {
+                                            $(document).trigger('loader:show');
+
+                                            if (!blank(r.redirectUrl)) {
+                                                $(location).attr(
+                                                    'href',
+                                                    r.redirectUrl,
+                                                );
+                                            } else {
+                                                location.reload(true);
+                                            }
                                         } else {
-                                            metaRedirect.attr(
-                                                'content',
+                                            const redirectTime = 60;
+                                            const metaRedirect = $(
+                                                '<meta http-equiv="refresh">',
+                                            );
+
+                                            if (!blank(r.redirectUrl)) {
+                                                metaRedirect.attr(
+                                                    'content',
+                                                    `${redirectTime};url=${r.redirectUrl}`,
+                                                );
+                                            } else {
+                                                metaRedirect.attr(
+                                                    'content',
+                                                    redirectTime,
+                                                );
+                                            }
+
+                                            $('head').append(metaRedirect);
+
+                                            toast(
+                                                'info',
+                                                `<div id="countdown">Redirecting in ${redirectTime} seconds!</div>`,
+                                                false,
+                                            );
+
+                                            startCountdown(
+                                                $('.toast-body #countdown'),
                                                 redirectTime,
+                                                '{{ __('esign::label.redirecting_in_seconds') }}',
                                             );
                                         }
 
-                                        $('head').append(metaRedirect);
-
-                                        toast(
-                                            'info',
-                                            `<div id="countdown">Redirecting in ${redirectTime} seconds!</div>`,
-                                            false,
-                                        );
-
-                                        startCountdown(
-                                            $('.toast-body #countdown'),
-                                            redirectTime,
-                                            '{{ __('esign::label.redirecting_in_seconds') }}',
-                                        );
+                                        return;
                                     }
 
-                                    return;
-                                }
-
-                                toast(
-                                    'error',
-                                    r.msg ??
-                                        '{{ __('esign::validations.something_went_wrong') }}',
-                                );
-                            },
-                            error: (x) => toast('error', x.responseText),
-                            complete: () => $(document).trigger('loader:hide'),
-                        }),
+                                    toast(
+                                        'error',
+                                        r.msg ??
+                                            '{{ __('esign::validations.something_went_wrong') }}',
+                                    );
+                                },
+                                error: (x) => toast('error', x.responseText),
+                                complete: () =>
+                                    $(document).trigger('loader:hide'),
+                            }),
+                        ),
                     );
             };
 
@@ -405,9 +505,14 @@
                                 signaturePad = new SignaturePad(
                                     signaturePadEle[0],
                                     {
+                                        backgroundColor:
+                                            'rgba(255, 255, 255, 0)',
                                         penColor: 'rgb(0, 0, 0)',
-                                        minWidth: 1,
-                                        maxWidth: 2,
+                                        velocityFilterWeight: 0.7,
+                                        minWidth: 0.5,
+                                        maxWidth: 2.5,
+                                        throttle: 16,
+                                        minPointDistance: 3,
                                     },
                                 );
 
@@ -532,6 +637,10 @@
                             eles.nextBtn
                                 .attr('data-action', isLast ? 'submit' : 'next')
                                 .text(labels[isLast ? 'submit' : 'next']);
+
+                            $('.elementPanels .tab-pane.active.show')
+                                .find('input:visible, textarea:visible')
+                                .trigger('focus');
                         },
                     )
                     .on('signers-save', function (e, obj) {
@@ -573,6 +682,26 @@
                         `#${eles.nextBtn.attr('id')}[data-action="submit"]`,
                         () => {
                             saveBtnAction();
+                        },
+                    )
+                    .on(
+                        'keydown',
+                        'input.signingElement,textarea.signingElement',
+                        function (e) {
+                            const _t = $(this);
+                            const isEnter = e['keyCode'] === 13;
+
+                            if (
+                                isEnter &&
+                                (_t.is('input') ||
+                                    (_t.is('textarea') &&
+                                        isEnter &&
+                                        e['ctrlKey']))
+                            ) {
+                                $('#elementTabs button.nav-link.active')
+                                    .next('button')
+                                    .trigger('click');
+                            }
                         },
                     )
                     .on(

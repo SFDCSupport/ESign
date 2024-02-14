@@ -14,8 +14,6 @@ use NIIT\ESign\Events\SigningStatusChanged;
 use NIIT\ESign\Http\Requests\SigningRequest;
 use NIIT\ESign\Http\Resources\SignerResource;
 use NIIT\ESign\Models\Signer;
-use setasign\Fpdi\Fpdi;
-use setasign\Fpdi\PdfParser\StreamReader;
 
 class SigningController extends Controller
 {
@@ -95,72 +93,18 @@ class SigningController extends Controller
         });
 
         $fileName = $loadedSigner->document_id.'.pdf';
+        $documentPath = $loadedSigner->document->document->path;
 
-        $pdf = new Fpdi();
+        /** @var UploadedFile $signedDocument */
+        $signedDocument = $request->validated()['signed_document'];
 
-        $pageCount = $pdf->setSourceFile(
-            StreamReader::createByString(
-                $storage->get($documentPath = $loadedSigner->document->document->path)
-            )
+        $signedCopyPath = $signedDocument->storeAs(
+            $signerUploadPath,
+            $fileName.'.png',
+            $disk
         );
 
-        for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
-            $templateId = $pdf->importPage($pageNumber);
-            $pdf->addPage();
-            $pdf->useTemplate($templateId);
-
-            if ($data->where('pageIndex', $pageNumber)->isNotEmpty()) {
-                [$pageWidth, $pageHeight] = $pdf->getTemplateSize($templateId);
-
-                $data->where('pageIndex', $pageNumber)->where('type', 'image')->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
-                    $scaleX = $pageWidth / $d['pageWidth'];
-                    $scaleY = $pageHeight / $d['pageHeight'];
-                    $pdfLeft = $d['left'] * $scaleX;
-                    $pdfTop = $d['top'] * $scaleY;
-                    $width = $d['width'] * $scaleX;
-                    $height = $d['height'] * $scaleY;
-
-                    $pdf->Image(
-                        $d['data'],
-                        $pdfTop,
-                        $pdfLeft,
-                        $width,
-                        $height
-                    );
-                });
-
-                $data->where('pageIndex', $pageNumber)->where('type', '!=', 'signature_pad')->each(function ($d) use ($pdf, $pageWidth, $pageHeight) {
-                    $scaleX = $pageWidth / $d['pageWidth'];
-                    $scaleY = $pageHeight / $d['pageHeight'];
-                    $width = $d['width'] * $scaleX;
-                    $height = $d['height'] * $scaleY;
-                    $pdfLeft = $d['left'] * $scaleX;
-                    $pdfTop = $d['top'] * $scaleY;
-                    $fontSize = min($width / $d['pageWidth'] * $pageWidth, $height / $d['pageHeight'] * $pageHeight);
-
-                    $pdf->SetFont('Arial', '', $fontSize);
-                    $pdf->SetTextColor($d['color'] ?? '000', '000', '000');
-                    $pdf->SetXY($pdfTop, $pdfLeft);
-
-                    if ($d['type'] === 'textarea') {
-                        $pdf->MultiCell($width, $height, $d['data'], align: 'L');
-                    } else {
-                        $pdf->Cell($width, $height, $d['data'], ln: 1, align: 'L');
-                    }
-                });
-            }
-        }
-
-        $documentContent = $pdf->Output('S', $fileName);
-        $storage->put(
-            ($signedCopyPath = $signerUploadPath.'/'.$fileName),
-            $documentContent
-        );
-
-        $storage->put(
-            $documentPath,
-            $documentContent
-        );
+        $storage->copy($signedCopyPath, $documentPath);
 
         $downloadUrl = FilepondAction::loadFile($signedCopyPath, 'view');
         $createOrUpdateSubmissions = static function ($data, $elementId) use ($loadedSigner) {
