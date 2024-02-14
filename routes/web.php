@@ -6,6 +6,8 @@ use NIIT\ESign\Http\Controllers\DocumentController;
 use NIIT\ESign\Http\Controllers\SignerController;
 use NIIT\ESign\Http\Controllers\SigningController;
 
+Route::post('heartbeat', \NIIT\ESign\Http\Controllers\HeartbeatController::class)->name('heartbeat');
+
 Route::prefix('asset')
     ->name('asset.')
     ->group(function () {
@@ -17,9 +19,7 @@ Route::prefix('asset')
 // ADMIN ROUTES
 Route::middleware([
     'auth',
-    \NIIT\ESign\Http\Middleware\Heartbeat::class,
 ])->group(function () {
-    Route::post('heartbeat', \NIIT\ESign\Http\Controllers\HeartbeatController::class)->name('heartbeat');
     Route::resource('templates', \NIIT\ESign\Http\Controllers\TemplateController::class)
         ->except(['edit', 'create']);
 

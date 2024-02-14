@@ -40,7 +40,7 @@ class SigningCompletedListener
         $disk = FilepondAction::getDisk();
 
         $config = ESignFacade::config('certificate');
-        $documentPath = $document->document->path;
+        $documentPath = $document->document->path.'/'.$document->document->file_name;
 
         try {
             $outputPdfFile = null;
@@ -61,10 +61,8 @@ class SigningCompletedListener
 
             $signer->sign($module);
 
-            [$outputFileName, $outputPath] = $document->getSignedDocumentPath(true);
-
             $disk->put(
-                $outputPath,
+                $documentPath,
                 $outputPdfFile
             );
 
@@ -81,7 +79,7 @@ class SigningCompletedListener
                             ->creator->email,
                     ])->toArray()
             )->send(
-                new SignedByAllMail($document, $outputPath)
+                new SignedByAllMail($document, $documentPath)
             );
         } catch (Exception $e) {
             throw $e;

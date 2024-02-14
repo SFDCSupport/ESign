@@ -177,7 +177,7 @@
 
                 download(
                     pdfBytes,
-                    'pdf-lib_modification_example.pdf',
+                    '{{ $document->document->file_name }}',
                     'application/pdf',
                 );
 

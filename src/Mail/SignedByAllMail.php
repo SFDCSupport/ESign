@@ -45,7 +45,7 @@ class SignedByAllMail extends Mailable
         return [
             Attachment::fromStorageDisk(
                 $asset->disk ?? FilepondAction::getDisk(true),
-                ($path = $this->signedDocumentPath ?? $this->document->getSignedDocumentPath())
+                ($path = $this->signedDocumentPath ?? $this->document->getDocumentPath())
             )->as(
                 $this->document->title.'.'.($asset->extension ?? pathinfo($path, PATHINFO_EXTENSION))
             )->withMime(

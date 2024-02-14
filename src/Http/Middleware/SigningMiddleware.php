@@ -75,7 +75,7 @@ class SigningMiddleware
         }
 
         if (
-            $signer->signingStatusIs(SigningStatus::SIGNED) && $isIndexRoute
+            $isSigned && $isIndexRoute
         ) {
             return redirect()->route('esign.signing.show', [
                 'signing_url' => $signer->url,

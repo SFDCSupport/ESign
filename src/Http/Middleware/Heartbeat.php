@@ -21,17 +21,40 @@ class Heartbeat
             return $response;
         }
 
-        $timestamp = now()->format('YmdHms');
+        $documentId = $request->document?->id;
+        $signerId = $request->signer?->id;
+        $timestamp = now();
         $heartbeatRoute = route('esign.heartbeat');
+
+        if ($request->routeIs('esign.signing.*')) {
+            $signer = $request->signer();
+
+            $documentId = $signer->document_id;
+            $signerId = $signer->id;
+        }
 
         $javascriptCode = <<<JS
                 <script>
                     setInterval(function () {
                         $.post("$heartbeatRoute", {
-                            timestamp: $timestamp,
-                            }).done((r) => {
-                                console.log(r);
-                            }).fail((x) => toast("error", x.responseText));
+                            timestamp: '$timestamp',
+                            documentId: '$documentId',
+                            signerId: '$signerId',
+                        })
+                        .done((r) => {
+                            if(r.status !== 1) {
+                                return;
+                            }
+
+                            if(!blank(r.toast)) {
+                                toast(r.toast.type ?? 'info', r.toast.msg ?? r.toast);
+                            }
+
+                            if(!blank(r.redirect)) {
+                                $(location).attr("href", r.redirect);
+                            }
+                        })
+                        .fail((x) => toast("error", x.responseText));
                     }, $interval);
                 </script>;
             JS;

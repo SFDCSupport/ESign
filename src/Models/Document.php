@@ -103,7 +103,7 @@ class Document extends Model implements HasLocalePreference
             ->where(
                 fn ($q) => $q->whereNull('is_snapshot')
                     ->orWhere('is_snapshot', false)
-            )->latest('version');
+            );
     }
 
     public function preferredLocale(): string
@@ -142,22 +142,16 @@ class Document extends Model implements HasLocalePreference
      */
     public function getDocumentPath(bool $getBoth = false): array|string
     {
-        $fileName = $this->loadMissing('document')->document->file_name;
+        $asset = $this->loadMissing('document')->document;
 
-        $signedFileName = (
-            pathinfo($fileName, PATHINFO_FILENAME).
-            '_signed.'.
-            pathinfo($fileName, PATHINFO_EXTENSION)
-        );
-
-        $path = esignUploadPath('document', ['document' => $this->id]).'/'.$signedFileName;
+        $path = esignUploadPath('document', ['document' => $this->id]);
 
         return $getBoth
-            ? [$signedFileName, $path]
+            ? [$asset->file_name, $path]
             : $path;
     }
 
-    public function getSignedDocumentUrl(): string
+    public function getDocumentUrl(): string
     {
         return FilepondAction::loadFile($this->getSignedDocumentPath(), 'view');
     }

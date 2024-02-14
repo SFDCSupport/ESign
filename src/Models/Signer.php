@@ -9,12 +9,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Mail\Attachment as MailAttachment;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use NIIT\ESign\Concerns\HasAsset;
 use NIIT\ESign\Enum\AssetType;
+use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\ReadStatus;
 use NIIT\ESign\Enum\SendStatus;
 use NIIT\ESign\Enum\SigningStatus;
@@ -36,6 +39,7 @@ class Signer extends Model implements Attachable
         'email', 'text', 'url',
         'signing_status', 'read_status', 'send_status',
         'position', 'is_next_receiver',
+        'submitted_at',
     ];
 
     /**
@@ -47,6 +51,7 @@ class Signer extends Model implements Attachable
         'signing_status' => SigningStatus::class,
         'position' => 'integer',
         'is_next_receiver' => 'boolean',
+        'submitted_at' => 'timestamp',
     ];
 
     /**
@@ -71,17 +76,6 @@ class Signer extends Model implements Attachable
         );
     }
 
-    /**
-     * @return HasMany<Submission>
-     */
-    public function submissions()
-    {
-        return $this->hasMany(
-            related: Submission::class,
-            foreignKey: 'signer_id'
-        );
-    }
-
     public function url(): Attribute
     {
         return new Attribute(
@@ -89,7 +83,7 @@ class Signer extends Model implements Attachable
         );
     }
 
-    public function spanshots(): MorphMany
+    public function snapshots(): MorphMany
     {
         return $this->assets(AssetType::SIGNER_SNAPSHOT)
             ->where('is_snapshot', true)
@@ -155,7 +149,7 @@ class Signer extends Model implements Attachable
 
     public function getSignedDocumentPath(): string
     {
-        return $this->getUploadPath().'/'.$this->document_id.'.pdf';
+        return $this->getUploadPath(true);
     }
 
     public function getSignedDocumentUrl(): string
@@ -163,11 +157,69 @@ class Signer extends Model implements Attachable
         return FilepondAction::loadFile($this->getSignedDocumentPath(), 'view');
     }
 
-    public function getUploadPath(): string
+    public function getUploadPath(bool $getPath = false): string
     {
-        return esignUploadPath('signer_snapshot', [
-            'document' => $this->loadMissing('document')->document->id,
+        $loadedModel = $this->loadMissing('document.document');
+
+        $path = ($isCompleted = $loadedModel->document->statusIs(DocumentStatus::COMPLETED))
+            ? esignUploadPath('document', [
+                'document' => $loadedModel->document->id,
+            ])
+            : esignUploadPath('signer_snapshot', [
+                'document' => $loadedModel->document->id,
+                'signer' => $this->id,
+            ]);
+
+        return $getPath
+            ? ($path.'/'.($isCompleted ? '' : (SnapshotType::POST_SUBMIT->value.'-')).$loadedModel->document->document->file_name)
+            : $path;
+    }
+
+    public function createSnapshot(Asset $asset, UploadedFile $file): Asset
+    {
+        $postSubmitSnapshot = null;
+
+        $snapshotPath = esignUploadPath('signer_snapshot', [
+            'document' => $this->document->id,
             'signer' => $this->id,
         ]);
+
+        foreach (SnapshotType::values() as $snapshotType) {
+            $filename = $snapshotType.'-'.$asset->file_name;
+            $path = $snapshotPath.'/'.$filename;
+            $isPostSubmit = ($snapshotType === 'post_submit');
+
+            if (! $isPostSubmit) {
+                Storage::disk($asset->disk)->copy(
+                    $asset->path.'/'.$asset->file_name,
+                    $path
+                );
+            } else {
+                $path = $file->storeAs(
+                    $snapshotPath,
+                    $filename,
+                    $asset->disk
+                );
+            }
+
+            /** @var Asset $newAsset */
+            $newAsset = $this->snapshots()->updateOrCreate([
+                'type' => AssetType::SIGNER_SNAPSHOT,
+                'snapshot_type' => $snapshotType,
+                'is_snapshot' => true,
+            ], [
+                'path' => $snapshotPath,
+                'file_name' => $filename,
+                'bucket' => $asset->bucket,
+                'disk' => $asset->disk,
+                'extension' => $asset->extension,
+            ]);
+
+            if ($isPostSubmit) {
+                $postSubmitSnapshot = $newAsset;
+            }
+        }
+
+        return $postSubmitSnapshot;
     }
 }

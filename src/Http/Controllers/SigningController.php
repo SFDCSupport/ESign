@@ -6,6 +6,7 @@ use App\Actions\FilepondAction;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use NIIT\ESign\Enum\ReadStatus;
 use NIIT\ESign\Enum\SigningStatus;
 use NIIT\ESign\Events\ReadStatusChanged;
@@ -53,7 +54,7 @@ class SigningController extends Controller
             if ($isSignaturePad) {
                 /** @var UploadedFile $file */
                 $file = $d['data'];
-                $fileName = $d['id'].'_'.trim($originalFileName = $file->getClientOriginalName());
+                $fileName = $d['id'].'_'.trim($file->getClientOriginalName());
 
                 $filePath = $file->storeAs(
                     $signerUploadPath,
@@ -63,8 +64,8 @@ class SigningController extends Controller
 
                 $loadedSigner->elements()->where('id', $d['id'])->first()->update([
                     'data' => json_encode([
-                        'file_path' => $filePath,
-                        'file_name' => $originalFileName,
+                        'file_path' => $signerUploadPath,
+                        'file_name' => $fileName,
                         'disk' => $disk,
                         'saved_at' => now(),
                     ]),
@@ -93,34 +94,33 @@ class SigningController extends Controller
             ]));
         });
 
-        $fileName = $loadedSigner->document_id.'.pdf';
-        /** @var Asset $asset */
-        $asset = $loadedSigner->document->document;
-        $documentPath = $asset->path;
-
         /** @var UploadedFile $signedDocument */
         $signedDocument = $request->validated()['signed_document'];
 
-        $signedCopyPath = $signedDocument->storeAs(
-            $signerUploadPath,
-            $fileName.'.png',
-            $disk
+        /** @var Asset $postSubmitAsset */
+        $postSubmitAsset = $signer->createSnapshot(
+            /** @var Asset $asset */
+            ($asset = $loadedSigner->document->document),
+            $signedDocument
         );
 
-        $storage->copy($signedCopyPath, $documentPath);
+        $storage->copy(($loadFile = $postSubmitAsset->path.'/'.$postSubmitAsset->file_name), $asset->path.'/'.$asset->file_name);
+        $asset->touch('updated_at');
 
-        $downloadUrl = FilepondAction::loadFile($signedCopyPath, 'view');
+        $downloadUrl = FilepondAction::loadFile($loadFile, 'view');
         $createOrUpdateSubmissions = static function ($data, $elementId) use ($loadedSigner) {
-            return $loadedSigner->submissions()->updateOrCreate([
-                'signer_element_id' => $elementId,
+            return $loadedSigner->elements()->updateOrCreate([
+                'id' => $elementId,
                 'signer_id' => $loadedSigner->id,
                 'document_id' => $loadedSigner->document->id,
             ], [
                 'data' => $data,
+                'submitted_at' => now(),
             ]);
         };
 
         $data->pluck('data', 'signer_element_id')->each(fn ($elementId, $data) => $createOrUpdateSubmissions($elementId, $data));
+        $signer->touch('submitted_at');
 
         SigningStatusChanged::dispatch(
             $loadedSigner->document,
@@ -137,11 +137,11 @@ class SigningController extends Controller
 
     public function show(Request $request, Signer $signer)
     {
-        /** @var Filesystem $disk */
-        $disk = FilepondAction::getDisk();
-
         $document = $signer->loadMissing('document.document', 'elements')->document;
         $signedDocument = $signer->getSignedDocumentPath();
+
+        /** @var Filesystem $disk */
+        $disk = Storage::disk($document->document->disk);
 
         abort_if(
             ! $disk->exists($signedDocument) ||

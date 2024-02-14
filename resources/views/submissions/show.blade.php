@@ -2,5 +2,7 @@
     :title="__('esign::label.submissions')"
     :document="$document"
 >
-    XYZ
+    @foreach ($signer->elements as $element)
+            {{ $element->submitted_at->format('') }} - {!! $element->data !!}
+    @endforeach
 </x-esign::layout>

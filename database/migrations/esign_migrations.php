@@ -21,7 +21,6 @@ return new class extends Migration
         $this->dropIfTableExists('e_documents');
         $this->dropIfTableExists('e_signers');
         $this->dropIfTableExists('e_signer_elements');
-        $this->dropIfTableExists('e_submissions');
         $this->dropIfTableExists('e_assets');
         $this->dropIfTableExists('e_audits');
         Schema::enableForeignKeyConstraints();
@@ -60,6 +59,8 @@ return new class extends Migration
             $table->enum('send_status', SendStatus::values())->default(SendStatus::NOT_SENT);
             $table->boolean('is_next_receiver')->default(true);
             $table->integer('position')->default(0);
+            $table->timestamp('submitted_at')->nullable();
+            $table->json('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->eSignUserStamps();
@@ -80,20 +81,11 @@ return new class extends Migration
             $table->double('height');
             $table->integer('position')->default(0);
             $table->boolean('is_required')->default(true);
+            $table->text('data')->nullable();
+            $table->timestamp('submitted_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->eSignUserStamps();
-        });
-
-        Schema::create('e_submissions', static function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('document_id')->constrained('e_documents');
-            $table->foreignUuid('signer_id')->constrained('e_signers');
-            $table->foreignUuid('signer_element_id')->constrained('e_signer_elements');
-            $table->longText('data');
-            $table->timestamps();
-            $table->softDeletes();
-            $table->eSignUserStamps('restored_at');
         });
 
         Schema::create('e_assets', static function (Blueprint $table) {
@@ -107,7 +99,6 @@ return new class extends Migration
             $table->string('path');
             $table->boolean('is_snapshot')->default(false);
             $table->enum('snapshot_type', SnapshotType::values())->nullable();
-            $table->tinyInteger('version')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->eSignUserStamps();
@@ -130,7 +121,6 @@ return new class extends Migration
     {
         Schema::drop('e_audits');
         Schema::drop('e_assets');
-        Schema::drop('e_submissions');
         Schema::drop('e_signer_elements');
         Schema::drop('e_signers');
         Schema::drop('e_documents');

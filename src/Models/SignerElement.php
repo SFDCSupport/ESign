@@ -4,7 +4,6 @@ namespace NIIT\ESign\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use NIIT\ESign\Concerns\HasAsset;
 use NIIT\ESign\Enum\AssetType;
@@ -26,6 +25,7 @@ class SignerElement extends Model
         'page_index', 'page_width', 'page_height',
         'left', 'top', 'width', 'height',
         'position', 'is_required',
+        'data', 'submitted_at',
     ];
 
     /**
@@ -41,6 +41,7 @@ class SignerElement extends Model
         'top' => 'double',
         'left' => 'double',
         'is_required' => 'boolean',
+        'submitted_at' => 'timestamp',
     ];
 
     /**
@@ -62,17 +63,6 @@ class SignerElement extends Model
         return $this->belongsTo(
             related: Signer::class,
             foreignKey: 'signer_id',
-        );
-    }
-
-    /**
-     * @return HasOne<Submission>
-     */
-    public function submission()
-    {
-        return $this->hasOne(
-            related: Submission::class,
-            foreignKey: 'signer_element_id'
         );
     }
 

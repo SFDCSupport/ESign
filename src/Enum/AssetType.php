@@ -11,5 +11,4 @@ enum AssetType: string
     case DOCUMENT = 'document';
     case SIGNER_ELEMENT = 'signer_element';
     case SIGNER_SNAPSHOT = 'signer_snapshot';
-    case SIGNED_DOCUMENT = 'signed_document';
 }

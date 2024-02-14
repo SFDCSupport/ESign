@@ -72,10 +72,10 @@ class Controller extends Base
         abort_if(! method_exists(Document::class, ($method = Str::camel($type))), 400);
 
         $filePath = null;
-        $fileName = date('YmdHms').'_'.trim($originalFileName = $file->getClientOriginalName());
+        $fileName = date('YmdHms').'_'.trim($file->getClientOriginalName());
 
         if ($filePath = $file->storeAs(
-            esignUploadPath($type, ['document' => $id]),
+            ($path = esignUploadPath($type, ['document' => $id])),
             $fileName,
             ($disk = FilepondAction::getDisk(true))
         )) {
@@ -87,8 +87,8 @@ class Controller extends Base
                 'type' => $type,
             ], [
                 'bucket' => config('filesystems.disks.s3.bucket'),
-                'path' => $filePath,
-                'file_name' => $originalFileName,
+                'path' => $path,
+                'file_name' => $fileName,
                 'disk' => $disk,
                 'extension' => $file->getClientOriginalExtension(),
             ]);

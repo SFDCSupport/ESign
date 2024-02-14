@@ -40,19 +40,12 @@ class ESignServiceProvider extends ServiceProvider
 
         (new ESign($this->app))->addMacros()->proceed();
 
-        Route::bind('signing_url', function (string $value) {
-            $signer = Signer::where('url', $value)->firstOrFail();
-
-            Request::macro('signer', fn () => $signer);
-
-            return $signer;
-        });
-
         Route::name(self::NAME.'.')
             ->prefix(self::NAME)
             ->middleware([
                 'web',
                 Http\Middleware\ESignMiddleware::class,
+                Http\Middleware\Heartbeat::class,
             ])->group(function () {
                 $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
             });
@@ -112,6 +105,14 @@ class ESignServiceProvider extends ServiceProvider
 
     private function bindRouting(): void
     {
+        Route::bind('signing_url', function (string $value) {
+            $signer = Signer::where('url', $value)->firstOrFail();
+
+            Request::macro('signer', fn () => $signer);
+
+            return $signer;
+        });
+
         $uuidExpressions = config('esign.expressions.uuid');
 
         foreach ([
