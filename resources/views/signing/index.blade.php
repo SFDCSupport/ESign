@@ -211,7 +211,7 @@
                     return `<p>
                       <textarea class="form-control signingElement"
                         id="id-${id}-element" rows="3" data-type="${type}"
-                        ${required ? 'required' : ''}
+                        ${required ? 'required' : ''} autofocus
                       ></textarea>
                     </p>`;
                 }
@@ -237,7 +237,7 @@
                   <input type="${$type}" id="id-${id}-element"
                     class="form-control form-control-lg signingElement"
                     placeholder="${label ?? type}" data-type="${type}"
-                    ${required ? 'required' : ''}
+                    ${required ? 'required' : ''} autofocus autocomplete="off"
                   />
                 </p>`;
             };

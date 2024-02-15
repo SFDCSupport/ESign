@@ -71,21 +71,17 @@
             global: true,
             beforeSend: function (x) {},
             complete: function (x, s) {
-                $(document).trigger('loader:hide');
-
                 if (x.responseJSON) {
-                    if (
-                        (errors = x.responseJSON.errors ?? undefined) !==
-                        undefined
-                    ) {
+                    const json = x.responseJSON;
+
+                    if ((errors = json.errors ?? undefined) !== undefined) {
                         $.each(errors, function (k, v) {
                             toast(getToastClass('error'), v.message ?? v);
                         });
                     }
 
                     if (
-                        (notify = x.responseJSON.notify ?? undefined) !==
-                            undefined &&
+                        (notify = json.notify ?? undefined) !== undefined &&
                         !blank(notify.message)
                     ) {
                         toast(
@@ -99,7 +95,9 @@
                 }
             },
             success: function (r, s, x) {},
-            error: function (x, s, e) {},
+            error: function (x, s, e) {
+                $(document).trigger('loader:hide');
+            },
         });
     </script>
 </div>

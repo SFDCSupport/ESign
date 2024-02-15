@@ -105,6 +105,8 @@
                                         __LABEL
                                     </label>
                                     <input
+                                        __AUTOFOCUS
+                                        autocomplete="off"
                                         data-rule-email="true"
                                         data-rule-required="true"
                                         data-rule-unique-signers-email="true"
@@ -151,18 +153,24 @@
                         .attr('data-target'),
                 ).addClass('d-none');
 
-                collect(loadedData?.signers || [])
-                    .sortBy('position')
-                    .where('is_deleted', '!==', true)
-                    .each((s, i) => {
-                        signersHolderEle.append(
-                            $.trim(_signerEmailTemplate)
-                                .replace(/__UUID/gi, s.uuid)
-                                .replace(/__LABEL/gi, s.text)
-                                .replace(/__EMAIL/gi, s.email ?? '')
-                                .replace(/__INDEX/gi, s.position ?? i + 1),
-                        );
-                    });
+                $.when(
+                    collect(loadedData?.signers || [])
+                        .sortBy('position')
+                        .where('is_deleted', '!==', true)
+                        .each((s, i) =>
+                            signersHolderEle.append(
+                                $.trim(_signerEmailTemplate)
+                                    .replace(/__UUID/gi, s.uuid)
+                                    .replace(/__LABEL/gi, s.text)
+                                    .replace(/__EMAIL/gi, s.email ?? '')
+                                    .replace(/__INDEX/gi, s.position ?? i + 1)
+                                    .replace(
+                                        /__AUTOFOCUS/gi,
+                                        i === 0 ? 'autofocus' : '',
+                                    ),
+                            ),
+                        ),
+                ).then(() => signersHolderEle.find('input[autofocus]').focus());
 
                 signersForm
                     .find('input#preserve_order')

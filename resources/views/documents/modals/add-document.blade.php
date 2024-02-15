@@ -15,6 +15,8 @@
                 id="documentName"
                 name="title"
                 required
+                autofocus
+                autocomplete="off"
                 placeholder="{{ __('esign::label.document_name_placeholder') }}"
             />
         </div>
