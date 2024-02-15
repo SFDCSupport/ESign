@@ -29,7 +29,8 @@
     "autoload": {
         "psr-4": {
             "NIIT\\ESign\\": "src/",
-            "NIIT\\ESign\\Database\\Factories\\": "database/factories/"
+            "NIIT\\ESign\\Database\\Factories\\": "database/factories/",
+            "NIIT\\ESign\\Database\\Seeders\\": "database/seederes/"
         },
         "classmap": [
             "SetaPDF/"

@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace NIIT\ESign\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use NIIT\ESign\Models\Template;
