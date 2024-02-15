@@ -19,6 +19,7 @@ class ReadStatusListener
 
         $signer->update([
             'read_status' => $status,
+            'read_at' => now(),
         ]);
     }
 }

@@ -166,8 +166,8 @@ class Document extends Model implements HasLocalePreference
         return $this->loadMissing([
             'signers' => fn ($q) => $q->with('preSubmitSnapshot')
                 ->where('signing_status', SigningStatus::SIGNED)
-                ->whereNotNull('submitted_at')
-                ->oldest('submitted_at')
+                ->whereNotNull('signed_at')
+                ->oldest('signed_at')
                 ->first(),
         ])->signers
             ->first()

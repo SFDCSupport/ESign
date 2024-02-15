@@ -52,8 +52,8 @@ return new class extends Migration
             $table->enum('send_status', Enum\SendStatus::values())->default(Enum\SendStatus::NOT_SENT);
             $table->boolean('is_next_receiver')->default(true);
             $table->integer('position')->default(0);
-            $table->timestamp('submitted_at')->nullable();
-            $table->json('metadata')->nullable();
+            $table->timestamp('signed_at')->nullable();
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->eSignUserStamps();

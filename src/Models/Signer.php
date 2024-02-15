@@ -39,7 +39,7 @@ class Signer extends Model implements Attachable
         'email', 'text', 'url',
         'signing_status', 'read_status', 'send_status',
         'position', 'is_next_receiver',
-        'submitted_at',
+        'signed_at', 'read_at',
     ];
 
     /**
@@ -51,7 +51,8 @@ class Signer extends Model implements Attachable
         'signing_status' => SigningStatus::class,
         'position' => 'integer',
         'is_next_receiver' => 'boolean',
-        'submitted_at' => 'timestamp',
+        'read_at' => 'timestamp',
+        'signed_at' => 'timestamp',
     ];
 
     /**

@@ -121,7 +121,6 @@ class SigningController extends Controller
         };
 
         $data->pluck('data', 'signer_element_id')->each(fn ($elementId, $data) => $createOrUpdateSubmissions($elementId, $data));
-        $signer->touch('submitted_at');
 
         SigningStatusChanged::dispatch(
             $loadedSigner->document,

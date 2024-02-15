@@ -28,6 +28,7 @@ class SigningStatusListener
             $signer->update([
                 'is_next_receiver' => false,
                 'signing_status' => $status,
+                'signed_at' => now(),
             ]);
         }
 
