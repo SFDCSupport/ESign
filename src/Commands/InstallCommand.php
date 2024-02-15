@@ -52,6 +52,11 @@ class InstallCommand extends Command
                     '--tenant' => $tenant->id,
                 ]);
 
+                $this->call('tenants:artisan', [
+                    'artisanCommand' => 'db:seed --class=\NIIT\ESign\Database\Seeders\ESignSeeder --database=tenant',
+                    '--tenant' => $tenant->id,
+                ]);
+
                 $this->info('Done: migrations!');
             } else {
                 $this->error('Unable to clean old migration entries! Do it manually!');
