@@ -8,6 +8,7 @@
 namespace NIIT\ESign\Observers;
 
 use Illuminate\Support\Str;
+use NIIT\ESign\Enum\AuditEvent;
 use NIIT\ESign\Models\Signer;
 
 class SignerObserver extends Observer
@@ -34,14 +35,14 @@ class SignerObserver extends Observer
     {
         $this->logAuditTrait(
             document: $signer->loadMissing('document')->document,
-            event: 'signer-added',
+            event: AuditEvent::SIGNER_ADDED,
             signer: $signer,
         );
     }
 
     public function updated(Signer $signer): void
     {
-        $event = 'signer-updated';
+        $event = AuditEvent::SIGNER_UPDATED;
         $dirty = array_diff_key(
             $signer->getdirty(),
             array_flip([
@@ -51,11 +52,11 @@ class SignerObserver extends Observer
         );
 
         if (array_key_exists('signing_status', $dirty)) {
-            $event = 'signer-signing-status-changed';
+            $event = AuditEvent::SIGNER_SIGNING_STATUS_CHANGED;
         } elseif (array_key_exists('read_status', $dirty)) {
-            $event = 'signer-read-status-changed';
+            $event = AuditEvent::SIGNER_READ_STATUS_CHANGED;
         } elseif (array_key_exists('send_status', $dirty)) {
-            $event = 'signer-send-status-changed';
+            $event = AuditEvent::SIGNER_SEND_STATUS_CHANGED;
         }
 
         $this->logAuditTrait(
@@ -70,7 +71,7 @@ class SignerObserver extends Observer
     {
         $this->logAuditTrait(
             document: $signer->loadMissing('document')->document,
-            event: 'signer-deleted',
+            event: AuditEvent::SIGNER_DELETED,
             signer: $signer,
         );
     }
@@ -79,7 +80,7 @@ class SignerObserver extends Observer
     {
         $this->logAuditTrait(
             document: $signer->loadMissing('document')->document,
-            event: 'signer-restored',
+            event: AuditEvent::SIGNER_RESTORED,
             signer: $signer,
         );
     }
@@ -88,7 +89,7 @@ class SignerObserver extends Observer
     {
         $this->logAuditTrait(
             document: $signer->loadMissing('document')->document,
-            event: 'signer-force-deleted',
+            event: AuditEvent::SIGNER_DELETED_FORCE,
             signer: $signer,
         );
     }

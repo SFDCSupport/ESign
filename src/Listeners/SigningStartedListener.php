@@ -2,6 +2,7 @@
 
 namespace NIIT\ESign\Listeners;
 
+use NIIT\ESign\Enum\AuditEvent;
 use NIIT\ESign\Events\SigningProcessStarted;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
@@ -18,7 +19,7 @@ class SigningStartedListener
 
         $document->logAuditTrait(
             document: $document,
-            event: 'signing-started',
+            event: AuditEvent::SIGNING_STARTED,
             signer: $signer,
         );
     }

@@ -12,6 +12,7 @@ use NIIT\ESign\Enum\AssetType;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\Enum\NotificationSequence;
 use NIIT\ESign\Enum\SendStatus;
+use NIIT\ESign\Enum\SigningStatus;
 use NIIT\ESign\ESignFacade;
 use NIIT\ESign\Events\DocumentStatusChanged;
 
@@ -154,5 +155,22 @@ class Document extends Model implements HasLocalePreference
     public function getDocumentUrl(): string
     {
         return FilepondAction::loadFile($this->getSignedDocumentPath(), 'view');
+    }
+
+    public function initialDocument(): Asset
+    {
+        if ($this->statusIsNot(DocumentStatus::COMPLETED)) {
+            return $this->loadMissing('document')->document;
+        }
+
+        return $this->loadMissing([
+            'signers' => fn ($q) => $q->with('preSubmitSnapshot')
+                ->where('signing_status', SigningStatus::SIGNED)
+                ->whereNotNull('submitted_at')
+                ->oldest('submitted_at')
+                ->first(),
+        ])->signers
+            ->first()
+            ->preSubmitSnapshot;
     }
 }

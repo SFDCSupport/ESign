@@ -6,6 +6,7 @@ use App\Actions\FilepondAction;
 use Exception;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Mail;
+use NIIT\ESign\Enum\AuditEvent;
 use NIIT\ESign\Enum\DocumentStatus;
 use NIIT\ESign\ESignFacade;
 use NIIT\ESign\Events\SigningProcessCompleted;
@@ -32,7 +33,7 @@ class SigningCompletedListener
 
         $document->logAuditTrait(
             document: $document,
-            event: 'signing-completed',
+            event: AuditEvent::SIGNING_COMPLETED,
             signer: $signer,
         );
 
@@ -68,7 +69,7 @@ class SigningCompletedListener
 
             $document->logAuditTrait(
                 document: $document,
-                event: 'document-signed',
+                event: AuditEvent::DOCUMENT_SIGNED,
             );
 
             Mail::to(

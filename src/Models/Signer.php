@@ -159,19 +159,20 @@ class Signer extends Model implements Attachable
 
     public function getUploadPath(bool $getPath = false): string
     {
-        $loadedModel = $this->loadMissing('document.document');
+        /** @var Document $document */
+        $document = $this->loadMissing('document.document')->document;
 
-        $path = ($isCompleted = $loadedModel->document->statusIs(DocumentStatus::COMPLETED))
+        $path = ($isCompleted = $document->statusIs(DocumentStatus::COMPLETED))
             ? esignUploadPath('document', [
-                'document' => $loadedModel->document->id,
+                'document' => $document->id,
             ])
             : esignUploadPath('signer_snapshot', [
-                'document' => $loadedModel->document->id,
+                'document' => $document->id,
                 'signer' => $this->id,
             ]);
 
         return $getPath
-            ? ($path.'/'.($isCompleted ? '' : (SnapshotType::POST_SUBMIT->value.'-')).$loadedModel->document->document->file_name)
+            ? ($path.'/'.($isCompleted ? '' : (SnapshotType::POST_SUBMIT->value.'-')).$document->document->file_name)
             : $path;
     }
 

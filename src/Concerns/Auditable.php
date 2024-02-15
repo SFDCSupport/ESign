@@ -4,6 +4,7 @@ namespace NIIT\ESign\Concerns;
 
 use App\Models\User;
 use Illuminate\Support\Str;
+use NIIT\ESign\Enum\AuditEvent;
 use NIIT\ESign\Models\Audit;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
@@ -13,7 +14,7 @@ trait Auditable
 {
     public function logAuditTrait(
         Document $document,
-        string $event,
+        AuditEvent $event,
         ?Signer $signer = null,
         ?SignerElement $element = null,
         ?array $metadata = null,

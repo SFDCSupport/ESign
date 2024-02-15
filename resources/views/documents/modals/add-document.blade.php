@@ -28,6 +28,8 @@
         $(() => {
             let addDocumentBootboxInstance;
 
+            const _eleDocumentName = '#createDocumentForm input#documentName';
+
             const addDocumentBootbox = (callback) =>
                 bootbox.dialog({
                     title: '{{ __('esign::label.document_add_modal_title') }}',
@@ -35,6 +37,7 @@
                     closeButton: false,
                     backdrop: 'static',
                     size: 'md',
+                    onShown: () => $(_eleDocumentName).focus(),
                     buttons: {
                         cancel: {
                             label: '{{ __('esign::label.close') }}',
@@ -99,6 +102,14 @@
                 })
                 .on('modal:add-document:hide', () => {
                     addDocumentBootboxInstance().modal('hide');
+                })
+                .on('keydown', _eleDocumentName, function (e) {
+                    if (e.key === 'Enter' || e.keyCode === 13) {
+                        $(this)
+                            .closest('.modal-content')
+                            .find('button.bootbox-accept')
+                            .trigger('click');
+                    }
                 });
         });
     </script>

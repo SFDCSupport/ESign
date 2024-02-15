@@ -2,6 +2,7 @@
 
 namespace NIIT\ESign\Observers;
 
+use NIIT\ESign\Enum\AuditEvent;
 use NIIT\ESign\Models\Document;
 
 class DocumentObserver extends Observer
@@ -10,13 +11,13 @@ class DocumentObserver extends Observer
     {
         $this->logAuditTrait(
             document: $document,
-            event: 'document-created'
+            event: AuditEvent::DOCUMENT_CREATED,
         );
     }
 
     public function updated(Document $document): void
     {
-        $event = 'document-updated';
+        $event = AuditEvent::DOCUMENT_UPDATED;
         $dirty = array_diff_key(
             $document->getdirty(),
             array_flip([
@@ -26,7 +27,7 @@ class DocumentObserver extends Observer
         );
 
         if (array_key_exists('status', $dirty)) {
-            $event = 'document-status-changed';
+            $event = AuditEvent::DOCUMENT_STATUS_CHANGED;
         }
 
         $this->logAuditTrait(
@@ -40,7 +41,7 @@ class DocumentObserver extends Observer
     {
         $this->logAuditTrait(
             document: $document,
-            event: 'document-deleted'
+            event: AuditEvent::DOCUMENT_DELETED
         );
     }
 
@@ -48,7 +49,7 @@ class DocumentObserver extends Observer
     {
         $this->logAuditTrait(
             document: $document,
-            event: 'document-restored'
+            event: AuditEvent::DOCUMENT_RESTORED
         );
     }
 
@@ -56,7 +57,7 @@ class DocumentObserver extends Observer
     {
         $this->logAuditTrait(
             document: $document,
-            event: 'document-force-deleted'
+            event: AuditEvent::DOCUMENT_DELETED_FORCE
         );
     }
 }

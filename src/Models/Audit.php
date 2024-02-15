@@ -3,6 +3,7 @@
 namespace NIIT\ESign\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use NIIT\ESign\Enum\AuditEvent;
 
 class Audit extends Model
 {
@@ -21,6 +22,7 @@ class Audit extends Model
      * @var array<string,string>
      */
     protected $casts = [
+        'event' => AuditEvent::class,
         'metadata' => 'json',
     ];
 

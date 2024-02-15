@@ -2,6 +2,7 @@
 
 namespace NIIT\ESign\Observers;
 
+use NIIT\ESign\Enum\AuditEvent;
 use NIIT\ESign\Models\Signer;
 use NIIT\ESign\Models\SignerElement as Element;
 
@@ -28,7 +29,7 @@ class SignerElementObserver extends Observer
 
         $this->logAuditTrait(
             document: $signer->document,
-            event: 'element-added',
+            event: AuditEvent::ELEMENT_ADDED,
             signer: $signer,
             element: $element
         );
@@ -47,7 +48,7 @@ class SignerElementObserver extends Observer
 
         $this->logAuditTrait(
             document: $signer->document,
-            event: 'element-updated',
+            event: AuditEvent::ELEMENT_UPDATED,
             signer: $signer,
             element: $element,
             metadata: $dirty
@@ -60,7 +61,7 @@ class SignerElementObserver extends Observer
 
         $this->logAuditTrait(
             document: $signer->document,
-            event: 'element-deleted',
+            event: AuditEvent::ELEMENT_DELETED,
             signer: $signer,
             element: $element
         );
@@ -72,7 +73,7 @@ class SignerElementObserver extends Observer
 
         $this->logAuditTrait(
             document: $signer->document,
-            event: 'element-restored',
+            event: AuditEvent::ELEMENT_RESTORED,
             signer: $signer,
             element: $element
         );
@@ -84,7 +85,7 @@ class SignerElementObserver extends Observer
 
         $this->logAuditTrait(
             document: $signer->document,
-            event: 'element-force-deleted',
+            event: AuditEvent::ELEMENT_DELETED_FORCE,
             signer: $signer,
             element: $element
         );

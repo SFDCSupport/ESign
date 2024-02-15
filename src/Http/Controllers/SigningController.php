@@ -15,6 +15,7 @@ use NIIT\ESign\Events\SigningStatusChanged;
 use NIIT\ESign\Http\Requests\SigningRequest;
 use NIIT\ESign\Http\Resources\SignerResource;
 use NIIT\ESign\Models\Asset;
+use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
 
 class SigningController extends Controller
@@ -137,7 +138,8 @@ class SigningController extends Controller
 
     public function show(Request $request, Signer $signer)
     {
-        $document = $signer->loadMissing('document.document', 'elements')->document;
+        /** @var Document $document */
+        $document = $signer->loadMissing('postSubmitSnapshot', 'document', 'elements')->document;
         $signedDocument = $signer->getSignedDocumentPath();
 
         /** @var Filesystem $disk */
