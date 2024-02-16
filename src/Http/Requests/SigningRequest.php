@@ -27,6 +27,7 @@ class SigningRequest extends FormRequest
                 ]),
             ],
             'signed_document' => 'required',
+            'metaData' => 'nullable',
             'element.*.id' => [
                 'required',
                 Rule::exists('e_signer_elements', 'id'),

@@ -7,6 +7,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use NIIT\ESign\Enum\AuditEvent;
 use NIIT\ESign\Enum\ReadStatus;
 use NIIT\ESign\Enum\SigningStatus;
 use NIIT\ESign\Events\ReadStatusChanged;
@@ -15,6 +16,7 @@ use NIIT\ESign\Events\SigningStatusChanged;
 use NIIT\ESign\Http\Requests\SigningRequest;
 use NIIT\ESign\Http\Resources\SignerResource;
 use NIIT\ESign\Models\Asset;
+use NIIT\ESign\Models\Audit;
 use NIIT\ESign\Models\Document;
 use NIIT\ESign\Models\Signer;
 
@@ -47,7 +49,7 @@ class SigningController extends Controller
         $loadedSigner = $signer->loadMissing('document.document');
         $signerUploadPath = $signer->getUploadPath();
 
-        $data = collect($request->validated()['element'])->map(function ($d) use ($loadedSigner, $disk, $signerUploadPath) {
+        $data = collect($request->validated('element'))->map(function ($d) use ($loadedSigner, $disk, $signerUploadPath) {
             $isSignaturePad = $d['type'] === 'signature_pad';
 
             $data = $d['data'];
@@ -96,7 +98,7 @@ class SigningController extends Controller
         });
 
         /** @var UploadedFile $signedDocument */
-        $signedDocument = $request->validated()['signed_document'];
+        $signedDocument = $request->validated('signed_document');
 
         /** @var Asset $postSubmitAsset */
         $postSubmitAsset = $signer->createSnapshot(
@@ -106,7 +108,7 @@ class SigningController extends Controller
         );
 
         $storage->copy(($loadFile = $postSubmitAsset->path.'/'.$postSubmitAsset->file_name), $asset->path.'/'.$asset->file_name);
-        $asset->touch('updated_at');
+        $asset->lockForUpdate()->touch('updated_at');
 
         $downloadUrl = FilepondAction::loadFile($loadFile, 'view');
         $createOrUpdateSubmissions = static function ($data, $elementId) use ($loadedSigner) {
@@ -127,6 +129,16 @@ class SigningController extends Controller
             $signer,
             SigningStatus::SIGNED
         );
+
+        if (($audit = (Audit::where([
+            'model_id' => $signer->id,
+            'model_type' => $signer::class,
+            'event' => AuditEvent::SIGNER_SIGNING_STATUS_CHANGED,
+        ]))) && $request->validated('metaData')) {
+            $audit->update([
+                'metadata' => array_merge($audit->metadata, $request->validated('metaData')),
+            ]);
+        }
 
         return $this->jsonResponse([
             'status' => 1,

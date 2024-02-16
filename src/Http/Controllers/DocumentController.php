@@ -43,8 +43,8 @@ class DocumentController extends Controller
 
         $formattedData = [
             'title' => $document->title,
-            'status' => $document->status,
-            'notification_sequence' => $document->notification_sequence,
+            'status' => $document->status->value,
+            'notification_sequence' => $document->notification_sequence->value,
             'signers' => $this->mergeWhen(
                 $loadedRelations->signers->count() > 0,
                 SignerResource::collection($loadedRelations->signers),

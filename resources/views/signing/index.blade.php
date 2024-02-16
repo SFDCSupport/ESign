@@ -101,6 +101,7 @@
     @endpushonce
 
     @pushonce('js')
+        <x-esign::location />
         <script src="{{ url('vendor/esign/js/signature_pad.umd.min.js') }}?4.1.7"></script>
         <script src="{{ url('vendor/esign/js/pdf-lib.min.js') }}?1.4.0"></script>
         <script src="{{ url('vendor/esign/js/download.min.js') }}?1.4.7"></script>
@@ -345,7 +346,8 @@
                     .then(
                         () =>
                             formData.append('mode', status) &&
-                            formData.append('_token', '{{ csrf_token() }}'),
+                            formData.append('_token', '{{ csrf_token() }}') &&
+                            formData.append('metaData', loadedData.metaData),
                     )
                     .then(() => console.table(Object.fromEntries(formData)))
                     .then(() =>
@@ -446,6 +448,19 @@
                     ),
                     nextBtn: $('#nextSigningBtn'),
                 };
+
+                document.addEventListener('location-service', function (e) {
+                    if (e.detail?.type === 'success') {
+                        collect(loadedData).merge({ metaData: e.detail.data });
+                    } else {
+                        $('head').append(
+                            $('<script />', {
+                                src: '{{ route('esign.user-info') }}',
+                                type: 'application/json',
+                            }),
+                        );
+                    }
+                });
 
                 $(document).on('elements-added-to-canvas', () => {
                     signerData = collect(loadedData.signers)

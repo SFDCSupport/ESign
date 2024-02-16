@@ -32,4 +32,8 @@ return [
     'signing_headers' => [
         'ESign' => 'XYZ',
     ],
+    'services' => [
+        'ipstack_key' => '039a88e1607c2a618fed7e96252ba923',
+        'gmaps_key' => null,
+    ],
 ];
