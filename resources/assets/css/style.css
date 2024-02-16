@@ -132,19 +132,19 @@ body{
 }
 
 .template_type{
-    display: block;
-    top: 12px;
-    width: 90px;
-    position: absolute;
-    text-align: center;
-    transform: rotate(45deg);
-    right: -22px;
-    background-color: #fff;
-    font-size: .8rem;
-    padding: 4px 0px;
-    line-height: 10px;
-    margin-bottom: 0px;
-    box-shadow: 2px 4px 12px rgba(0,0,0,.08);
+  display: block;
+  top: 22px;
+  width: 110px;
+  position: absolute;
+  text-align: center;
+  transform: rotate(45deg);
+  right: -24px;
+  background-color: #fff;
+  font-size: .8rem;
+  padding: 4px 0px;
+  line-height: 10px;
+  margin-bottom: 0px;
+  box-shadow: 2px 4px 12px rgba(0,0,0,.08);
 }
 
 /* .document-template-cards.status-pending{
