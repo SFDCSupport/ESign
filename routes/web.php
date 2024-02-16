@@ -7,6 +7,7 @@ use NIIT\ESign\Http\Controllers\SignerController;
 use NIIT\ESign\Http\Controllers\SigningController;
 
 Route::post('heartbeat', \NIIT\ESign\Http\Controllers\HeartbeatController::class)->name('heartbeat');
+Route::get('user-info', \NIIT\ESign\Support\UserInfo::class)->name('user-info');
 
 Route::prefix('asset')
     ->name('asset.')
